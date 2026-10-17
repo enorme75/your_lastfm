@@ -27,14 +27,21 @@ test("does not build incomplete Last.fm links", () => {
 test("builds user library links for scrobble deletion", () => {
   assert.equal(
     getUserLibraryTrackUrl("OUF", "https://www.last.fm/music/Eels/_/New+Story"),
-    "https://www.last.fm/user/OUF/library/music/Eels/New+Story"
+    "https://www.last.fm/user/OUF/library/music/Eels/_/New+Story"
+  );
+  assert.equal(
+    getUserLibraryTrackUrl(
+      "OUF",
+      "https://www.last.fm/music/The+Lemon+Twigs/_/Intro"
+    ),
+    "https://www.last.fm/user/OUF/library/music/The+Lemon+Twigs/_/Intro"
   );
   assert.equal(
     getUserLibraryTrackUrl(
       "OUF",
       "https://www.last.fm/music/Prince/_/It%27s+Gonna+Be+a+Beautiful+Night"
     ),
-    "https://www.last.fm/user/OUF/library/music/Prince/It%27s+Gonna+Be+a+Beautiful+Night"
+    "https://www.last.fm/user/OUF/library/music/Prince/_/It%27s+Gonna+Be+a+Beautiful+Night"
   );
   assert.equal(
     getUserLibraryTrackUrl("OUF", "https://www.last.fm/music/Artist/Album/Track"),

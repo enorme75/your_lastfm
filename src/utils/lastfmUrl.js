@@ -29,7 +29,7 @@ function getUserLibraryTrackUrl(username, trackUrl) {
   const segments = trackUrl
     .slice(LASTFM_TRACK_URL_PREFIX.length)
     .split("/")
-    .filter(segment => segment && segment !== "_");
+    .filter(segment => segment);
   if (segments.length === 0) return null;
   return `https://www.last.fm/user/${safeUsername}/library/music/${segments.join("/")}`;
 }
