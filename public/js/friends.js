@@ -21,7 +21,7 @@ function hideLoading() {
 
 export async function loadFriends() {
   const container = document.getElementById("friends-view");
-  container.innerHTML = '<div class="text-center p-5">Chargement de la liste d'amis...</div>';
+  container.innerHTML = `<div class="text-center p-5">Chargement de la liste d'amis...</div>`;
 
   try {
     const friends = await fetchJSON("/api/friends", { cache: "no-store" });

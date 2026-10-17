@@ -36,29 +36,29 @@
 
                     <nav class="sidebar-menu">
                         <button class="sidebar-link active" data-view="dashboard">
-                            <i class="mdi mdi-view-dashboard"></i> Tableau de bord
+                            <i class="mdi mdi-view-dashboard"></i> <span data-i18n="nav.dashboard">Tableau de bord</span>
                         </button>
                         <button class="sidebar-link" data-view="scrobbles">
-                            <i class="mdi mdi-history"></i> Scrobbles
+                            <i class="mdi mdi-history"></i> <span data-i18n="nav.scrobbles">Scrobbles</span>
                         </button>
                         <button class="sidebar-link" data-view="friends">
-                            <i class="mdi mdi-account-multiple"></i> Amis
+                            <i class="mdi mdi-account-multiple"></i> <span data-i18n="nav.friends">Amis</span>
                         </button>
                         <button class="sidebar-link" data-view="leaderboards">
-                            <i class="mdi mdi-podium"></i> Classements
+                            <i class="mdi mdi-podium"></i> <span data-i18n="nav.leaderboards">Classements</span>
                         </button>
                         <button class="sidebar-link" data-view="insights">
-                            <i class="mdi mdi-chart-areaspline"></i> Analyses
+                            <i class="mdi mdi-chart-areaspline"></i> <span data-i18n="nav.insights">Analyses</span>
                         </button>
                         <button class="sidebar-link" data-view="share">
-                            <i class="mdi mdi-share-variant"></i> Partager
+                            <i class="mdi mdi-share-variant"></i> <span data-i18n="nav.share">Partager</span>
                         </button>
                     </nav>
                 </div>
 
                 <div class="sidebar-bottom">
                     <button class="sidebar-link account" data-view="account">
-                    <i class="mdi mdi-account"></i> Compte
+                    <i class="mdi mdi-account"></i> <span data-i18n="nav.account">Compte</span>
                     </button>
                 </div>
             </aside>
@@ -87,42 +87,42 @@
 
                     <section class="filters-bar mb-4">
                         <div class="range-filters">
-                            <button class="range-pill" data-range="day">
+                            <button class="range-pill" data-range="day" data-i18n="dashboard.rangeDay">
                                 Last day
                             </button>
-                            <button class="range-pill" data-range="week">
+                            <button class="range-pill" data-range="week" data-i18n="dashboard.rangeWeek">
                                 Last week
                             </button>
-                            <button class="range-pill" data-range="month">
+                            <button class="range-pill" data-range="month" data-i18n="dashboard.rangeMonth">
                                 Last month
                             </button>
-                            <button class="range-pill" data-range="year">
+                            <button class="range-pill" data-range="year" data-i18n="dashboard.rangeYear">
                                 Last year
                             </button>
                         </div>
 
                         <div class="manual-filters">
                             <div class="filter-group">
-                                <span class="filter-label">Année</span>
+                                <span class="filter-label" data-i18n="dashboard.year">Année</span>
                                 <select id="year" class="filter-select"></select>
                             </div>
 
                             <div class="filter-group">
-                                <span class="filter-label">Mois</span>
+                                <span class="filter-label" data-i18n="dashboard.month">Mois</span>
                                 <select id="month" class="filter-select">
-                                    <option value="">Tous</option>
-                                    <option value="1">Janvier</option>
-                                    <option value="2">Février</option>
-                                    <option value="3">Mars</option>
-                                    <option value="4">Avril</option>
-                                    <option value="5">Mai</option>
-                                    <option value="6">Juin</option>
-                                    <option value="7">Juillet</option>
-                                    <option value="8">Août</option>
-                                    <option value="9">Septembre</option>
-                                    <option value="10">Octobre</option>
-                                    <option value="11">Novembre</option>
-                                    <option value="12">Décembre</option>
+                                    <option value="" data-i18n="dashboard.all">Tous</option>
+                                    <option value="1" data-i18n="months.jan">Janvier</option>
+                                    <option value="2" data-i18n="months.feb">Février</option>
+                                    <option value="3" data-i18n="months.mar">Mars</option>
+                                    <option value="4" data-i18n="months.apr">Avril</option>
+                                    <option value="5" data-i18n="months.may">Mai</option>
+                                    <option value="6" data-i18n="months.jun">Juin</option>
+                                    <option value="7" data-i18n="months.jul">Juillet</option>
+                                    <option value="8" data-i18n="months.aug">Août</option>
+                                    <option value="9" data-i18n="months.sep">Septembre</option>
+                                    <option value="10" data-i18n="months.oct">Octobre</option>
+                                    <option value="11" data-i18n="months.nov">Novembre</option>
+                                    <option value="12" data-i18n="months.dec">Décembre</option>
                                 </select>
                             </div>
                         </div>
@@ -135,7 +135,7 @@
                                     <i
                                         class="mdi mdi-timer-outline me-1 text-green"
                                     ></i>
-                                    Minutes écoutées
+                                    <span data-i18n="dashboard.minutesListened">Minutes écoutées</span>
                                     <p class="card-text fs-2 mb-1" id="hours">0</p>
                                     <div class="metric-trend" id="hours-trend"></div>
                                 </div>
@@ -147,7 +147,7 @@
                                     <i
                                         class="mdi mdi-music-note-outline me-1 text-green"
                                     ></i>
-                                    Morceaux joués
+                                    <span data-i18n="dashboard.songsPlayed">Morceaux joués</span>
                                     <p class="card-text fs-2 mb-1" id="plays">0</p>
                                     <div class="metric-trend" id="plays-trend"></div>
                                 </div>
@@ -159,7 +159,7 @@
                                     <i
                                         class="mdi mdi-calendar-range me-1 text-green"
                                     ></i>
-                                    Moyenne quotidienne
+                                    <span data-i18n="dashboard.dailyAverage">Moyenne quotidienne</span>
                                     <p class="card-text fs-2 mb-1" id="avg">0</p>
                                     <div class="metric-trend" id="avg-trend"></div>
                                 </div>
@@ -183,7 +183,7 @@
                                         <i
                                             class="mdi mdi-account-music-outline text-green"
                                         ></i>
-                                        <span>Top artistes</span>
+                                        <span data-i18n="common.topArtists">Top artistes</span>
                                     </div>
                                     <div class="top-split">
                                         <div class="top-list top-podium" id="top-artists-podium"></div>
@@ -200,15 +200,15 @@
                                         <i
                                             class="mdi mdi-playlist-music-outline text-green"
                                         ></i>
-                                        <span>Top morceaux</span>
+                                        <span data-i18n="dashboard.topSongs">Top morceaux</span>
                                     </div>
                                     <div class="top-split flex-grow-1">
                                         <div class="top-list top-podium" id="top-songs-podium"></div>
                                         <div class="top-songs-list flex-grow-1">
                                             <div class="top-songs-header">
                                                 <span>#</span>
-                                                <span>Morceau / Artiste</span>
-                                                <span>Écoutes</span>
+                                                <span data-i18n="dashboard.songArtistHeader">Morceau / Artiste</span>
+                                                <span data-i18n="dashboard.playsHeader">Écoutes</span>
                                                 <span>Total</span>
                                             </div>
                                             <div id="top-songs"></div>
@@ -223,7 +223,7 @@
                                 <div class="card-body text-light">
                                     <div class="card-header-title mb-3">
                                         <i class="mdi mdi-chart-line text-green"></i>
-                                        <span>Écoutes par jour</span>
+                                        <span data-i18n="dashboard.playsPerDay">Écoutes par jour</span>
                                     </div>
                                     <div class="chart-container">
                                         <canvas id="daily"></canvas>
@@ -237,7 +237,7 @@
                                 <div class="card-body text-light">
                                     <div class="card-header-title mb-1">
                                         <i class="mdi mdi-clock-outline text-green"></i>
-                                        <span>Horloge d'écoute</span>
+                                        <span data-i18n="dashboard.listeningClock">Horloge d'écoute</span>
                                     </div>
                                     <div id="peak-listening-hour" class="chart-caption mb-3">
                                         Activité d'écoute par heure locale
@@ -254,7 +254,7 @@
                 <section id="insights-view" class="d-none mt-4">
                     <div class="mb-3">
                         <i class="mdi mdi-chart-areaspline me-1 text-green"></i>
-                        Insights
+                        <span data-i18n="insights.title">Analyses</span>
                     </div>
 
                     <section class="row gy-4">
@@ -263,19 +263,19 @@
                                 <div class="card-body text-light">
                                     <div class="card-header-title mb-3">
                                         <i class="mdi mdi-calendar-month-outline text-green"></i>
-                                        <span>Activité (12 derniers mois)</span>
+                                        <span data-i18n="insights.activity">Activité (12 derniers mois)</span>
                                     </div>
                                     <div class="heatmap-scroll">
                                         <div id="activity-heatmap" class="heatmap-grid"></div>
                                     </div>
                                     <div class="heatmap-legend">
-                                        <span class="text-muted me-1">Moins</span>
+                                        <span class="text-muted me-1" data-i18n="insights.less">Moins</span>
                                         <span class="heatmap-cell level-0"></span>
                                         <span class="heatmap-cell level-1"></span>
                                         <span class="heatmap-cell level-2"></span>
                                         <span class="heatmap-cell level-3"></span>
                                         <span class="heatmap-cell level-4"></span>
-                                        <span class="text-muted ms-1">Plus</span>
+                                        <span class="text-muted ms-1" data-i18n="insights.more">Plus</span>
                                     </div>
                                 </div>
                             </div>
@@ -286,7 +286,7 @@
                                 <div class="card-body text-light">
                                     <div class="card-header-title mb-3">
                                         <i class="mdi mdi-calendar-week text-green"></i>
-                                        <span>Écoutes par semaine</span>
+                                        <span data-i18n="insights.playsPerWeek">Écoutes par semaine</span>
                                     </div>
                                     <div class="chart-container">
                                         <canvas id="weekly"></canvas>
@@ -300,7 +300,7 @@
                                 <div class="card-body text-light">
                                     <div class="card-header-title mb-3">
                                         <i class="mdi mdi-chart-areaspline text-green"></i>
-                                        <span>Top artistes dans le temps</span>
+                                        <span data-i18n="insights.artistsOverTime">Top artistes dans le temps</span>
                                     </div>
                                     <div class="chart-container">
                                         <canvas id="artists-evolution"></canvas>
@@ -314,7 +314,7 @@
                 <section id="scrobbles-view" class="d-none mt-4">
                     <div class="mb-3">
                         <i class="mdi mdi-history me-1 text-green"></i>
-                        Recent Scrobbles
+                        <span data-i18n="dashboard.recentScrobbles">Scrobbles récents</span>
                     </div>
                     <div id="scrobbles-list" class="scrobbles-list"></div>
                     <div class="text-center mt-4">
@@ -322,7 +322,7 @@
                             id="load-more-scrobbles"
                             class="btn btn-outline-light d-none"
                         >
-                            Show more
+                            <span data-i18n="scrobbles.showMore">Voir plus</span>
                         </button>
                     </div>
                 </section>
