@@ -6,6 +6,7 @@ import {
   safeImageUrl
 } from "./dom.js";
 import { formatDay } from "./dates.js";
+import { t } from "./i18n.js";
 
 const AVATAR_PLACEHOLDER = "/images/artist-placeholder.png";
 const COVER_PLACEHOLDER = "/images/cover-placeholder.svg";
@@ -247,11 +248,11 @@ function renderMemberRanking(members) {
   installImageFallbacks(UI.memberRanking);
 }
 
-function getTypeLabel(type) {
-  if (type === "albums") return "albums";
-  if (type === "tracks") return "tracks";
-  return "artists";
-}
+const TYPE_TITLE_KEYS = {
+  artists: "common.topArtists",
+  albums: "common.topAlbums",
+  tracks: "common.topTracks"
+};
 
 function renderItemLink(item, content) {
   const url = safeExternalUrl(item.url);
@@ -260,12 +261,12 @@ function renderItemLink(item, content) {
 }
 
 function renderItems(result) {
-  UI.itemsTitle.textContent = `Top ${getTypeLabel(result.type)}`;
+  UI.itemsTitle.textContent = t(TYPE_TITLE_KEYS[result.type] || "common.topArtists");
 
   if (!result.items.length) {
     UI.items.innerHTML = `
       <div class="leaderboard-no-data">
-        No ${getTypeLabel(result.type)} were returned for this range.
+        ${t("leaderboards.noItems")}
       </div>
     `;
     return;
@@ -291,8 +292,8 @@ function renderItems(result) {
           <strong>${title}</strong>
           ${item.artist ? `<span>${escapeHTML(item.artist)}</span>` : ""}
           <small>
-            ${item.listeners} listener${item.listeners === 1 ? "" : "s"}
-            ${topContribution ? ` · ${escapeHTML(topContribution.username)} en tête avec ${numberFormat.format(topContribution.plays)}` : ""}
+            ${item.listeners} ${item.listeners === 1 ? t("leaderboards.listener") : t("leaderboards.listenerPlural")}
+            ${topContribution ? ` · ${escapeHTML(topContribution.username)} ${t("leaderboards.leadsWith")} ${numberFormat.format(topContribution.plays)}` : ""}
           </small>
         </div>
         <div class="leaderboard-item-score">
@@ -323,13 +324,13 @@ function renderLeaderboardResult(result) {
   UI.activeMembers.textContent = `${availableMembers.length}/${result.members.length}`;
   UI.currentLeader.textContent = leader?.username || "—";
   const statusFlags = [
-    result.partial ? "résultat partiel" : null,
-    result.stale || result.cache?.stale ? "cache périmé utilisé après une erreur Last.fm" : null
+    result.partial ? t("leaderboards.partialResult") : null,
+    result.stale || result.cache?.stale ? t("leaderboards.staleCacheUsed") : null
   ].filter(Boolean);
-  UI.status.textContent = `${formatDay(result.range.from)} to ${formatDay(result.range.to)} · ${result.range.days} day${result.range.days === 1 ? "" : "s"}${statusFlags.length ? ` · ${statusFlags.join(" · ")}` : ""}`;
+  UI.status.textContent = `${formatDay(result.range.from)} ${t("leaderboards.rangeSeparator")} ${formatDay(result.range.to)} · ${result.range.days} ${result.range.days === 1 ? t("common.days") : t("common.daysPlural")}${statusFlags.length ? ` · ${statusFlags.join(" · ")}` : ""}`;
   UI.cacheState.textContent = result.cache?.hit
-    ? `${result.cache.stale ? "Cache périmé" : "En cache"} ${new Date(result.cache.cachedAt).toLocaleTimeString()}`
-    : `Mis à jour ${new Date(result.generatedAt).toLocaleTimeString()}`;
+    ? `${result.cache.stale ? t("leaderboards.cacheStale") : t("leaderboards.cached")} ${new Date(result.cache.cachedAt).toLocaleTimeString()}`
+    : `${t("leaderboards.updated")} ${new Date(result.generatedAt).toLocaleTimeString()}`;
 
   renderMemberRanking(result.members);
   renderItems(result);
@@ -365,7 +366,7 @@ async function loadLeaderboardResult({ refresh = false } = {}) {
     renderLeaderboardResult(result);
   } catch (error) {
     if (error.name === "AbortError" || loadId !== state.resultLoadId) return;
-    showError(error.message || "Impossible de charger ce classement");
+    showError(error.message || t("leaderboards.couldNotLoad"));
     if (hadResult) UI.results.classList.remove("d-none");
   } finally {
     if (loadId === state.resultLoadId) setLoading(false);
@@ -391,7 +392,7 @@ function addMemberToDraft(value) {
   if (!username) return;
 
   if (/\s/.test(username)) {
-    showFormError("Les noms d'utilisateur Last.fm ne peuvent pas contenir d'espaces");
+    showFormError(t("leaderboards.usernamesNoSpaces"));
     return;
   }
   if (state.memberDraft.length >= state.limits.maxMembers) {
@@ -427,10 +428,10 @@ function openGroupModal(group = null) {
       ? [state.mainUsername]
       : [];
 
-  UI.groupModalTitle.textContent = group ? "Modifier le groupe de classement" : "Créer un groupe de classement";
+  UI.groupModalTitle.textContent = group ? t("leaderboards.editGroup") : t("leaderboards.createGroup");
   UI.groupNameInput.value = group?.name || "";
   UI.memberInput.value = "";
-  setSaveButtonLabel(group ? "Enregistrer les modifications" : "Créer le groupe");
+  setSaveButtonLabel(group ? t("leaderboards.saveChanges") : t("leaderboards.createGroupButton"));
   clearFormError();
   renderMemberDraft();
   state.groupModal.show();
@@ -441,8 +442,8 @@ async function saveGroup() {
   if (UI.memberInput.value.trim()) addMemberToDraft(UI.memberInput.value);
 
   const name = UI.groupNameInput.value.trim();
-  if (!name) return showFormError("Le nom du groupe est requis");
-  if (state.memberDraft.length < 2) return showFormError("Ajoutez au moins deux utilisateurs Last.fm");
+  if (!name) return showFormError(t("leaderboards.groupNameRequired"));
+  if (state.memberDraft.length < 2) return showFormError(t("leaderboards.addTwoUsers"));
 
   UI.saveGroup.disabled = true;
   UI.saveGroup.innerHTML = '<i class="mdi mdi-loading mdi-spin me-1"></i> Checking users';
@@ -462,10 +463,10 @@ async function saveGroup() {
     state.groupModal.hide();
     await loadGroups({ preferredGroupId: group.id });
   } catch (error) {
-    showFormError(error.message || "Impossible d'enregistrer le groupe");
+    showFormError(error.message || t("leaderboards.couldNotSave"));
   } finally {
     UI.saveGroup.disabled = false;
-    setSaveButtonLabel(state.editingGroupId ? "Enregistrer les modifications" : "Créer le groupe");
+    setSaveButtonLabel(state.editingGroupId ? t("leaderboards.saveChanges") : t("leaderboards.createGroupButton"));
   }
 }
 
@@ -484,20 +485,18 @@ async function deleteActiveGroup() {
     state.currentResult = null;
     await loadGroups();
   } catch (error) {
-    showError(error.message || "Impossible de supprimer le groupe");
+    showError(error.message || t("leaderboards.couldNotDelete"));
   } finally {
     UI.deleteGroup.disabled = false;
   }
 }
 
 function renderDetailList(data) {
-  UI.detailTitle.textContent = data.kind === "album"
-    ? `${data.title} — top tracks`
-    : `${data.title} — top tracks`;
-  UI.detailSubtitle.textContent = `${data.group.name} · ${data.range.from} to ${data.range.to} · ${numberFormat.format(data.totalScrobbles)} scrobbles`;
+  UI.detailTitle.textContent = `${data.title} — ${t("common.topTracks")}`;
+  UI.detailSubtitle.textContent = `${data.group.name} · ${formatDay(data.range.from)} ${t("leaderboards.rangeSeparator")} ${formatDay(data.range.to)} · ${numberFormat.format(data.totalScrobbles)} scrobbles`;
 
   if (!data.items.length) {
-    UI.detailList.innerHTML = '<div class="leaderboard-no-data">No matching tracks were found in this range.</div>';
+    UI.detailList.innerHTML = `<div class="leaderboard-no-data">${t("leaderboards.noMatchingTracks")}</div>`;
   } else {
     UI.detailList.innerHTML = data.items.map((item, index) => {
       const url = safeExternalUrl(item.url);
@@ -537,7 +536,7 @@ async function openItemDetails(kind, item) {
 
   state.detailController?.abort();
   state.detailController = new AbortController();
-  UI.detailTitle.textContent = `Loading ${item.name}...`;
+  UI.detailTitle.textContent = t("leaderboards.loadingItem", { name: item.name });
   UI.detailSubtitle.textContent = "";
   UI.detailError.classList.add("d-none");
   UI.detailList.classList.add("d-none");
@@ -561,7 +560,7 @@ async function openItemDetails(kind, item) {
   } catch (error) {
     if (error.name === "AbortError") return;
     UI.detailLoading.classList.add("d-none");
-    UI.detailError.textContent = error.message || "Impossible de charger les top morceaux";
+    UI.detailError.textContent = error.message || t("leaderboards.couldNotLoadTopTracks");
     UI.detailError.classList.remove("d-none");
   }
 }
@@ -595,7 +594,7 @@ async function loadGroups({ preferredGroupId = null } = {}) {
       await loadLeaderboardResult();
     }
   } catch (error) {
-    showError(error.message || "Impossible de charger les groupes");
+    showError(error.message || t("leaderboards.couldNotLoadGroups"));
   }
 }
 

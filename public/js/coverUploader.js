@@ -1,4 +1,5 @@
 import { escapeAttribute, safeImageUrl } from "./dom.js";
+import { t } from "./i18n.js";
 
 const PLACEHOLDER = "https://www.beatstars.com/assets/img/placeholders/playlist-placeholder.svg";
 
@@ -20,14 +21,14 @@ export function renderCover({
       <img
         src="${escapeAttribute(imageUrl)}"
         class="cover-img"
-        alt="${escapeAttribute(`${album || "Album"} — pochette`)}"
+        alt="${escapeAttribute(`${album || "Album"} ${t("covers.coverAlt")}`)}"
         loading="lazy"
       />
 
       ${!hasImage ? `
         <div class="cover-overlay">
-          <span>＋ Ajouter une pochette</span>
-          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Envoyer une pochette pour ${escapeAttribute(album)}" />
+          <span>＋ ${t("covers.addCover")}</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="${t("covers.uploadFor", { album })}" />
         </div>
       ` : ""}
     </div>
@@ -64,7 +65,7 @@ export function initCoverUploads() {
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-          throw new Error(data.error || "Échec de l'envoi de la pochette");
+          throw new Error(data.error || t("covers.uploadFailed"));
         }
 
         wrapper.innerHTML = `

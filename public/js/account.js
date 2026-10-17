@@ -1,3 +1,4 @@
+import { t } from "./i18n.js";
 import { fetchJSON } from "./api.js";
 import { installImageFallback, safeImageUrl } from "./dom.js";
 import { formatTimestampDate } from "./dates.js";
@@ -16,7 +17,7 @@ export async function loadAccount() {
 async function fetchAndRenderStats() {
   try {
     const data = await fetchJSON("/api/user-stats", { cache: "no-store" });
-    updateText("profile-username", data.username || "Utilisateur");
+    updateText("profile-username", data.username || t("account.user"));
 
     const avatar = document.querySelector(".profile-avatar img");
     if (avatar) {
@@ -59,7 +60,7 @@ function setupCsvButtons() {
     if (!file) return;
 
     const originalText = importButton.innerHTML;
-    importButton.textContent = "Envoi en cours...";
+    importButton.textContent = t("account.uploading");
     importButton.disabled = true;
 
     const formData = new FormData();
@@ -72,13 +73,13 @@ function setupCsvButtons() {
       });
 
       alert(
-        `Succès ! ${result.imported} nouveaux scrobbles importés.`
-        + (result.duplicates ? ` ${result.duplicates} duplicates ignored.` : "")
-        + (result.skipped ? ` ${result.skipped} invalid rows skipped.` : "")
+        t("account.importSuccess", { count: result.imported })
+        + (result.duplicates ? ` ${t("account.duplicatesIgnored", { count: result.duplicates })}` : "")
+        + (result.skipped ? ` ${t("account.skippedRows", { count: result.skipped })}` : "")
       );
       await fetchAndRenderStats();
     } catch (error) {
-      alert(`Erreur : ${error.message}`);
+      alert(t("account.errorPrefix", { message: error.message }));
     } finally {
       importButton.innerHTML = originalText;
       importButton.disabled = false;

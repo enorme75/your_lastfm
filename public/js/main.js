@@ -5,6 +5,7 @@ import { renderAlbums } from "./albums.js";
 import { renderDailyChart, renderListeningClock } from "./charts.js";
 import { loadInsights } from "./insights.js";
 import { formatTimestampDate } from "./dates.js";
+import { t, setLocale, getLocale, applyStaticTranslations } from "./i18n.js";
 import { renderTopSongs } from "./topSongs.js";
 import { renderTopArtists } from "./artists.js";
 import { loadScrobbles } from "./scrobbles.js";
@@ -33,10 +34,15 @@ function isDashboardVisible() {
   return !document.getElementById("dashboard-view")?.classList.contains("d-none");
 }
 
+function syncStatusText(status = {}) {
+  if (status.messageKey) return t(status.messageKey, status.messageParams || {});
+  return status.message || "";
+}
+
 function formatLastSync(timestamp) {
-  if (!timestamp) return "Dernière synchro : jamais";
+  if (!timestamp) return `${t("dashboard.lastSyncPrefix")} ${t("common.never")}`;
   const time = new Date(timestamp).toLocaleTimeString();
-  return `Dernière synchro : ${formatTimestampDate(timestamp)} ${time}`;
+  return `${t("dashboard.lastSyncPrefix")} ${formatTimestampDate(timestamp)} ${time}`;
 }
 
 function renderSyncState(timestamp, status = {}) {
@@ -47,15 +53,15 @@ function renderSyncState(timestamp, status = {}) {
       ? ` (${status.page || 0}/${status.totalPages})`
       : "";
 
-    UI.lastSync.textContent = `${status.message || "Synchronisation..."}${progress}`;
+    UI.lastSync.textContent = `${syncStatusText(status)}${progress}`;
     UI.syncButton.disabled = true;
-    UI.syncButton.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> En cours';
+    UI.syncButton.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> ${t("dashboard.syncing")}';
     return;
   }
 
   UI.lastSync.textContent = formatLastSync(timestamp);
   UI.syncButton.disabled = false;
-  UI.syncButton.innerHTML = '<i class="mdi mdi-sync"></i> Synchroniser';
+  UI.syncButton.innerHTML = '<i class="mdi mdi-sync"></i> ${t("dashboard.sync")}';
 }
 
 function renderDashboardCacheState(cache = {}) {
@@ -67,7 +73,7 @@ function renderDashboardCacheState(cache = {}) {
     return;
   }
 
-  const prefix = cache.hit ? "Chargé depuis le cache du tableau de bord" : "Cache du tableau de bord actualisé";
+  const prefix = cache.hit ? t("dashboard.cacheLoaded") : t("dashboard.cacheRefreshed");
   UI.dashboardCacheState.textContent = `${prefix} · ${new Date(cachedAt).toLocaleTimeString()}`;
 }
 
@@ -95,11 +101,11 @@ async function pollSyncUntilFinished() {
     }
 
     if (data.status?.error) {
-      showToast(data.status.message || "Échec de la synchro", "error");
+      showToast(syncStatusText(data.status) || t("dashboard.syncFailed"), "error");
       return;
     }
 
-    showToast(data.status?.message || "Synchro terminée", "success");
+    showToast(syncStatusText(data.status) || t("dashboard.syncCompleted"), "success");
     if (isDashboardVisible()) await reloadDashboardData({ skipSyncRefresh: true });
   } catch (error) {
     console.error("Could not read sync status:", error);
@@ -118,7 +124,7 @@ function initSyncControls() {
         method: "POST",
         cache: "no-store"
       });
-      showToast("Synchro démarrée", "info");
+      showToast(t("dashboard.syncStarted"), "info");
     } catch (error) {
       if (error.status !== 409) {
         showToast(error.message, "error");
@@ -126,7 +132,7 @@ function initSyncControls() {
         return;
       }
 
-      showToast("Une synchro est déjà en cours", "info");
+      showToast(t("dashboard.syncAlreadyRunning"), "info");
     }
 
     pollSyncUntilFinished();
@@ -170,7 +176,7 @@ async function reloadDashboardData({ skipSyncRefresh = false } = {}) {
     if (error.name === "AbortError") return;
 
     console.error("Error loading dashboard:", error);
-    showToast(error.message || "Erreur de chargement du tableau de bord", "error");
+    showToast(error.message || t("dashboard.loadError"), "error");
   } finally {
     if (loadId === dashboardLoadCounter) UI.loading.style.display = "none";
   }
@@ -258,10 +264,31 @@ initFilters(() => {
   if (isDashboardVisible()) reloadDashboardData();
 });
 
+function updateLocaleToggleLabel() {
+  const label = document.getElementById("locale-toggle-label");
+  if (label) label.textContent = getLocale() === "fr" ? "EN" : "FR";
+}
+
+function initLocaleToggle() {
+  updateLocaleToggleLabel();
+
+  document.getElementById("locale-toggle")?.addEventListener("click", () => {
+    setLocale(getLocale() === "fr" ? "en" : "fr");
+  });
+
+  window.addEventListener("localechange", () => {
+    updateLocaleToggleLabel();
+    const currentView = localStorage.getItem("activeView") || "dashboard";
+    toggleView(currentView);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  applyStaticTranslations();
   initSidebar();
   initSharePage();
   initSyncControls();
+  initLocaleToggle();
 
   const savedView = localStorage.getItem("activeView") || "dashboard";
   toggleView(savedView);

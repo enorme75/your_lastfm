@@ -1,3 +1,4 @@
+import { t } from "./i18n.js";
 import { fetchJSON } from "./api.js";
 import { buildQuery } from "./filters.js";
 import { escapeHTML, safeImageUrl } from "./dom.js";

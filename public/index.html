@@ -57,6 +57,9 @@
                 </div>
 
                 <div class="sidebar-bottom">
+                    <button id="locale-toggle" class="sidebar-link" type="button" title="English / Français">
+                        <i class="mdi mdi-translate"></i> <span id="locale-toggle-label">EN</span>
+                    </button>
                     <button class="sidebar-link account" data-view="account">
                     <i class="mdi mdi-account"></i> <span data-i18n="nav.account">Compte</span>
                     </button>
@@ -331,8 +334,8 @@
                     <div class="leaderboards-shell">
                         <header class="leaderboards-header">
                             <div>
-                                <div class="leaderboards-eyebrow">Classements Last.fm</div>
-                                <h2>Classements personnalisés</h2>
+                                <div class="leaderboards-eyebrow" data-i18n="leaderboards.communityCharts">Classements Last.fm</div>
+                                <h2 data-i18n="leaderboards.title">Classements personnalisés</h2>
                                 <p>Create local groups and compare public Last.fm listening charts.</p>
                             </div>
                             <button id="leaderboard-new-group" class="btn btn-success" type="button">
@@ -343,7 +346,7 @@
                         <div class="leaderboards-layout">
                             <aside class="leaderboard-groups-panel">
                                 <div class="leaderboard-panel-heading">
-                                    <span>Groupes</span>
+                                    <span data-i18n="leaderboards.groups">Groupes</span>
                                     <span id="leaderboard-group-count" class="leaderboard-count-badge">0</span>
                                 </div>
                                 <div id="leaderboard-groups-list" class="leaderboard-groups-list"></div>
@@ -352,7 +355,7 @@
                             <div class="leaderboard-main-panel">
                                 <div id="leaderboard-empty" class="leaderboard-empty-state">
                                     <i class="mdi mdi-podium-gold"></i>
-                                    <h3>Créez votre premier groupe</h3>
+                                    <h3 data-i18n="leaderboards.createFirstGroup">Créez votre premier groupe</h3>
                                     <p>Add at least two Noms d'utilisateur Last.fm to build a shared leaderboard.</p>
                                     <button class="btn btn-outline-warning leaderboard-empty-create" type="button">
                                         Create group
@@ -362,7 +365,7 @@
                                 <div id="leaderboard-content" class="d-none">
                                     <div class="leaderboard-group-header">
                                         <div>
-                                            <div class="leaderboards-eyebrow">Groupe sélectionné</div>
+                                            <div class="leaderboards-eyebrow" data-i18n="leaderboards.selectedGroup">Groupe sélectionné</div>
                                             <h3 id="leaderboard-group-name">Groupe</h3>
                                             <div id="leaderboard-group-members-label" class="text-secondary"></div>
                                         </div>
@@ -378,7 +381,7 @@
 
                                     <div class="leaderboard-controls">
                                         <div class="leaderboard-control-block">
-                                            <span class="leaderboard-control-label">Période</span>
+                                            <span class="leaderboard-control-label" data-i18n="leaderboards.timeRange">Période</span>
                                             <div class="leaderboard-range-presets">
                                                 <button class="leaderboard-preset active" data-days="30" type="button">30 days</button>
                                                 <button class="leaderboard-preset" data-days="7" type="button">7 days</button>
@@ -389,28 +392,28 @@
 
                                         <div class="leaderboard-date-fields">
                                             <label>
-                                                <span>Du</span>
+                                                <span data-i18n="leaderboards.from">Du</span>
                                                 <input id="leaderboard-from" type="date" class="leaderboard-date-input">
                                             </label>
                                             <label>
-                                                <span>Au</span>
+                                                <span data-i18n="leaderboards.to">Au</span>
                                                 <input id="leaderboard-to" type="date" class="leaderboard-date-input">
                                             </label>
                                         </div>
 
                                         <div class="leaderboard-control-block leaderboard-type-block">
-                                            <span class="leaderboard-control-label">Type de classement</span>
+                                            <span class="leaderboard-control-label" data-i18n="leaderboards.rankingType">Type de classement</span>
                                             <div class="leaderboard-type-switch">
-                                                <button class="leaderboard-type active" data-type="artists" type="button">Artistes</button>
-                                                <button class="leaderboard-type" data-type="albums" type="button">Albums</button>
-                                                <button class="leaderboard-type" data-type="tracks" type="button">Morceaux</button>
+                                                <button class="leaderboard-type active" data-type="artists" type="button" data-i18n="leaderboards.artists">Artistes</button>
+                                                <button class="leaderboard-type" data-type="albums" type="button" data-i18n="leaderboards.albums">Albums</button>
+                                                <button class="leaderboard-type" data-type="tracks" type="button" data-i18n="leaderboards.tracks">Morceaux</button>
                                             </div>
                                         </div>
 
                                         <div class="leaderboard-control-actions">
-                                            <button id="leaderboard-apply" class="btn btn-success" type="button">Appliquer</button>
+                                            <button id="leaderboard-apply" class="btn btn-success" type="button" data-i18n="leaderboards.apply">Appliquer</button>
                                             <button id="leaderboard-refresh" class="btn btn-outline-warning" type="button" title="Ignorer les données en cache">
-                                                <i class="mdi mdi-refresh"></i> Refresh
+                                                <i class="mdi mdi-refresh"></i> <span data-i18n="leaderboards.refresh">Rafraîchir</span>
                                             </button>
                                         </div>
                                     </div>
@@ -418,22 +421,22 @@
                                     <div id="leaderboard-status" class="leaderboard-status" aria-live="polite"></div>
                                     <div id="leaderboard-loading" class="leaderboard-loading d-none">
                                         <div class="spinner-border text-warning" role="status"></div>
-                                        <span>Construction des classements du groupe depuis Last.fm...</span>
+                                        <span data-i18n="leaderboards.building">Construction des classements du groupe depuis Last.fm...</span>
                                     </div>
                                     <div id="leaderboard-error" class="alert alert-danger d-none" role="alert"></div>
 
                                     <div id="leaderboard-results" class="d-none">
                                         <div class="leaderboard-summary-grid">
                                             <div class="leaderboard-summary-card">
-                                                <span>Scrobbles totaux</span>
+                                                <span data-i18n="leaderboards.totalScrobbles">Scrobbles totaux</span>
                                                 <strong id="leaderboard-total-scrobbles">0</strong>
                                             </div>
                                             <div class="leaderboard-summary-card">
-                                                <span>Membres avec données</span>
+                                                <span data-i18n="leaderboards.membersWithData">Membres avec données</span>
                                                 <strong id="leaderboard-active-members">0</strong>
                                             </div>
                                             <div class="leaderboard-summary-card">
-                                                <span>Leader actuel</span>
+                                                <span data-i18n="leaderboards.currentLeader">Leader actuel</span>
                                                 <strong id="leaderboard-current-leader">—</strong>
                                             </div>
                                         </div>
@@ -441,8 +444,8 @@
                                         <section class="leaderboard-results-section">
                                             <div class="leaderboard-section-heading">
                                                 <div>
-                                                    <div class="leaderboards-eyebrow">Classement des membres</div>
-                                                    <h4>Scrobbles par auditeur</h4>
+                                                    <div class="leaderboards-eyebrow" data-i18n="leaderboards.memberRanking">Classement des membres</div>
+                                                    <h4 data-i18n="leaderboards.scrobblesByListener">Scrobbles par auditeur</h4>
                                                 </div>
                                             </div>
                                             <div id="leaderboard-member-ranking" class="leaderboard-member-ranking"></div>
@@ -451,8 +454,8 @@
                                         <section class="leaderboard-results-section">
                                             <div class="leaderboard-section-heading">
                                                 <div>
-                                                    <div class="leaderboards-eyebrow">Top du groupe</div>
-                                                    <h4 id="leaderboard-items-title">Top artistes</h4>
+                                                    <div class="leaderboards-eyebrow" data-i18n="leaderboards.groupChart">Top du groupe</div>
+                                                    <h4 id="leaderboard-items-title" data-i18n="common.topArtists">Top artistes</h4>
                                                 </div>
                                                 <small id="leaderboard-cache-state" class="text-secondary"></small>
                                             </div>
@@ -472,25 +475,25 @@
                                 <div class="card border-secondary shadow-lg sticky-top" style="top: 20px; z-index: 1;">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0 text-white">
-                                            <i class="mdi mdi-creation text-green me-2"></i>Generator
+                                            <i class="mdi mdi-creation text-green me-2"></i><span data-i18n="share.generator">Générateur</span>
                                         </h5>
                                     </div>
                                     <div class="card-body text-light">
                                         
                                         <div class="mb-4">
-                                            <label class="form-label text-gray text-uppercase small fw-bold">Période</label>
+                                            <label class="form-label text-gray text-uppercase small fw-bold" data-i18n="share.timePeriod">Période</label>
                                             <select id="share-period" class="form-select bg-black text-light border-secondary">
-                                                <option value="7day">7 derniers jours</option>
-                                                <option value="30day">30 derniers jours</option>
-                                                <option value="3month">3 derniers mois</option>
-                                                <option value="6month">6 derniers mois</option>
-                                                <option value="year">Dernière année</option>
-                                                <option value="all">Tout l'historique</option>
+                                                <option value="7day" data-i18n="share.last7">7 derniers jours</option>
+                                                <option value="30day" data-i18n="share.last30">30 derniers jours</option>
+                                                <option value="3month" data-i18n="share.last3m">3 derniers mois</option>
+                                                <option value="6month" data-i18n="share.last6m">6 derniers mois</option>
+                                                <option value="year" data-i18n="share.lastYear">Dernière année</option>
+                                                <option value="all" data-i18n="share.allTime">Tout l'historique</option>
                                             </select>
                                         </div>
 
                                         <div class="mb-4">
-                                            <label class="form-label text-gray text-uppercase small fw-bold">Format</label>
+                                            <label class="form-label text-gray text-uppercase small fw-bold" data-i18n="share.format">Format</label>
                                             <div class="d-flex gap-2">
                                                 <input type="radio" class="btn-check" name="format-option" id="format-standard" value="standard" checked>
                                                 <label class="btn btn-outline-secondary w-50" for="format-standard">
@@ -505,32 +508,32 @@
                                         </div>
 
                                         <div class="mb-4">
-                                            <label class="form-label text-gray text-uppercase small fw-bold">Inclure</label>
+                                            <label class="form-label text-gray text-uppercase small fw-bold" data-i18n="share.include">Inclure</label>
                                             
                                             <div class="form-check form-switch mb-2">
                                                 <input class="form-check-input bg-green" type="checkbox" value="albums" id="check-albums" checked>
-                                                <label class="form-check-label" for="check-albums">Top albums</label>
+                                                <label class="form-check-label" for="check-albums" data-i18n="common.topAlbums">Top albums</label>
                                             </div>
                                             
                                             <div class="form-check form-switch mb-2">
                                                 <input class="form-check-input bg-green" type="checkbox" value="artists" id="check-artists" checked>
-                                                <label class="form-check-label" for="check-artists">Top artistes</label>
+                                                <label class="form-check-label" for="check-artists" data-i18n="common.topArtists">Top artistes</label>
                                             </div>
 
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input bg-green" type="checkbox" value="tracks" id="check-tracks" checked>
-                                                <label class="form-check-label" for="check-tracks">Top morceaux</label>
+                                                <label class="form-check-label" for="check-tracks" data-i18n="common.topTracks">Top morceaux</label>
                                             </div>
                                         </div>
 
-                                        <button id="btn-generate" class="btn btn-success w-100 py-2 fw-bold text-uppercase">
-                                            Generate
+                                        <button id="btn-generate" class="btn btn-success w-100 py-2 fw-bold text-uppercase" data-i18n="share.generate">
+                                            Générer
                                         </button>
 
                                         <div id="share-error" class="alert alert-danger mt-3 mb-0 d-none" role="alert"></div>
                                         
                                         <a id="btn-download" href="#" class="btn btn-outline-light w-100 mt-3 d-none">
-                                            <i class="mdi mdi-download me-1"></i> Download Image
+                                            <i class="mdi mdi-download me-1"></i> <span data-i18n="share.download">Télécharger l'image</span>
                                         </a>
                                     </div>
                                 </div>
@@ -540,12 +543,12 @@
                                 
                                 <div id="share-loading" class="text-center text-muted py-5 d-none">
                                     <div class="spinner-border text-success mb-3" role="status"></div>
-                                    <p>Génération de votre récapitulatif...</p>
+                                    <p data-i18n="share.generating">Génération de votre récapitulatif...</p>
                                 </div>
 
                                 <div id="share-placeholder" class="text-center text-secondary py-5">
                                     <i class="mdi mdi-image-filter-hdr fs-1 opacity-25"></i>
-                                    <p class="mt-2">Choisissez vos options puis cliquez sur Générer</p>
+                                    <p class="mt-2" data-i18n="share.selectOptions">Choisissez vos options puis cliquez sur Générer</p>
                                 </div>
 
                                 <img id="share-result" class="img-fluid shadow-lg rounded d-none" style="max-height: 85vh;" alt="Music Recap">
@@ -567,7 +570,7 @@
                         <div class="profile-main-stats">
                             <div class="scrobble-count-area">
                                 <span id="profile-total-scrobbles" class="big-number">0</span>
-                                <span class="label">Scrobbles</span>
+                                <span class="label" data-i18n="account.scrobblesLabel">Scrobbles</span>
                             </div>
                             <div class="joined-date">
                                 Joined <span id="profile-joined-date">-- --- ----</span>
@@ -581,39 +584,39 @@
                                 <span class="stat-icon">⭐</span>
                                 <div class="stat-text">
                                     <span id="profile-artists" class="stat-value">0</span>
-                                    <span class="stat-label">Artistes</span>
+                                    <span class="stat-label" data-i18n="account.artistsLabel">Artistes</span>
                                 </div>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-icon">◎</span>
                                 <div class="stat-text">
                                     <span id="profile-albums" class="stat-value">0</span>
-                                    <span class="stat-label">Albums</span>
+                                    <span class="stat-label" data-i18n="account.albumsLabel">Albums</span>
                                 </div>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-icon">♪</span>
                                 <div class="stat-text">
                                     <span id="profile-tracks" class="stat-value">0</span>
-                                    <span class="stat-label">Morceaux</span>
+                                    <span class="stat-label" data-i18n="account.tracksLabel">Morceaux</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="data-management">
-                        <h3>Données & confidentialité</h3>
+                        <h3 data-i18n="account.dataPrivacy">Données & confidentialité</h3>
                         <div class="data-buttons">
                             <button id="btn-export-csv" class="data-btn export">
-                                <span class="icon">⬇</span> Exporter CSV
+                                <span class="icon">⬇</span> <span data-i18n="account.exportCsv">Exporter CSV</span>
                             </button>
                             
                             <button id="btn-import-trigger" class="data-btn import">
-                                <span class="icon">⬆</span> Importer CSV
+                                <span class="icon">⬆</span> <span data-i18n="account.importCsv">Importer CSV</span>
                             </button>
                             <input type="file" id="csv-upload-input" accept=".csv" style="display: none;">
                         </div>
-                        <p class="data-note">L'import peut prendre du temps selon la taille du fichier.</p>
+                        <p class="data-note" data-i18n="account.importNote">L'import peut prendre du temps selon la taille du fichier.</p>
                     </div>
 
                 </section>
@@ -636,26 +639,26 @@
                 <div class="modal-content leaderboard-modal-content">
                     <div class="modal-header border-0">
                         <div>
-                            <div class="leaderboards-eyebrow">Groupe local</div>
+                            <div class="leaderboards-eyebrow" data-i18n="leaderboards.localGroup">Groupe local</div>
                             <h5 id="leaderboard-group-modal-title" class="modal-title">Créer un groupe de classement</h5>
                         </div>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form id="leaderboard-group-form">
-                            <label class="leaderboard-form-label" for="leaderboard-group-name-input">Nom du groupe</label>
+                            <label class="leaderboard-form-label" for="leaderboard-group-name-input" data-i18n="leaderboards.groupName">Nom du groupe</label>
                             <input
                                 id="leaderboard-group-name-input"
                                 class="form-control leaderboard-form-control"
                                 maxlength="60"
                                 autocomplete="off"
-                                placeholder="Auditeurs du week-end"
+                                placeholder="Auditeurs du week-end" data-i18n-placeholder="leaderboards.groupNamePlaceholder"
                                 required
                             >
 
                             <div class="leaderboard-member-form-header">
-                                <label class="leaderboard-form-label mb-0" for="leaderboard-member-input">Noms d'utilisateur Last.fm</label>
-                                <button id="leaderboard-add-me" class="btn btn-sm btn-outline-warning" type="button">M'ajouter</button>
+                                <label class="leaderboard-form-label mb-0" for="leaderboard-member-input" data-i18n="leaderboards.lastfmUsernames">Noms d'utilisateur Last.fm</label>
+                                <button id="leaderboard-add-me" class="btn btn-sm btn-outline-warning" type="button" data-i18n="leaderboards.addMe">M'ajouter</button>
                             </div>
                             <div id="leaderboard-member-chips" class="leaderboard-member-chips"></div>
                             <div class="input-group">
@@ -664,18 +667,18 @@
                                     class="form-control leaderboard-form-control"
                                     maxlength="64"
                                     autocomplete="off"
-                                    placeholder="Saisissez un nom d'utilisateur puis Entrée"
+                                    placeholder="Saisissez un nom d'utilisateur puis Entrée" data-i18n-placeholder="leaderboards.memberPlaceholder"
                                 >
                                 <button id="leaderboard-add-member" class="btn btn-outline-light" type="button">Ajouter</button>
                             </div>
-                            <div id="leaderboard-member-limit" class="form-text text-secondary">Au moins 2 membres.</div>
+                            <div id="leaderboard-member-limit" class="form-text text-secondary" data-i18n="leaderboards.atLeastTwoMembers">Au moins 2 membres.</div>
                             <div id="leaderboard-group-form-error" class="alert alert-danger mt-3 d-none" role="alert"></div>
                         </form>
                     </div>
                     <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" data-i18n="common.cancel">Annuler</button>
                         <button id="leaderboard-save-group" type="button" class="btn btn-success">
-                            <span class="leaderboard-save-label">Enregistrer le groupe</span>
+                            <span class="leaderboard-save-label" data-i18n="leaderboards.saveGroup">Enregistrer le groupe</span>
                         </button>
                     </div>
                 </div>
@@ -687,8 +690,8 @@
                 <div class="modal-content leaderboard-modal-content">
                     <div class="modal-header border-0">
                         <div>
-                            <div class="leaderboards-eyebrow">Top morceaux</div>
-                            <h5 id="leaderboard-detail-title" class="modal-title">Détails</h5>
+                            <div class="leaderboards-eyebrow" data-i18n="common.topTracks">Top morceaux</div>
+                            <h5 id="leaderboard-detail-title" class="modal-title" data-i18n="leaderboards.itemDetails">Détails</h5>
                             <div id="leaderboard-detail-subtitle" class="text-secondary small"></div>
                         </div>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -696,7 +699,7 @@
                     <div class="modal-body">
                         <div id="leaderboard-detail-loading" class="leaderboard-loading">
                             <div class="spinner-border text-warning" role="status"></div>
-                            <span>Chargement des top morceaux...</span>
+                            <span data-i18n="leaderboards.loadingTopTracks">Chargement des top morceaux...</span>
                         </div>
                         <div id="leaderboard-detail-error" class="alert alert-danger d-none"></div>
                         <div id="leaderboard-detail-list" class="leaderboard-detail-list d-none"></div>

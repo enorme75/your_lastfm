@@ -36,7 +36,8 @@ function getSummary(context) {
     return {
       ...current,
       comparison: null,
-      comparisonNote: context.comparisonNote
+      comparisonNote: context.comparisonNote,
+      comparisonNoteKey: context.comparisonNoteKey
     };
   }
 
@@ -45,6 +46,7 @@ function getSummary(context) {
     ...current,
     comparison: {
       label: context.comparisonLabel,
+      labelKey: context.comparisonLabelKey,
       totalPlays: calculateChange(current.totalPlays, previous.totalPlays),
       totalMinutes: calculateChange(current.totalMinutes, previous.totalMinutes),
       avgPerDay: calculateChange(current.avgPerDay, previous.avgPerDay)

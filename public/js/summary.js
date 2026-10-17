@@ -1,4 +1,5 @@
 import { fetchJSON } from "./api.js";
+import { t } from "./i18n.js";
 import { buildQuery } from "./filters.js";
 
 function renderTrend(elementId, metric, label, note) {
@@ -8,7 +9,7 @@ function renderTrend(elementId, metric, label, note) {
   element.className = "metric-trend";
 
   if (!metric || !label) {
-    element.innerHTML = `<i class="mdi mdi-history"></i> ${note || "Tout l'historique disponible"}`;
+    element.innerHTML = `<i class="mdi mdi-history"></i> ${note || t("dashboard.allHistory")}`;
     return;
   }
 
@@ -19,7 +20,7 @@ function renderTrend(elementId, metric, label, note) {
       ? "mdi-arrow-down"
       : "mdi-minus";
   const value = metric.percent === null
-    ? "New"
+    ? t("dashboard.new")
     : `${Math.abs(Number(metric.percent) || 0).toLocaleString(undefined, {
         maximumFractionDigits: 1
       })}%`;
@@ -35,23 +36,30 @@ export function renderSummary(data = {}) {
     maximumFractionDigits: 1
   });
 
+  const comparisonLabel = data.comparison?.labelKey
+    ? t(`comparison.${data.comparison.labelKey}`)
+    : data.comparison?.label;
+  const comparisonNote = data.comparisonNoteKey
+    ? t(`comparison.${data.comparisonNoteKey}`)
+    : data.comparisonNote;
+
   renderTrend(
     "hours-trend",
     data.comparison?.totalMinutes,
-    data.comparison?.label,
-    data.comparisonNote
+    comparisonLabel,
+    comparisonNote
   );
   renderTrend(
     "plays-trend",
     data.comparison?.totalPlays,
-    data.comparison?.label,
-    data.comparisonNote
+    comparisonLabel,
+    comparisonNote
   );
   renderTrend(
     "avg-trend",
     data.comparison?.avgPerDay,
-    data.comparison?.label,
-    data.comparisonNote
+    comparisonLabel,
+    comparisonNote
   );
 }
 

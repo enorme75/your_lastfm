@@ -1,3 +1,4 @@
+import { t } from "./i18n.js";
 import { fetchJSON } from "./api.js";
 import { buildQuery } from "./filters.js";
 import { renderCover, initCoverUploads } from "./coverUploader.js";
@@ -25,7 +26,7 @@ export function renderAlbums(albums = []) {
         href="${escapeAttribute(album.url || "#")}"
         target="_blank"
         rel="noopener noreferrer"
-        title="Ouvrir l'album sur Last.fm"
+        title="${t("dashboard.openAlbumOnLastfm")}"
       >
         <strong>${escapeHTML(album.album)}</strong>
         <i class="mdi mdi-open-in-new"></i>
@@ -35,7 +36,7 @@ export function renderAlbums(albums = []) {
         href="${escapeAttribute(album.artist_url || "#")}"
         target="_blank"
         rel="noopener noreferrer"
-        title="Ouvrir l'artiste sur Last.fm"
+        title="${t("dashboard.openArtistOnLastfm")}"
       >${escapeHTML(album.artist)}</a>
       <small>${Number(album.plays).toLocaleString()} plays</small>
     `;

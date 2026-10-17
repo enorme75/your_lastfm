@@ -1,3 +1,4 @@
+import { t } from "./i18n.js";
 import { fetchJSON } from "./api.js";
 import {
   escapeAttribute,
@@ -21,7 +22,7 @@ function hideLoading() {
 
 export async function loadFriends() {
   const container = document.getElementById("friends-view");
-  container.innerHTML = `<div class="text-center p-5">Chargement de la liste d'amis...</div>`;
+  container.innerHTML = `<div class="text-center p-5">${t("friends.loading")}</div>`;
 
   try {
     const friends = await fetchJSON("/api/friends", { cache: "no-store" });
@@ -111,7 +112,7 @@ function renderCommonItem(item, friendUsername) {
         <strong>${escapeHTML(item.name)}</strong>
         ${item.artist ? `<small>${escapeHTML(item.artist)}</small>` : ""}
         <div class="common-counts">
-          <span class="text-orange">Vous : ${Number(item.myPlays).toLocaleString("pt-BR")}</span>
+          <span class="text-orange">${t("friends.you")} : ${Number(item.myPlays).toLocaleString("pt-BR")}</span>
           <span class="text-secondary"> | ${escapeHTML(friendUsername)}: ${Number(item.friendPlays).toLocaleString("pt-BR")}</span>
         </div>
       </div>
@@ -139,7 +140,7 @@ function renderComparison(data, container) {
             src="${escapeAttribute(myAvatar)}"
             data-fallback="${PLACEHOLDER_AVATAR}"
             class="vs-avatar"
-            alt="Votre avatar"
+            alt="${t("friends.yourAvatar")}"
             decoding="async"
             referrerpolicy="no-referrer"
           />
@@ -159,7 +160,7 @@ function renderComparison(data, container) {
     </div>
 
     <div class="compatibility-result">
-      <div class="compatibility-label">Niveau de compatibilité</div>
+      <div class="compatibility-label">${t("friends.compatibilityLevel")}</div>
       <div class="compatibility-status ${compatibility.css}">${compatibility.text}</div>
     </div>
 
@@ -186,7 +187,7 @@ function renderComparison(data, container) {
 
     <div class="row">
       <div class="col-md-4 mb-4">
-        <h5 class="mb-3 text-uppercase fs-6 ls-1">Top artistes</h5>
+        <h5 class="mb-3 text-uppercase fs-6 ls-1">${t("common.topArtists")}</h5>
         <div class="common-list-container">
           ${commonArtists.length
             ? commonArtists.map(item => renderCommonItem(item, friend.username)).join("")
@@ -194,7 +195,7 @@ function renderComparison(data, container) {
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <h5 class="mb-3 text-uppercase fs-6 ls-1">Top albums</h5>
+        <h5 class="mb-3 text-uppercase fs-6 ls-1">${t("common.topAlbums")}</h5>
         <div class="common-list-container">
           ${commonAlbums.length
             ? commonAlbums.map(item => renderCommonItem(item, friend.username)).join("")
@@ -202,7 +203,7 @@ function renderComparison(data, container) {
         </div>
       </div>
       <div class="col-md-4 mb-4">
-        <h5 class="mb-3 text-uppercase fs-6 ls-1">Top morceaux</h5>
+        <h5 class="mb-3 text-uppercase fs-6 ls-1">${t("common.topTracks")}</h5>
         <div class="common-list-container">
           ${commonTracks.length
             ? commonTracks.map(item => renderCommonItem(item, friend.username)).join("")
@@ -225,8 +226,8 @@ function backToList() {
 
 function getCompatibilityStatus(score) {
   if (score >= 80) return { text: "SUPER", css: "comp-soulmates" };
-  if (score >= 65) return { text: "ÉLEVÉ", css: "comp-high" };
-  if (score >= 40) return { text: "MOYEN", css: "comp-medium" };
-  if (score >= 20) return { text: "FAIBLE", css: "comp-low" };
-  return { text: "TRÈS FAIBLE", css: "comp-low" };
+  if (score >= 65) return { text: t("friends.compHigh"), css: "comp-high" };
+  if (score >= 40) return { text: t("friends.compMedium"), css: "comp-medium" };
+  if (score >= 20) return { text: t("friends.compLow"), css: "comp-low" };
+  return { text: t("friends.compVeryLow"), css: "comp-low" };
 }

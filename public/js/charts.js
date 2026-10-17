@@ -1,6 +1,7 @@
 import { fetchJSON } from "./api.js";
 import { buildQuery } from "./filters.js";
 import { formatDay, formatWeek, formatMonth } from "./dates.js";
+import { t } from "./i18n.js";
 
 const state = {
   charts: {}
@@ -50,7 +51,7 @@ export function renderDailyChart(data = []) {
     data: {
       labels: data.map(item => formatDay(item.day)),
       datasets: [{
-        label: "Écoutes par jour",
+        label: t("dashboard.playsPerDay"),
         data: data.map(item => item.plays),
         backgroundColor: "rgba(255, 115, 2, 0.78)",
         borderRadius: 6,
@@ -75,7 +76,7 @@ export function renderListeningClock(data = {}) {
         return `${String(hour).padStart(2, "0")}:00–${String((hour + 1) % 24).padStart(2, "0")}:00`;
       },
       label(item) {
-        return `${Number(item.raw || 0).toLocaleString()} écoutes`;
+        return `${Number(item.raw || 0).toLocaleString()} ${t("common.playsUnit")}`;
       }
     }
   };
@@ -100,8 +101,12 @@ export function renderListeningClock(data = {}) {
   if (!peakElement) return;
 
   peakElement.textContent = peakHour === null
-    ? "Aucune écoute sur cette période"
-    : `Pic : ${String(peakHour).padStart(2, "0")}:00–${String((peakHour + 1) % 24).padStart(2, "0")}:00 heure locale · ${Number(data.peakPlays || 0).toLocaleString()} écoutes`;
+    ? t("dashboard.noListeningData")
+    : t("insights.peak", {
+        from: `${String(peakHour).padStart(2, "0")}:00`,
+        to: `${String((peakHour + 1) % 24).padStart(2, "0")}:00`,
+        count: Number(data.peakPlays || 0).toLocaleString()
+      });
 }
 
 export function renderWeeklyChart(data = []) {
@@ -114,7 +119,7 @@ export function renderWeeklyChart(data = []) {
     data: {
       labels: data.map(item => formatWeek(item.week)),
       datasets: [{
-        label: "Écoutes par semaine",
+        label: t("insights.playsPerWeek"),
         data: data.map(item => item.plays),
         backgroundColor: "rgba(255, 115, 2, 0.6)",
         borderRadius: 4,
@@ -209,7 +214,7 @@ export function renderActivityHeatmap(days = []) {
       const key = localDateKey(cellDate);
       const plays = playsByDay.get(key) || 0;
       const level = activityLevel(plays, maxPlays);
-      html += `<div class="heatmap-cell level-${level}" title="${formatDay(key)} · ${plays.toLocaleString()} écoutes"></div>`;
+      html += `<div class="heatmap-cell level-${level}" title="${formatDay(key)} · ${plays.toLocaleString()} ${t("common.playsUnit")}"></div>`;
     }
     html += "</div>";
   }

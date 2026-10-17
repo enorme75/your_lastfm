@@ -8,6 +8,19 @@ const ROLLING_LABELS = {
   year: "année précédente"
 };
 
+// i18n keys resolved by the front (public/js/i18n.js -> comparison.*)
+const ROLLING_LABEL_KEYS = {
+  day: "previous24h",
+  week: "previous7d",
+  month: "previousMonth",
+  year: "previousYear"
+};
+
+const COMPARISON_NOTE_KEYS = {
+  matchingMonths: "Tous les mois correspondants dans l'historique",
+  allHistory: "Tout l'historique disponible"
+};
+
 function toSqlFilter(from, to) {
   return {
     where: "played_at >= ? AND played_at <= ?",
@@ -52,6 +65,8 @@ function getDashboardFilterContext(query = {}, referenceDate = new Date()) {
   let current = validatedFilter;
   let previous = null;
   let comparisonLabel = null;
+  let comparisonLabelKey = null;
+  let comparisonNoteKey = month && !year ? "matchingMonths" : "allHistory";
   let comparisonNote = month && !year
     ? "Tous les mois correspondants dans l'historique"
     : "Tout l'historique disponible";
@@ -61,6 +76,7 @@ function getDashboardFilterContext(query = {}, referenceDate = new Date()) {
     current = toSqlFilter(from, to);
     previous = toSqlFilter(shiftStartBack(from, range), new Date(from.getTime() - 1));
     comparisonLabel = ROLLING_LABELS[range];
+    comparisonLabelKey = ROLLING_LABEL_KEYS[range];
     comparisonNote = null;
   } else if (year) {
     const { from, to } = getDateRange(null, year, month || null, referenceDate);
@@ -68,6 +84,7 @@ function getDashboardFilterContext(query = {}, referenceDate = new Date()) {
     current = toSqlFilter(from, to);
     previous = toSqlFilter(shiftStartBack(from, unit), new Date(from.getTime() - 1));
     comparisonLabel = month ? "mois précédent" : "année précédente";
+    comparisonLabelKey = month ? "previousMonth" : "previousYear";
     comparisonNote = null;
   }
 
@@ -82,7 +99,9 @@ function getDashboardFilterContext(query = {}, referenceDate = new Date()) {
     current,
     previous,
     comparisonLabel,
+    comparisonLabelKey,
     comparisonNote,
+    comparisonNoteKey,
     timezoneOffset,
     cacheKey
   };

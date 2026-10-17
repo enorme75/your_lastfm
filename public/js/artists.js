@@ -1,3 +1,4 @@
+import { t } from "./i18n.js";
 import { fetchJSON } from "./api.js";
 import { buildQuery } from "./filters.js";
 import { escapeAttribute, escapeHTML, installImageFallbacks, safeImageUrl } from "./dom.js";
@@ -20,7 +21,7 @@ function artistRow(artist, index) {
           href="${escapeAttribute(artist.url || "#")}"
           target="_blank"
           rel="noopener noreferrer"
-          title="Ouvrir l'artiste sur Last.fm"
+          title="${t("dashboard.openArtistOnLastfm")}"
         >
           <strong>${escapeHTML(artist.artist)}</strong>
           <i class="mdi mdi-open-in-new"></i>

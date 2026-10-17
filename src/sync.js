@@ -106,7 +106,8 @@ function getSyncStatus() {
       totalPages: 0,
       inserted: 0,
       skipped: 0,
-      message: "Pas commencé"
+      message: "Pas commencé",
+      messageKey: "sync.notStarted"
     };
   }
 
@@ -120,7 +121,8 @@ function getSyncStatus() {
       totalPages: 0,
       inserted: 0,
       skipped: 0,
-      message: "Statut inconnu"
+      message: "Statut inconnu",
+      messageKey: "sync.unknown"
     };
   }
 }
@@ -258,7 +260,8 @@ async function runSync(options, lock) {
     resumed,
     from,
     to,
-    message: resumed ? "Reprise de la synchronisation interrompue..." : "Connexion à Last.fm..."
+    message: resumed ? "Reprise de la synchronisation interrompue..." : "Connexion à Last.fm...",
+    messageKey: resumed ? "sync.resuming" : "sync.connecting"
   });
 
   try {
@@ -297,7 +300,9 @@ async function runSync(options, lock) {
         resumed,
         from,
         to,
-        message: `Synchronisation : page ${page} sur ${totalPages} (${percent}%)`
+        message: `Synchronisation : page ${page} sur ${totalPages} (${percent}%)`,
+        messageKey: "sync.page",
+        messageParams: { page, totalPages, percent }
       });
 
       if (page === 1 || page === totalPages || page % 10 === 0) {
@@ -325,7 +330,9 @@ async function runSync(options, lock) {
       resumed,
       from,
       to,
-      message: `Synchronisation terminée : ${totalInserted} nouveaux scrobbles`
+      message: `Synchronisation terminée : ${totalInserted} nouveaux scrobbles`,
+      messageKey: "sync.completed",
+      messageParams: { count: totalInserted }
     });
 
     console.log(`✨ Sync finished - Total new scrobbles: ${totalInserted}`);
@@ -355,6 +362,8 @@ async function runSync(options, lock) {
       from,
       to,
       message: `${error.message || "Échec de la synchronisation"}. La même fenêtre sera retentée.`,
+      messageKey: "sync.failedRetry",
+      messageParams: { detail: error.message || "Sync failed" },
       error: true
     });
     throw error;
