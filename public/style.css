@@ -306,14 +306,21 @@ canvas {
    CARD DE ÁLBUM
 ========================= */
 .album-card {
-  flex: 0 0 auto;          
-  width: 160px;
+  flex: 0 0 auto;
+  width: 240px;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 14px;
   text-align: center;
   scroll-snap-align: start;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.album-card .cover-wrapper {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 10px;
 }
 
 .album-card:hover {
