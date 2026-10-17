@@ -5,7 +5,7 @@ import { renderAlbums } from "./albums.js";
 import { renderDailyChart, renderListeningClock } from "./charts.js";
 import { loadInsights } from "./insights.js";
 import { formatTimestampDate } from "./dates.js";
-import { t, setLocale, getLocale, applyStaticTranslations } from "./i18n.js";
+import { t, setLocale, getNextLocale, applyStaticTranslations } from "./i18n.js";
 import { renderTopSongs } from "./topSongs.js";
 import { renderTopArtists } from "./artists.js";
 import { loadScrobbles } from "./scrobbles.js";
@@ -222,6 +222,7 @@ window.addEventListener("resize", () => {
 });
 
 function toggleView(viewName) {
+  if (!document.getElementById(`${viewName}-view`)) viewName = "dashboard";
   localStorage.setItem("activeView", viewName);
 
   UI.sidebarButtons.forEach(button => {
@@ -257,6 +258,7 @@ function toggleView(viewName) {
 }
 
 UI.sidebarButtons.forEach(button => {
+  if (!button.dataset.view) return;
   button.addEventListener("click", () => toggleView(button.dataset.view));
 });
 
@@ -266,14 +268,14 @@ initFilters(() => {
 
 function updateLocaleToggleLabel() {
   const label = document.getElementById("locale-toggle-label");
-  if (label) label.textContent = getLocale() === "fr" ? "EN" : "FR";
+  if (label) label.textContent = getNextLocale().toUpperCase();
 }
 
 function initLocaleToggle() {
   updateLocaleToggleLabel();
 
   document.getElementById("locale-toggle")?.addEventListener("click", () => {
-    setLocale(getLocale() === "fr" ? "en" : "fr");
+    setLocale(getNextLocale());
   });
 
   window.addEventListener("localechange", () => {

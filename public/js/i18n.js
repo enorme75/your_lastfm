@@ -303,10 +303,25 @@ const DICTIONARY = {
   }
 };
 
-let currentLocale = localStorage.getItem("locale") || "fr";
+// Pour ajouter une langue : ajouter son code ici, puis une entrée par clé
+// du dictionnaire ci-dessus (fr reste la valeur de repli si une clé manque).
+const LOCALES = ["fr", "en"];
+
+let currentLocale = LOCALES.includes(localStorage.getItem("locale"))
+  ? localStorage.getItem("locale")
+  : "fr";
 
 export function getLocale() {
   return currentLocale;
+}
+
+export function getLocales() {
+  return [...LOCALES];
+}
+
+export function getNextLocale() {
+  const index = LOCALES.indexOf(currentLocale);
+  return LOCALES[(index + 1) % LOCALES.length];
 }
 
 export function t(key, params = {}) {
@@ -324,7 +339,7 @@ export function t(key, params = {}) {
 }
 
 export function setLocale(locale) {
-  if (locale !== "fr" && locale !== "en") return;
+  if (!LOCALES.includes(locale)) return;
   if (locale === currentLocale) return;
 
   currentLocale = locale;
