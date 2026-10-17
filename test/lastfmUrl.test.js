@@ -26,10 +26,22 @@ test("does not build incomplete Last.fm links", () => {
 
 test("builds user library links for scrobble deletion", () => {
   assert.equal(
-    getUserLibraryTrackUrl("OUF", "Radiohead", "How to Disappear Completely"),
-    "https://www.last.fm/user/OUF/library/music/Radiohead/How+to+Disappear+Completely"
+    getUserLibraryTrackUrl("OUF", "https://www.last.fm/music/Eels/_/New+Story"),
+    "https://www.last.fm/user/OUF/library/music/Eels/New+Story"
   );
-  assert.equal(getUserLibraryTrackUrl("", "Artist", "Track"), null);
-  assert.equal(getUserLibraryTrackUrl("OUF", "", "Track"), null);
-  assert.equal(getUserLibraryTrackUrl("OUF", "Artist", ""), null);
+  assert.equal(
+    getUserLibraryTrackUrl(
+      "OUF",
+      "https://www.last.fm/music/Prince/_/It%27s+Gonna+Be+a+Beautiful+Night"
+    ),
+    "https://www.last.fm/user/OUF/library/music/Prince/It%27s+Gonna+Be+a+Beautiful+Night"
+  );
+  assert.equal(
+    getUserLibraryTrackUrl("OUF", "https://www.last.fm/music/Artist/Album/Track"),
+    "https://www.last.fm/user/OUF/library/music/Artist/Album/Track"
+  );
+  assert.equal(getUserLibraryTrackUrl("", "https://www.last.fm/music/Artist/_/Track"), null);
+  assert.equal(getUserLibraryTrackUrl("OUF", ""), null);
+  assert.equal(getUserLibraryTrackUrl("OUF", "https://example.com/music/Artist/_/Track"), null);
+  assert.equal(getUserLibraryTrackUrl("OUF", "https://www.last.fm/music/"), null);
 });

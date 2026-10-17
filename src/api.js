@@ -449,8 +449,7 @@ app.get("/api/recent-scrobbles", asyncRoute(async (req, res) => {
       date: track.date ? Number(track.date.uts) * 1000 : null,
       delete_url: getUserLibraryTrackUrl(
         process.env.LASTFM_USERNAME,
-        track.artist?.["#text"],
-        track.name
+        track.url
       )
     }));
 

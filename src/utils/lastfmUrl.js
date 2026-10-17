@@ -20,12 +20,18 @@ function getTrackUrl(artist, track) {
   return buildLastFmUrl(artist, "_", track);
 }
 
-function getUserLibraryTrackUrl(username, artist, track) {
+const LASTFM_TRACK_URL_PREFIX = "https://www.last.fm/music/";
+
+function getUserLibraryTrackUrl(username, trackUrl) {
   const safeUsername = encodePathSegment(username);
-  const safeArtist = encodePathSegment(artist);
-  const safeTrack = encodePathSegment(track);
-  if (!safeUsername || !safeArtist || !safeTrack) return null;
-  return `https://www.last.fm/user/${safeUsername}/library/music/${safeArtist}/${safeTrack}`;
+  if (!safeUsername || typeof trackUrl !== "string") return null;
+  if (!trackUrl.startsWith(LASTFM_TRACK_URL_PREFIX)) return null;
+  const segments = trackUrl
+    .slice(LASTFM_TRACK_URL_PREFIX.length)
+    .split("/")
+    .filter(segment => segment && segment !== "_");
+  if (segments.length === 0) return null;
+  return `https://www.last.fm/user/${safeUsername}/library/music/${segments.join("/")}`;
 }
 
 module.exports = { getArtistUrl, getAlbumUrl, getTrackUrl, getUserLibraryTrackUrl };
