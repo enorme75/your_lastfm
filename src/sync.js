@@ -10,6 +10,7 @@ const { assertLastFmResponse } = require("./utils/lastfmResponse");
 const { sanitizeError } = require("./utils/sanitizeAxios");
 const { parseSyncCheckpoint, resolveSyncWindow } = require("./utils/syncWindow");
 const { invalidateDashboardCache } = require("./services/dashboardCache");
+const { isDeletedScrobble } = require("./services/scrobbleDeletion");
 
 const CONFIG = {
   API_URL: "https://ws.audioscrobbler.com/2.0/",
@@ -63,6 +64,11 @@ const runSyncTransaction = db.transaction(tracks => {
     const playedAt = Number(track.date?.uts);
 
     if (!artist || !name || !Number.isInteger(playedAt) || playedAt <= 0) {
+      skipped++;
+      continue;
+    }
+
+    if (isDeletedScrobble(artist, name, playedAt)) {
       skipped++;
       continue;
     }

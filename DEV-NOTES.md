@@ -207,14 +207,24 @@ Trois options pour le fork, par coût croissant :
    postulat « lecture seule », coût faible. Limite : les scrobbles
    existent toujours côté Last.fm et reviendront si on purge/recrée la
    base (donc plutôt filtres persistants que deletes purs).
+   **Partiellement fait** (2026-10-17) : suppression **par scrobble** via
+   `DELETE /api/scrobbles` (service `src/services/scrobbleDeletion.js`),
+   table `deleted_scrobbles` empêchant la sync de ré-insérer un scrobble
+   supprimé localement (garde dans `sync.js`), et check d'intégrité
+   tenant compte des exclusions (`integrity-check.js`). Côté front : la
+   poubelle ouvre Last.fm et propose la suppression locale (confirm).
+   Reste à faire : règles de filtrage par artiste/motif, si besoin.
 2. **Lien d'action vers le site** : bouton par scrobble qui ouvre la page
    Last.fm correspondante pour suppression manuelle. Coût trivial,
    UX moyenne. **Fait** (2026-10-17) : `getUserLibraryTrackUrl()` dans
    `src/utils/lastfmUrl.js`, champ `delete_url` sur
    `/api/recent-scrobbles`, icône poubelle `.scrobble-delete` dans
    `public/js/scrobbles.js` + `style.css`. Cible :
-   `last.fm/user/{user}/library/music/{artist}/{track}` (page où
-   Last.fm permet la suppression, API dédiée inexistante).
+   `last.fm/user/{user}/library/music/{artist}/_/{track}` (page
+   bibliothèque du morceau, avec `/_/` obligatoire ; slugs repris tels
+   quels de l'URL canonique `track.url` renvoyée par l'API Last.fm —
+   ne pas ré-encoder soi-même : encodage Last.fm spécifique, ex.
+   apostrophe en `%27`).
 3. **Vraie suppression côté Last.fm** : scraper le site avec un cookie de
    session stocké dans `.env`. Coût élevé, maintenance continue, risque de
    casser à chaque évolution du site, zone grise côté CGU. Ne se lance

@@ -7,6 +7,7 @@ const { sync } = require("./sync");
 const { fetchWithRetry } = require("./utils/fetchRetry");
 const { assertLastFmResponse } = require("./utils/lastfmResponse");
 const { sanitizeError } = require("./utils/sanitizeAxios");
+const { getDeletedScrobblesCount } = require("./services/scrobbleDeletion");
 
 const MISSING_THRESHOLD = Math.max(
   1,
@@ -42,7 +43,8 @@ async function verifyIntegrity() {
   try {
     const lastfmCount = await getLastFmPlaycount();
     const localCount = getLocalCount.get().count;
-    const difference = lastfmCount - localCount;
+    const deletedCount = getDeletedScrobblesCount();
+    const difference = lastfmCount - deletedCount - localCount;
     const missingLocally = Math.max(0, difference);
     const extraLocally = Math.max(0, -difference);
 
@@ -72,7 +74,7 @@ async function verifyIntegrity() {
     }
 
     const repairedLocalCount = getLocalCount.get().count;
-    const remainingMissing = Math.max(0, lastfmCount - repairedLocalCount);
+    const remainingMissing = Math.max(0, lastfmCount - deletedCount - repairedLocalCount);
 
     console.log(
       `[Integrity] Repair finished. Local=${repairedLocalCount} Remaining missing=${remainingMissing}`

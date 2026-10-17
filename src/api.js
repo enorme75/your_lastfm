@@ -19,6 +19,7 @@ const { mapWithConcurrency } = require("./utils/mapWithConcurrency");
 const { sanitizeError } = require("./utils/sanitizeAxios");
 const { getLastFmImage } = require("./utils/lastfmImage");
 const { getUserLibraryTrackUrl } = require("./utils/lastfmUrl");
+const { deleteScrobbleLocally } = require("./services/scrobbleDeletion");
 const { ensureAlbumCover } = require("./services/albumCoverCache");
 const { ensureArtistImage } = require("./services/artistImageCache");
 const { importScrobbleCSV } = require("./services/importScrobbleCSV");
@@ -457,6 +458,26 @@ app.get("/api/recent-scrobbles", asyncRoute(async (req, res) => {
     tracks: parsed,
     hasMore: page < Number(attr?.totalPages || 1)
   });
+}));
+
+app.delete("/api/scrobbles", asyncRoute(async (req, res) => {
+  setNoStore(res);
+  const { artist, track, date } = req.body || {};
+  const playedAt = Math.floor(Number(date) / 1000);
+
+  if (
+    typeof artist !== "string" || !artist.trim() ||
+    typeof track !== "string" || !track.trim() ||
+    !Number.isInteger(playedAt) || playedAt <= 0
+  ) {
+    const error = new Error("Invalid scrobble reference");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const deleted = deleteScrobbleLocally(artist.trim(), track.trim(), playedAt);
+
+  res.json({ deleted });
 }));
 
 app.post("/api/import/scrobbles", (req, res, next) => {

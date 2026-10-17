@@ -51,6 +51,9 @@ export async function loadScrobbles(reset = true) {
               target="_blank"
               rel="noopener noreferrer"
               title="Delete this scrobble on Last.fm"
+              ${scrobble.date
+                ? `data-artist="${escapeAttribute(scrobble.artist)}" data-track="${escapeAttribute(scrobble.track)}" data-date="${scrobble.date}"`
+                : ""}
             ><i class="mdi mdi-delete-outline"></i></a>`
           : ""}
       </div>
@@ -72,6 +75,31 @@ export async function loadScrobbles(reset = true) {
 
 document.getElementById("load-more-scrobbles")?.addEventListener("click", () => {
   loadScrobbles(false);
+});
+
+document.getElementById("scrobbles-list")?.addEventListener("click", async event => {
+  const link = event.target.closest(".scrobble-delete");
+  if (!link || !link.dataset.date) return;
+
+  const confirmed = window.confirm(
+    "Also remove this scrobble from the local database (your_lastfm stats)?"
+  );
+  if (!confirmed) return;
+
+  try {
+    await fetchJSON("/api/scrobbles", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        artist: link.dataset.artist,
+        track: link.dataset.track,
+        date: Number(link.dataset.date)
+      })
+    });
+  } catch (error) {
+    console.error("Error deleting scrobble locally:", error);
+    window.alert(`Could not delete the scrobble locally: ${error.message}`);
+  }
 });
 
 function timeAgo(timestamp) {

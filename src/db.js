@@ -44,6 +44,15 @@ db.prepare(`
 `).run();
 
 db.prepare(`
+  CREATE TABLE IF NOT EXISTS deleted_scrobbles (
+    artist TEXT NOT NULL,
+    track TEXT NOT NULL,
+    played_at INTEGER NOT NULL,
+    PRIMARY KEY (artist, track, played_at)
+  )
+`).run();
+
+db.prepare(`
   CREATE TABLE IF NOT EXISTS metadata (
     key TEXT PRIMARY KEY,
     value TEXT
