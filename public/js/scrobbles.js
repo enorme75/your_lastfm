@@ -41,7 +41,7 @@ export async function loadScrobbles(reset = true) {
           <div class="scrobble-artist">${escapeHTML(scrobble.artist)}</div>
           <div class="scrobble-time">
             ${scrobble.nowPlaying
-              ? '<i class="mdi mdi-access-point me-1 text-green"></i>t("scrobbles.listeningNow")'
+              ? `<i class="mdi mdi-access-point me-1 text-green"></i>${t("scrobbles.listeningNow")}`
               : timeAgo(scrobble.date)}
           </div>
         </div>
