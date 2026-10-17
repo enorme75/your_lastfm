@@ -20,4 +20,12 @@ function getTrackUrl(artist, track) {
   return buildLastFmUrl(artist, "_", track);
 }
 
-module.exports = { getArtistUrl, getAlbumUrl, getTrackUrl };
+function getUserLibraryTrackUrl(username, artist, track) {
+  const safeUsername = encodePathSegment(username);
+  const safeArtist = encodePathSegment(artist);
+  const safeTrack = encodePathSegment(track);
+  if (!safeUsername || !safeArtist || !safeTrack) return null;
+  return `https://www.last.fm/user/${safeUsername}/library/music/${safeArtist}/${safeTrack}`;
+}
+
+module.exports = { getArtistUrl, getAlbumUrl, getTrackUrl, getUserLibraryTrackUrl };

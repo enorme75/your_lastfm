@@ -18,6 +18,7 @@ const { assertLastFmResponse } = require("./utils/lastfmResponse");
 const { mapWithConcurrency } = require("./utils/mapWithConcurrency");
 const { sanitizeError } = require("./utils/sanitizeAxios");
 const { getLastFmImage } = require("./utils/lastfmImage");
+const { getUserLibraryTrackUrl } = require("./utils/lastfmUrl");
 const { ensureAlbumCover } = require("./services/albumCoverCache");
 const { ensureArtistImage } = require("./services/artistImageCache");
 const { importScrobbleCSV } = require("./services/importScrobbleCSV");
@@ -445,7 +446,12 @@ app.get("/api/recent-scrobbles", asyncRoute(async (req, res) => {
       artist: track.artist?.["#text"] || "Unknown artist",
       image: getLastFmImage(track.image),
       nowPlaying: Boolean(track["@attr"]?.nowplaying),
-      date: track.date ? Number(track.date.uts) * 1000 : null
+      date: track.date ? Number(track.date.uts) * 1000 : null,
+      delete_url: getUserLibraryTrackUrl(
+        process.env.LASTFM_USERNAME,
+        track.artist?.["#text"],
+        track.name
+      )
     }));
 
   res.json({

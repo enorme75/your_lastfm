@@ -44,6 +44,15 @@ export async function loadScrobbles(reset = true) {
               : timeAgo(scrobble.date)}
           </div>
         </div>
+        ${scrobble.delete_url
+          ? `<a
+              class="scrobble-delete"
+              href="${escapeAttribute(scrobble.delete_url)}"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Delete this scrobble on Last.fm"
+            ><i class="mdi mdi-delete-outline"></i></a>`
+          : ""}
       </div>
     `).join("");
 

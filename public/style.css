@@ -856,6 +856,24 @@ strong {
   opacity: 0.6;
 }
 
+.scrobble-delete {
+  align-self: center;
+  flex-shrink: 0;
+  padding: 8px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  opacity: 0.45;
+  transition: opacity var(--transition-fast), color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.scrobble-delete:hover,
+.scrobble-delete:focus-visible {
+  opacity: 1;
+  color: #ff5252;
+  background-color: rgba(255, 82, 82, 0.1);
+}
+
 #load-more-scrobbles {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.25);

@@ -209,7 +209,12 @@ Trois options pour le fork, par coût croissant :
    base (donc plutôt filtres persistants que deletes purs).
 2. **Lien d'action vers le site** : bouton par scrobble qui ouvre la page
    Last.fm correspondante pour suppression manuelle. Coût trivial,
-   UX moyenne.
+   UX moyenne. **Fait** (2026-10-17) : `getUserLibraryTrackUrl()` dans
+   `src/utils/lastfmUrl.js`, champ `delete_url` sur
+   `/api/recent-scrobbles`, icône poubelle `.scrobble-delete` dans
+   `public/js/scrobbles.js` + `style.css`. Cible :
+   `last.fm/user/{user}/library/music/{artist}/{track}` (page où
+   Last.fm permet la suppression, API dédiée inexistante).
 3. **Vraie suppression côté Last.fm** : scraper le site avec un cookie de
    session stocké dans `.env`. Coût élevé, maintenance continue, risque de
    casser à chaque évolution du site, zone grise côté CGU. Ne se lance
