@@ -131,6 +131,19 @@ Deezer (Spotify non requis).
   JJ/MM/AAAA via `public/js/dates.js`. « Scrobbles » et noms propres
   (Last.fm, YourLastFM) conservés. `public/js/csv.js` est du code mort
   non importé, non traduit.
+- **Bascule EN/FR** (2026-10-17) : bouton dans la sidebar (sous Compte,
+  `#locale-toggle`, affiche la langue cible), dictionnaire bilingue central
+  dans `public/js/i18n.js` (`t()`, `setLocale`, `applyStaticTranslations`,
+  événement `localechange`). Le HTML est clé via `data-i18n` (et
+  `-placeholder`/`-title`), les modules front passent par `t()`, et le
+  backend expose des clés : `messageKey`/`messageParams` dans les statuts
+  de synchro (`sync.js`), `comparisonLabelKey`/`comparisonNoteKey` dans
+  le payload dashboard. La bascule rejoue la vue courante (traductions
+  statiques + re-render dynamique). Piège à retenir : apostrophes
+  françaises jamais en quotes simples JS (bug cassant tout le graphe de
+  modules, corrigé au passage). Limite connue : les messages d'erreur
+  backend rares (filtres invalides, etc.) restent en français quelle que
+  soit la langue d'affichage.
 - **Feature 2 faite** (2026-10-17) : heatmap d'activité 12 mois (DOM/CSS
   pur, pas de plugin Chart.js), plays per week (bar), top artists over
   time (line, top 6 par mois). **Déplacés sur une page « Insights »
