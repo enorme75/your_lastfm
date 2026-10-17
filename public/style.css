@@ -352,28 +352,6 @@ canvas {
   color: var(--text-muted);
 }
 
-/* Podium: three first albums bigger */
-.album-card:nth-child(-n+3) {
-  width: 240px;
-  padding: 14px;
-}
-
-.album-card:nth-child(-n+3) .cover-wrapper {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1 / 1;
-  margin-bottom: 10px;
-}
-
-.album-card:nth-child(-n+3) strong {
-  font-size: 1.05rem;
-}
-
-.album-card:nth-child(-n+3) span,
-.album-card:nth-child(-n+3) small {
-  font-size: 0.85rem;
-}
-
 /* =========================
    TOP TRACKS LIST (TABELA)
 ========================= */
@@ -410,27 +388,41 @@ canvas {
   height: 48px;
 }
 
-/* Podium: three first songs bigger */
-.top-song-row:nth-child(-n+3) {
-  padding: 12px 0;
+/* Song podium (left column): large cards */
+.top-podium-item {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 10px 0;
 }
 
-.top-song-row:nth-child(-n+3) .song-position {
-  font-size: 1.15rem;
+.top-podium-item .rank {
+  display: block;
+  font-size: 1.2rem;
   font-weight: 700;
+  color: var(--text-rank);
+  grid-column: 1 / -1;
 }
 
-.top-song-row:nth-child(-n+3) .cover-wrapper {
-  width: 64px;
-  height: 64px;
+.top-podium-item .cover-wrapper {
+  width: 96px;
+  height: 96px;
 }
 
-.top-song-row:nth-child(-n+3) .song-title {
-  font-size: 1.1rem;
+.top-podium-item .song-title {
+  font-size: 1.15rem;
 }
 
-.top-song-row:nth-child(-n+3) .song-artist {
+.top-podium-item .song-artist {
   font-size: 0.95rem;
+}
+
+.top-podium-item .top-podium-plays {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #888;
 }
 
 .top-song-row:last-child {
@@ -629,27 +621,45 @@ strong {
   font-size: 0.75rem;
 }
 
-/* Podium: three first artists bigger */
-.top-row:nth-child(-n+3) {
-  grid-template-columns: 30px 76px 1fr auto;
+/* Two-column split: podium (top 3, big) left, rest right */
+.top-split {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 28px;
+  align-items: start;
 }
 
-.top-row:nth-child(-n+3) .rank {
-  font-size: 1.15rem;
+.top-podium {
+  max-height: none;
+  overflow: visible;
+  gap: 14px;
+}
+
+.top-podium .top-row {
+  grid-template-columns: 30px 80px 1fr auto;
+  gap: 14px;
+}
+
+.top-podium .top-row .rank {
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
-.top-row:nth-child(-n+3) .cover.artist {
-  width: 76px;
-  height: 76px;
+.top-podium .top-row .cover.artist {
+  width: 80px;
+  height: 80px;
 }
 
-.top-row:nth-child(-n+3) .meta strong {
-  font-size: 1.2rem;
+.top-podium .top-row .meta strong {
+  font-size: 1.25rem;
 }
 
-.top-row:nth-child(-n+3) .meta small {
+.top-podium .top-row .meta small {
   font-size: 0.9rem;
+}
+
+.top-rest {
+  max-height: 480px;
 }
 
 /* =========================
@@ -2325,6 +2335,11 @@ strong {
     grid-template-columns: 1fr;
   }
 
+  .top-split {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
   .leaderboard-groups-panel {
     position: static;
   }
@@ -2365,11 +2380,6 @@ strong {
 
   .scrobble-artist {
     font-size: 0.9rem;
-  }
-
-  .album-card:nth-child(-n+3) {
-    width: 190px;
-    padding: 12px;
   }
 
   .leaderboards-header > button,

@@ -2,10 +2,8 @@ import { fetchJSON } from "./api.js";
 import { buildQuery } from "./filters.js";
 import { escapeAttribute, escapeHTML, installImageFallbacks, safeImageUrl } from "./dom.js";
 
-export function renderTopArtists(data = []) {
-  const container = document.getElementById("top-artists");
-
-  container.innerHTML = data.map((artist, index) => `
+function artistRow(artist, index) {
+  return `
     <div class="top-row">
       <span class="rank">${index + 1}</span>
       <img
@@ -30,9 +28,18 @@ export function renderTopArtists(data = []) {
         <small>${Number(artist.plays).toLocaleString()} plays</small>
       </div>
     </div>
-  `).join("");
+  `;
+}
 
-  installImageFallbacks(container);
+export function renderTopArtists(data = []) {
+  const podium = document.getElementById("top-artists-podium");
+  const rest = document.getElementById("top-artists");
+
+  podium.innerHTML = data.slice(0, 3).map((artist, index) => artistRow(artist, index)).join("");
+  rest.innerHTML = data.slice(3).map((artist, index) => artistRow(artist, index + 3)).join("");
+
+  installImageFallbacks(podium);
+  installImageFallbacks(rest);
 }
 
 export async function loadTopArtists() {

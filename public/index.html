@@ -182,7 +182,10 @@
                                         ></i>
                                         <span>Top Artists</span>
                                     </div>
-                                    <div class="top-list" id="top-artists"></div>
+                                    <div class="top-split">
+                                        <div class="top-list top-podium" id="top-artists-podium"></div>
+                                        <div class="top-list top-rest" id="top-artists"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -196,14 +199,17 @@
                                         ></i>
                                         <span>Top Songs</span>
                                     </div>
-                                    <div class="top-songs-list flex-grow-1">
-                                        <div class="top-songs-header">
-                                            <span>#</span>
-                                            <span>Song / Artist</span>
-                                            <span>Plays</span>
-                                            <span>Total</span>
+                                    <div class="top-split flex-grow-1">
+                                        <div class="top-list top-podium" id="top-songs-podium"></div>
+                                        <div class="top-songs-list flex-grow-1">
+                                            <div class="top-songs-header">
+                                                <span>#</span>
+                                                <span>Song / Artist</span>
+                                                <span>Plays</span>
+                                                <span>Total</span>
+                                            </div>
+                                            <div id="top-songs"></div>
                                         </div>
-                                        <div id="top-songs"></div>
                                     </div>
                                 </div>
                             </div>

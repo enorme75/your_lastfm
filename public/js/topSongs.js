@@ -14,10 +14,49 @@ function formatDuration(totalSeconds) {
     : `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
-export function renderTopSongs(data = []) {
-  const container = document.getElementById("top-songs");
+function songCopy(row) {
+  return `
+    <div class="song-copy">
+      <a
+        class="music-link song-title"
+        href="${escapeAttribute(row.url || "#")}"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Open track on Last.fm"
+      >
+        ${escapeHTML(row.track)}
+        <i class="mdi mdi-open-in-new"></i>
+      </a>
+      <a
+        class="music-link song-artist"
+        href="${escapeAttribute(row.artist_url || "#")}"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Open artist on Last.fm"
+      >${escapeHTML(row.artist)}</a>
+    </div>
+  `;
+}
 
-  container.innerHTML = data.map((row, index) => `
+function songPodiumItem(row, index) {
+  return `
+    <div class="top-podium-item">
+      <span class="rank">${index + 1}</span>
+      ${renderCover({
+        image: row.album_image,
+        artist: row.artist,
+        album: row.album
+      })}
+      <div>
+        ${songCopy(row)}
+        <span class="top-podium-plays">${Number(row.plays).toLocaleString()} plays</span>
+      </div>
+    </div>
+  `;
+}
+
+function songRow(row, index) {
+  return `
     <div class="top-song-row">
       <span class="song-position">${index + 1}</span>
       <div class="song-main">
@@ -26,30 +65,20 @@ export function renderTopSongs(data = []) {
           artist: row.artist,
           album: row.album
         })}
-        <div class="song-copy">
-          <a
-            class="music-link song-title"
-            href="${escapeAttribute(row.url || "#")}"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Open track on Last.fm"
-          >
-            ${escapeHTML(row.track)}
-            <i class="mdi mdi-open-in-new"></i>
-          </a>
-          <a
-            class="music-link song-artist"
-            href="${escapeAttribute(row.artist_url || "#")}"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Open artist on Last.fm"
-          >${escapeHTML(row.artist)}</a>
-        </div>
+        ${songCopy(row)}
       </div>
       <span>${Number(row.plays).toLocaleString()}</span>
       <span>${formatDuration(row.total_seconds)}</span>
     </div>
-  `).join("");
+  `;
+}
+
+export function renderTopSongs(data = []) {
+  const podium = document.getElementById("top-songs-podium");
+  const container = document.getElementById("top-songs");
+
+  podium.innerHTML = data.slice(0, 3).map((row, index) => songPodiumItem(row, index)).join("");
+  container.innerHTML = data.slice(3).map((row, index) => songRow(row, index + 3)).join("");
 
   initCoverUploads();
 }
