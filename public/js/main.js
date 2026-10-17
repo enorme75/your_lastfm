@@ -55,13 +55,13 @@ function renderSyncState(timestamp, status = {}) {
 
     UI.lastSync.textContent = `${syncStatusText(status)}${progress}`;
     UI.syncButton.disabled = true;
-    UI.syncButton.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> ${t("dashboard.syncing")}';
+    UI.syncButton.innerHTML = `<i class="mdi mdi-loading mdi-spin"></i> ${t("dashboard.syncing")}`;
     return;
   }
 
   UI.lastSync.textContent = formatLastSync(timestamp);
   UI.syncButton.disabled = false;
-  UI.syncButton.innerHTML = '<i class="mdi mdi-sync"></i> ${t("dashboard.sync")}';
+  UI.syncButton.innerHTML = `<i class="mdi mdi-sync"></i> ${t("dashboard.sync")}`;
 }
 
 function renderDashboardCacheState(cache = {}) {
