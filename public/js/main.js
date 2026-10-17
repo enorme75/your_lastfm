@@ -4,6 +4,7 @@ import { renderSummary } from "./summary.js";
 import { renderAlbums } from "./albums.js";
 import { renderDailyChart, renderListeningClock } from "./charts.js";
 import { loadInsights } from "./insights.js";
+import { formatTimestampDate } from "./dates.js";
 import { renderTopSongs } from "./topSongs.js";
 import { renderTopArtists } from "./artists.js";
 import { loadScrobbles } from "./scrobbles.js";
@@ -34,7 +35,8 @@ function isDashboardVisible() {
 
 function formatLastSync(timestamp) {
   if (!timestamp) return "Last sync: never";
-  return `Last sync: ${new Date(timestamp).toLocaleString()}`;
+  const time = new Date(timestamp).toLocaleTimeString();
+  return `Last sync: ${formatTimestampDate(timestamp)} ${time}`;
 }
 
 function renderSyncState(timestamp, status = {}) {

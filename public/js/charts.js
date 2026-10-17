@@ -1,5 +1,6 @@
 import { fetchJSON } from "./api.js";
 import { buildQuery } from "./filters.js";
+import { formatDay, formatWeek, formatMonth } from "./dates.js";
 
 const state = {
   charts: {}
@@ -47,7 +48,7 @@ export function renderDailyChart(data = []) {
   replaceChart("daily", {
     type: "bar",
     data: {
-      labels: data.map(item => item.day),
+      labels: data.map(item => formatDay(item.day)),
       datasets: [{
         label: "Plays per day",
         data: data.map(item => item.plays),
@@ -111,7 +112,7 @@ export function renderWeeklyChart(data = []) {
   replaceChart("weekly", {
     type: "bar",
     data: {
-      labels: data.map(item => item.week),
+      labels: data.map(item => formatWeek(item.week)),
       datasets: [{
         label: "Plays per week",
         data: data.map(item => item.plays),
@@ -152,7 +153,7 @@ export function renderArtistEvolution(evolution = {}) {
   replaceChart("artists-evolution", {
     type: "line",
     data: {
-      labels: months,
+      labels: months.map(month => formatMonth(month)),
       datasets: artists.map((artist, index) => ({
         label: artist,
         data: months.map(month => playsByArtist.get(artist)?.get(month) || 0),
@@ -208,7 +209,7 @@ export function renderActivityHeatmap(days = []) {
       const key = localDateKey(cellDate);
       const plays = playsByDay.get(key) || 0;
       const level = activityLevel(plays, maxPlays);
-      html += `<div class="heatmap-cell level-${level}" title="${key} · ${plays.toLocaleString()} plays"></div>`;
+      html += `<div class="heatmap-cell level-${level}" title="${formatDay(key)} · ${plays.toLocaleString()} plays"></div>`;
     }
     html += "</div>";
   }

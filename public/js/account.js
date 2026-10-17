@@ -1,5 +1,6 @@
 import { fetchJSON } from "./api.js";
 import { installImageFallback, safeImageUrl } from "./dom.js";
+import { formatTimestampDate } from "./dates.js";
 
 let listenersAttached = false;
 
@@ -30,13 +31,7 @@ async function fetchAndRenderStats() {
     updateText("profile-tracks", format(data.uniqueTracks));
 
     if (data.joinedDate) {
-      const date = new Date(data.joinedDate * 1000);
-      const dateText = new Intl.DateTimeFormat("pt-BR", {
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      }).format(date);
-      updateText("profile-joined-date", dateText);
+      updateText("profile-joined-date", formatTimestampDate(data.joinedDate * 1000));
     }
   } catch (error) {
     console.error("Error loading account:", error);

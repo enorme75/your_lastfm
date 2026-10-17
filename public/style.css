@@ -720,6 +720,12 @@ strong {
   background: transparent;
 }
 
+.heatmap-grid .heatmap-cell:not(.heatmap-future):hover {
+  transform: scale(1.35);
+  outline: 1px solid rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
 .heatmap-legend {
   display: flex;
   align-items: center;

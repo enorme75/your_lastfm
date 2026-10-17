@@ -5,6 +5,7 @@ import {
   installImageFallbacks,
   safeImageUrl
 } from "./dom.js";
+import { formatDay } from "./dates.js";
 
 const AVATAR_PLACEHOLDER = "/images/artist-placeholder.png";
 const COVER_PLACEHOLDER = "/images/cover-placeholder.svg";
@@ -325,7 +326,7 @@ function renderLeaderboardResult(result) {
     result.partial ? "partial result" : null,
     result.stale || result.cache?.stale ? "using stale cache after a Last.fm error" : null
   ].filter(Boolean);
-  UI.status.textContent = `${result.range.from} to ${result.range.to} · ${result.range.days} day${result.range.days === 1 ? "" : "s"}${statusFlags.length ? ` · ${statusFlags.join(" · ")}` : ""}`;
+  UI.status.textContent = `${formatDay(result.range.from)} to ${formatDay(result.range.to)} · ${result.range.days} day${result.range.days === 1 ? "" : "s"}${statusFlags.length ? ` · ${statusFlags.join(" · ")}` : ""}`;
   UI.cacheState.textContent = result.cache?.hit
     ? `${result.cache.stale ? "Stale cache" : "Cached"} ${new Date(result.cache.cachedAt).toLocaleTimeString()}`
     : `Updated ${new Date(result.generatedAt).toLocaleTimeString()}`;
