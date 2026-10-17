@@ -125,14 +125,16 @@ Deezer (Spotify non requis).
   **Réglé** (2026-10-17) : `enorme75 <29152882+enorme75@users.noreply.github.com>`.
 - **Feature 2 faite** (2026-10-17) : heatmap d'activité 12 mois (DOM/CSS
   pur, pas de plugin Chart.js), plays per week (bar), top artists over
-  time (line, top 6 par mois). Backend dans `src/services/dashboard.js`
-  (`getActivityCalendar`, `getPlaysPerWeek`, `getArtistEvolution`),
-  servis via le payload combiné `/api/dashboard` (donc cachés par
-  `dashboard_cache`). Front : `charts.js` (`renderActivityHeatmap`,
-  `renderWeeklyChart`, `renderArtistEvolution`), câblés dans `main.js`.
-  Notes : l'heatmap est volontairement indépendante des filtres (toujours
-  12 derniers mois, tz du navigateur) ; l'évolution artistes suit le
-  filtre de période sélectionné.
+  time (line, top 6 par mois). **Déplacés sur une page « Insights »
+  dédiée** (sidebar, `#insights-view`, module `public/js/insights.js`)
+  car non liés aux filtres du dashboard : endpoint
+  `GET /api/insights` avec son propre cache
+  (`insights:tz{offset}`, clé par fuseau horaire), service
+  `getInsights()` dans `src/services/dashboard.js` (les trois requêtes y
+  vivent : `getActivityCalendar`, `getPlaysPerWeek`,
+  `getArtistEvolution`, toutes en tout-historique sauf la heatmap
+  limitée à 12 mois). Le payload `/api/dashboard` est revenu à sa forme
+  d'origine.
 - Reste : ajustements éventuels du layout, puis feature 2 (nouveaux
   graphiques) et feature 3 (pages artistes + bios) selon la roadmap.
 

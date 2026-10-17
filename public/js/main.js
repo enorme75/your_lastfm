@@ -2,13 +2,8 @@ import { fetchJSON } from "./api.js";
 import { initFilters, buildQuery } from "./filters.js";
 import { renderSummary } from "./summary.js";
 import { renderAlbums } from "./albums.js";
-import {
-  renderDailyChart,
-  renderListeningClock,
-  renderWeeklyChart,
-  renderArtistEvolution,
-  renderActivityHeatmap
-} from "./charts.js";
+import { renderDailyChart, renderListeningClock } from "./charts.js";
+import { loadInsights } from "./insights.js";
 import { renderTopSongs } from "./topSongs.js";
 import { renderTopArtists } from "./artists.js";
 import { loadScrobbles } from "./scrobbles.js";
@@ -149,9 +144,6 @@ function renderDashboard(data) {
   renderTopArtists(data.topArtists);
   renderDailyChart(data.playsPerDay);
   renderListeningClock(data.listeningClock);
-  renderWeeklyChart(data.playsPerWeek);
-  renderArtistEvolution(data.artistEvolution);
-  renderActivityHeatmap(data.activityCalendar);
   renderDashboardCacheState(data.cache);
 }
 
@@ -244,6 +236,9 @@ function toggleView(viewName) {
       break;
     case "leaderboards":
       loadLeaderboards();
+      break;
+    case "insights":
+      loadInsights();
       break;
     case "account":
       loadAccount();

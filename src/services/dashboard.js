@@ -1,6 +1,6 @@
 const db = require("../db");
 const { fillMissingDates } = require("../utils/dateRange");
-const { getDashboardFilterContext } = require("../utils/dashboardFilter");
+const { getDashboardFilterContext, getTimezoneOffset } = require("../utils/dashboardFilter");
 const { getArtistUrl, getAlbumUrl, getTrackUrl } = require("../utils/lastfmUrl");
 const { calculateChange, normalizeSummary } = require("../utils/dashboardMetrics");
 const { mapWithConcurrency } = require("../utils/mapWithConcurrency");
@@ -291,10 +291,7 @@ async function buildDashboard(query, context) {
   const albumRows = getTopAlbumRows(context.current);
   const trackRows = getTopTrackRows(context.current);
   const playsPerDay = getPlaysPerDay(context.current, query);
-  const playsPerWeek = getPlaysPerWeek(context.current);
   const listeningClock = getListeningClock(context.current, context.timezoneOffset);
-  const activityCalendar = getActivityCalendar(context.timezoneOffset);
-  const artistEvolution = getArtistEvolution(context.current);
   const lists = await enrichDashboardLists(artistRows, albumRows, trackRows);
 
   return {
@@ -303,10 +300,23 @@ async function buildDashboard(query, context) {
     topAlbums: lists.albums,
     topTracks: lists.tracks,
     playsPerDay,
-    playsPerWeek,
-    listeningClock,
-    activityCalendar,
-    artistEvolution
+    listeningClock
+  };
+}
+
+async function getInsights(query = {}) {
+  const timezoneOffset = getTimezoneOffset(query);
+  const allTimeFilter = { where: null, params: [] };
+
+  const result = await withDashboardCache(`insights:tz${timezoneOffset}`, () => ({
+    activityCalendar: getActivityCalendar(timezoneOffset),
+    playsPerWeek: getPlaysPerWeek(allTimeFilter),
+    artistEvolution: getArtistEvolution(allTimeFilter)
+  }));
+
+  return {
+    ...result.data,
+    cache: result.cache
   };
 }
 
@@ -320,4 +330,4 @@ async function getDashboard(query = {}) {
   };
 }
 
-module.exports = { getDashboard, getListeningClock };
+module.exports = { getDashboard, getInsights, getListeningClock };

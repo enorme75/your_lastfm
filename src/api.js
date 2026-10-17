@@ -37,7 +37,7 @@ const {
   listLeaderboardGroups,
   updateLeaderboardGroup
 } = require("./services/leaderboards");
-const { getDashboard } = require("./services/dashboard");
+const { getDashboard, getInsights } = require("./services/dashboard");
 const { invalidateDashboardCache } = require("./services/dashboardCache");
 const {
   generateShareImage,
@@ -144,6 +144,17 @@ app.get("/api/dashboard", asyncRoute(async (req, res) => {
     "X-Dashboard-Cache-Age": String(dashboard.cache.ageMs)
   });
   res.json(dashboard);
+}));
+
+app.get("/api/insights", asyncRoute(async (req, res) => {
+  setNoStore(res);
+  const insights = await getInsights(req.query);
+
+  res.set({
+    "X-Dashboard-Cache": insights.cache.hit ? "HIT" : "MISS",
+    "X-Dashboard-Cache-Age": String(insights.cache.ageMs)
+  });
+  res.json(insights);
 }));
 
 app.get("/api/top-artists", asyncRoute(async (req, res) => {
