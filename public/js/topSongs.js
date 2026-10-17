@@ -22,7 +22,7 @@ function songCopy(row) {
         href="${escapeAttribute(row.url || "#")}"
         target="_blank"
         rel="noopener noreferrer"
-        title="Open track on Last.fm"
+        title="Ouvrir le morceau sur Last.fm"
       >
         ${escapeHTML(row.track)}
         <i class="mdi mdi-open-in-new"></i>
@@ -32,7 +32,7 @@ function songCopy(row) {
         href="${escapeAttribute(row.artist_url || "#")}"
         target="_blank"
         rel="noopener noreferrer"
-        title="Open artist on Last.fm"
+        title="Ouvrir l'artiste sur Last.fm"
       >${escapeHTML(row.artist)}</a>
     </div>
   `;

@@ -17,7 +17,7 @@ export async function fetchJSON(url, options = {}) {
   } catch (error) {
     if (error.name === "AbortError") throw error;
 
-    throw new Error("Could not connect to YourLastFM. Check whether the server is still running.", {
+    throw new Error("Impossible de se connecter à YourLastFM. Vérifiez que le serveur fonctionne encore.", {
       cause: error
     });
   }

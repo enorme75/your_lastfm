@@ -76,7 +76,7 @@ const imageUpload = multer({
   limits: { fileSize: 8 * 1024 * 1024, files: 1 },
   fileFilter: (req, file, callback) => {
     const allowed = allowedImageTypes.has(file.mimetype);
-    callback(allowed ? null : new Error("Unsupported image type"), allowed);
+    callback(allowed ? null : new Error("Type d'image non pris en charge"), allowed);
   }
 });
 
@@ -329,14 +329,14 @@ app.post("/api/album-cover", (req, res, next) => {
   const album = String(req.body.album || "").trim();
 
   if (!artist || !album || !req.file) {
-    return res.status(400).json({ error: "Invalid payload" });
+    return res.status(400).json({ error: "Payload invalide" });
   }
 
   let sourceImage;
   try {
     sourceImage = await loadImage(req.file.buffer);
   } catch {
-    return res.status(400).json({ error: "Invalid or unsupported image" });
+    return res.status(400).json({ error: "Image invalide ou non prise en charge" });
   }
 
   const cropSize = Math.min(sourceImage.width, sourceImage.height);
@@ -404,7 +404,7 @@ app.post("/api/album-tracks", (req, res) => {
   const album = String(req.body.album || "").trim();
 
   if (!artist || !album) {
-    return res.status(400).json({ error: "Invalid payload" });
+    return res.status(400).json({ error: "Payload invalide" });
   }
 
   const filter = getActiveFilter(req.query);
@@ -481,7 +481,7 @@ app.delete("/api/scrobbles", asyncRoute(async (req, res) => {
     typeof track !== "string" || !track.trim() ||
     !Number.isInteger(playedAt) || playedAt <= 0
   ) {
-    const error = new Error("Invalid scrobble reference");
+    const error = new Error("Référence de scrobble invalide");
     error.statusCode = 400;
     throw error;
   }

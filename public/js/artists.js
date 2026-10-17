@@ -20,7 +20,7 @@ function artistRow(artist, index) {
           href="${escapeAttribute(artist.url || "#")}"
           target="_blank"
           rel="noopener noreferrer"
-          title="Open artist on Last.fm"
+          title="Ouvrir l'artiste sur Last.fm"
         >
           <strong>${escapeHTML(artist.artist)}</strong>
           <i class="mdi mdi-open-in-new"></i>

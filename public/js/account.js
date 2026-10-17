@@ -16,7 +16,7 @@ export async function loadAccount() {
 async function fetchAndRenderStats() {
   try {
     const data = await fetchJSON("/api/user-stats", { cache: "no-store" });
-    updateText("profile-username", data.username || "User");
+    updateText("profile-username", data.username || "Utilisateur");
 
     const avatar = document.querySelector(".profile-avatar img");
     if (avatar) {
@@ -59,7 +59,7 @@ function setupCsvButtons() {
     if (!file) return;
 
     const originalText = importButton.innerHTML;
-    importButton.textContent = "Uploading...";
+    importButton.textContent = "Envoi en cours...";
     importButton.disabled = true;
 
     const formData = new FormData();
@@ -72,13 +72,13 @@ function setupCsvButtons() {
       });
 
       alert(
-        `Success! ${result.imported} new scrobbles imported.`
+        `Succès ! ${result.imported} nouveaux scrobbles importés.`
         + (result.duplicates ? ` ${result.duplicates} duplicates ignored.` : "")
         + (result.skipped ? ` ${result.skipped} invalid rows skipped.` : "")
       );
       await fetchAndRenderStats();
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      alert(`Erreur : ${error.message}`);
     } finally {
       importButton.innerHTML = originalText;
       importButton.disabled = false;

@@ -9,7 +9,7 @@ function createRangeError(message) {
 function datePartsFromString(value, label) {
   const text = String(value || "").trim();
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
-  if (!match) throw createRangeError(`${label} must use YYYY-MM-DD`);
+  if (!match) throw createRangeError(`${label} doit être au format AAAA-MM-JJ`);
 
   const year = Number(match[1]);
   const month = Number(match[2]);
@@ -22,7 +22,7 @@ function datePartsFromString(value, label) {
     || date.getUTCMonth() !== month - 1
     || date.getUTCDate() !== day
   ) {
-    throw createRangeError(`${label} is not a valid date`);
+    throw createRangeError(`${label} n'est pas une date valide`);
   }
 
   return { text, startMs };
@@ -54,7 +54,7 @@ function parseLeaderboardRange(query = {}, options = {}) {
   const toDate = datePartsFromString(query.to || defaults.to, "to");
 
   if (fromDate.startMs > toDate.startMs) {
-    throw createRangeError("from must be before or equal to to");
+    throw createRangeError("La date de début doit être antérieure ou égale à la date de fin");
   }
 
   const current = new Date(now);
@@ -65,12 +65,12 @@ function parseLeaderboardRange(query = {}, options = {}) {
   );
 
   if (toDate.startMs > todayStart) {
-    throw createRangeError("to cannot be in the future");
+    throw createRangeError("La date de fin ne peut pas être dans le futur");
   }
 
   const days = Math.floor((toDate.startMs - fromDate.startMs) / DAY_MS) + 1;
   if (days > maxDays) {
-    throw createRangeError(`Leaderboard ranges are limited to ${maxDays} days`);
+    throw createRangeError(`Les périodes de classement sont limitées à ${maxDays} jours`);
   }
 
   return {

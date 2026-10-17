@@ -11,7 +11,7 @@ test("builds the previous equivalent rolling window", () => {
 
   assert.deepEqual(context.current.params, [1785103200, 1785708000]);
   assert.deepEqual(context.previous.params, [1784498400, 1785103199]);
-  assert.equal(context.comparisonLabel, "previous 7 days");
+  assert.equal(context.comparisonLabel, "7 derniers jours");
   assert.equal(context.timezoneOffset, 180);
 });
 
@@ -20,7 +20,7 @@ test("compares a selected month with the previous calendar month", () => {
 
   assert.deepEqual(context.current.params, [1772323200, 1775001599]);
   assert.deepEqual(context.previous.params, [1769904000, 1772323199]);
-  assert.equal(context.comparisonLabel, "previous month");
+  assert.equal(context.comparisonLabel, "mois précédent");
 });
 
 test("does not invent a previous period for all-time or month-only filters", () => {

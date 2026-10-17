@@ -8,7 +8,7 @@ function renderTrend(elementId, metric, label, note) {
   element.className = "metric-trend";
 
   if (!metric || !label) {
-    element.innerHTML = `<i class="mdi mdi-history"></i> ${note || "All available history"}`;
+    element.innerHTML = `<i class="mdi mdi-history"></i> ${note || "Tout l'historique disponible"}`;
     return;
   }
 

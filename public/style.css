@@ -1099,7 +1099,7 @@ strong {
 }
 
 .cover-wrapper.uploading::after {
-  content: "Uploading...";
+  content: "Envoi en cours...";
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,.7);

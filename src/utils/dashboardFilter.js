@@ -2,10 +2,10 @@ const { getDateRange } = require("./dateRange");
 const { getActiveFilter } = require("./filters");
 
 const ROLLING_LABELS = {
-  day: "previous 24 hours",
-  week: "previous 7 days",
-  month: "previous month",
-  year: "previous year"
+  day: "24 dernières heures",
+  week: "7 derniers jours",
+  month: "mois précédent",
+  year: "année précédente"
 };
 
 function toSqlFilter(from, to) {
@@ -35,7 +35,7 @@ function getTimezoneOffset(query = {}) {
 
   const parsed = Number.parseInt(raw, 10);
   if (!Number.isInteger(parsed) || parsed < -840 || parsed > 840) {
-    const error = new Error("Invalid timezone offset");
+    const error = new Error("Décalage horaire invalide");
     error.statusCode = 400;
     throw error;
   }
@@ -53,8 +53,8 @@ function getDashboardFilterContext(query = {}, referenceDate = new Date()) {
   let previous = null;
   let comparisonLabel = null;
   let comparisonNote = month && !year
-    ? "All matching months across your history"
-    : "All available history";
+    ? "Tous les mois correspondants dans l'historique"
+    : "Tout l'historique disponible";
 
   if (range) {
     const { from, to } = getDateRange(range, null, null, referenceDate);
@@ -67,7 +67,7 @@ function getDashboardFilterContext(query = {}, referenceDate = new Date()) {
     const unit = month ? "month" : "year";
     current = toSqlFilter(from, to);
     previous = toSqlFilter(shiftStartBack(from, unit), new Date(from.getTime() - 1));
-    comparisonLabel = month ? "previous month" : "previous year";
+    comparisonLabel = month ? "mois précédent" : "année précédente";
     comparisonNote = null;
   }
 

@@ -12,7 +12,7 @@ function parseMonth(month) {
   if (month === undefined || month === null || month === "") return null;
 
   const rawMonth = String(month);
-  if (!/^(?:0?[1-9]|1[0-2])$/.test(rawMonth)) invalidFilter("Invalid month filter");
+  if (!/^(?:0?[1-9]|1[0-2])$/.test(rawMonth)) invalidFilter("Filtre de mois invalide");
   return Number(rawMonth);
 }
 
@@ -21,7 +21,7 @@ function parseYear(year) {
 
   const parsed = Number.parseInt(year, 10);
   if (!/^\d{4}$/.test(String(year)) || parsed < 1970 || parsed > 9999) {
-    invalidFilter("Invalid year filter");
+    invalidFilter("Filtre d'année invalide");
   }
   return parsed;
 }
@@ -32,7 +32,7 @@ const getActiveFilter = (query = {}) => {
   const parsedMonth = parseMonth(query.month);
 
   if (rawRange) {
-    if (!ALLOWED_RANGES.has(rawRange)) invalidFilter("Invalid range filter");
+    if (!ALLOWED_RANGES.has(rawRange)) invalidFilter("Filtre de période invalide");
 
     const { from, to } = getDateRange(rawRange);
     return {

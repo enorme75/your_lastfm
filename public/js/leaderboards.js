@@ -292,7 +292,7 @@ function renderItems(result) {
           ${item.artist ? `<span>${escapeHTML(item.artist)}</span>` : ""}
           <small>
             ${item.listeners} listener${item.listeners === 1 ? "" : "s"}
-            ${topContribution ? ` · ${escapeHTML(topContribution.username)} leads with ${numberFormat.format(topContribution.plays)}` : ""}
+            ${topContribution ? ` · ${escapeHTML(topContribution.username)} en tête avec ${numberFormat.format(topContribution.plays)}` : ""}
           </small>
         </div>
         <div class="leaderboard-item-score">
@@ -323,13 +323,13 @@ function renderLeaderboardResult(result) {
   UI.activeMembers.textContent = `${availableMembers.length}/${result.members.length}`;
   UI.currentLeader.textContent = leader?.username || "—";
   const statusFlags = [
-    result.partial ? "partial result" : null,
-    result.stale || result.cache?.stale ? "using stale cache after a Last.fm error" : null
+    result.partial ? "résultat partiel" : null,
+    result.stale || result.cache?.stale ? "cache périmé utilisé après une erreur Last.fm" : null
   ].filter(Boolean);
   UI.status.textContent = `${formatDay(result.range.from)} to ${formatDay(result.range.to)} · ${result.range.days} day${result.range.days === 1 ? "" : "s"}${statusFlags.length ? ` · ${statusFlags.join(" · ")}` : ""}`;
   UI.cacheState.textContent = result.cache?.hit
-    ? `${result.cache.stale ? "Stale cache" : "Cached"} ${new Date(result.cache.cachedAt).toLocaleTimeString()}`
-    : `Updated ${new Date(result.generatedAt).toLocaleTimeString()}`;
+    ? `${result.cache.stale ? "Cache périmé" : "En cache"} ${new Date(result.cache.cachedAt).toLocaleTimeString()}`
+    : `Mis à jour ${new Date(result.generatedAt).toLocaleTimeString()}`;
 
   renderMemberRanking(result.members);
   renderItems(result);
@@ -365,7 +365,7 @@ async function loadLeaderboardResult({ refresh = false } = {}) {
     renderLeaderboardResult(result);
   } catch (error) {
     if (error.name === "AbortError" || loadId !== state.resultLoadId) return;
-    showError(error.message || "Could not load this leaderboard");
+    showError(error.message || "Impossible de charger ce classement");
     if (hadResult) UI.results.classList.remove("d-none");
   } finally {
     if (loadId === state.resultLoadId) setLoading(false);
@@ -391,7 +391,7 @@ function addMemberToDraft(value) {
   if (!username) return;
 
   if (/\s/.test(username)) {
-    showFormError("Last.fm usernames cannot contain spaces");
+    showFormError("Les noms d'utilisateur Last.fm ne peuvent pas contenir d'espaces");
     return;
   }
   if (state.memberDraft.length >= state.limits.maxMembers) {
@@ -427,10 +427,10 @@ function openGroupModal(group = null) {
       ? [state.mainUsername]
       : [];
 
-  UI.groupModalTitle.textContent = group ? "Edit leaderboard group" : "Create leaderboard group";
+  UI.groupModalTitle.textContent = group ? "Modifier le groupe de classement" : "Créer un groupe de classement";
   UI.groupNameInput.value = group?.name || "";
   UI.memberInput.value = "";
-  setSaveButtonLabel(group ? "Save changes" : "Create group");
+  setSaveButtonLabel(group ? "Enregistrer les modifications" : "Créer le groupe");
   clearFormError();
   renderMemberDraft();
   state.groupModal.show();
@@ -441,8 +441,8 @@ async function saveGroup() {
   if (UI.memberInput.value.trim()) addMemberToDraft(UI.memberInput.value);
 
   const name = UI.groupNameInput.value.trim();
-  if (!name) return showFormError("Group name is required");
-  if (state.memberDraft.length < 2) return showFormError("Add at least two Last.fm users");
+  if (!name) return showFormError("Le nom du groupe est requis");
+  if (state.memberDraft.length < 2) return showFormError("Ajoutez au moins deux utilisateurs Last.fm");
 
   UI.saveGroup.disabled = true;
   UI.saveGroup.innerHTML = '<i class="mdi mdi-loading mdi-spin me-1"></i> Checking users';
@@ -462,10 +462,10 @@ async function saveGroup() {
     state.groupModal.hide();
     await loadGroups({ preferredGroupId: group.id });
   } catch (error) {
-    showFormError(error.message || "Could not save the group");
+    showFormError(error.message || "Impossible d'enregistrer le groupe");
   } finally {
     UI.saveGroup.disabled = false;
-    setSaveButtonLabel(state.editingGroupId ? "Save changes" : "Create group");
+    setSaveButtonLabel(state.editingGroupId ? "Enregistrer les modifications" : "Créer le groupe");
   }
 }
 
@@ -484,7 +484,7 @@ async function deleteActiveGroup() {
     state.currentResult = null;
     await loadGroups();
   } catch (error) {
-    showError(error.message || "Could not delete the group");
+    showError(error.message || "Impossible de supprimer le groupe");
   } finally {
     UI.deleteGroup.disabled = false;
   }
@@ -561,7 +561,7 @@ async function openItemDetails(kind, item) {
   } catch (error) {
     if (error.name === "AbortError") return;
     UI.detailLoading.classList.add("d-none");
-    UI.detailError.textContent = error.message || "Could not load top tracks";
+    UI.detailError.textContent = error.message || "Impossible de charger les top morceaux";
     UI.detailError.classList.remove("d-none");
   }
 }
@@ -595,7 +595,7 @@ async function loadGroups({ preferredGroupId = null } = {}) {
       await loadLeaderboardResult();
     }
   } catch (error) {
-    showError(error.message || "Could not load leaderboard groups");
+    showError(error.message || "Impossible de charger les groupes");
   }
 }
 

@@ -34,9 +34,9 @@ function isDashboardVisible() {
 }
 
 function formatLastSync(timestamp) {
-  if (!timestamp) return "Last sync: never";
+  if (!timestamp) return "Dernière synchro : jamais";
   const time = new Date(timestamp).toLocaleTimeString();
-  return `Last sync: ${formatTimestampDate(timestamp)} ${time}`;
+  return `Dernière synchro : ${formatTimestampDate(timestamp)} ${time}`;
 }
 
 function renderSyncState(timestamp, status = {}) {
@@ -47,15 +47,15 @@ function renderSyncState(timestamp, status = {}) {
       ? ` (${status.page || 0}/${status.totalPages})`
       : "";
 
-    UI.lastSync.textContent = `${status.message || "Syncing..."}${progress}`;
+    UI.lastSync.textContent = `${status.message || "Synchronisation..."}${progress}`;
     UI.syncButton.disabled = true;
-    UI.syncButton.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Syncing';
+    UI.syncButton.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> En cours';
     return;
   }
 
   UI.lastSync.textContent = formatLastSync(timestamp);
   UI.syncButton.disabled = false;
-  UI.syncButton.innerHTML = '<i class="mdi mdi-sync"></i> Sync';
+  UI.syncButton.innerHTML = '<i class="mdi mdi-sync"></i> Synchroniser';
 }
 
 function renderDashboardCacheState(cache = {}) {
@@ -67,7 +67,7 @@ function renderDashboardCacheState(cache = {}) {
     return;
   }
 
-  const prefix = cache.hit ? "Loaded from dashboard cache" : "Dashboard cache refreshed";
+  const prefix = cache.hit ? "Chargé depuis le cache du tableau de bord" : "Cache du tableau de bord actualisé";
   UI.dashboardCacheState.textContent = `${prefix} · ${new Date(cachedAt).toLocaleTimeString()}`;
 }
 
@@ -95,11 +95,11 @@ async function pollSyncUntilFinished() {
     }
 
     if (data.status?.error) {
-      showToast(data.status.message || "Sync failed", "error");
+      showToast(data.status.message || "Échec de la synchro", "error");
       return;
     }
 
-    showToast(data.status?.message || "Sync completed", "success");
+    showToast(data.status?.message || "Synchro terminée", "success");
     if (isDashboardVisible()) await reloadDashboardData({ skipSyncRefresh: true });
   } catch (error) {
     console.error("Could not read sync status:", error);
@@ -118,7 +118,7 @@ function initSyncControls() {
         method: "POST",
         cache: "no-store"
       });
-      showToast("Sync started", "info");
+      showToast("Synchro démarrée", "info");
     } catch (error) {
       if (error.status !== 409) {
         showToast(error.message, "error");
@@ -126,7 +126,7 @@ function initSyncControls() {
         return;
       }
 
-      showToast("A sync is already running", "info");
+      showToast("Une synchro est déjà en cours", "info");
     }
 
     pollSyncUntilFinished();
@@ -170,7 +170,7 @@ async function reloadDashboardData({ skipSyncRefresh = false } = {}) {
     if (error.name === "AbortError") return;
 
     console.error("Error loading dashboard:", error);
-    showToast(error.message || "Error loading dashboard", "error");
+    showToast(error.message || "Erreur de chargement du tableau de bord", "error");
   } finally {
     if (loadId === dashboardLoadCounter) UI.loading.style.display = "none";
   }

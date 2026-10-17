@@ -9,14 +9,14 @@ export async function showAlbumModal({ album, artist, image, plays }) {
   const currentRequest = ++requestId;
   document.getElementById("album-modal-title").textContent = album;
   document.getElementById("album-modal-artist").textContent = artist;
-  document.getElementById("album-modal-plays").textContent = `${plays} plays`;
+  document.getElementById("album-modal-plays").textContent = `${plays} écoutes`;
 
   const imageElement = document.getElementById("album-modal-image");
   imageElement.src = safeImageUrl(image, PLACEHOLDER);
   imageElement.alt = album;
 
   const tracksElement = document.getElementById("album-modal-tracks");
-  tracksElement.innerHTML = '<div class="album-modal-tracks-empty">Loading tracks...</div>';
+  tracksElement.innerHTML = '<div class="album-modal-tracks-empty">Chargement des morceaux...</div>';
 
   const modalElement = document.getElementById("album-cover-modal");
   bootstrap.Modal.getOrCreateInstance(modalElement).show();
@@ -39,7 +39,7 @@ export async function showAlbumModal({ album, artist, image, plays }) {
       <div class="track-row">
         <span class="track-position">${index + 1}</span>
         <span class="track-name">${escapeHTML(track.track)}</span>
-        <span class="track-plays">${Number(track.plays).toLocaleString()} plays</span>
+        <span class="track-plays">${Number(track.plays).toLocaleString()} écoutes</span>
       </div>
     `).join("");
   } catch (error) {

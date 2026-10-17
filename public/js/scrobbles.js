@@ -40,7 +40,7 @@ export async function loadScrobbles(reset = true) {
           <div class="scrobble-artist">${escapeHTML(scrobble.artist)}</div>
           <div class="scrobble-time">
             ${scrobble.nowPlaying
-              ? '<i class="mdi mdi-access-point me-1 text-green"></i>Listening now'
+              ? '<i class="mdi mdi-access-point me-1 text-green"></i>En écoute'
               : timeAgo(scrobble.date)}
           </div>
         </div>
@@ -82,7 +82,7 @@ document.getElementById("scrobbles-list")?.addEventListener("click", async event
   if (!link || !link.dataset.date) return;
 
   const confirmed = window.confirm(
-    "Also remove this scrobble from the local database (your_lastfm stats)?"
+    "Supprimer aussi ce scrobble de la base locale (stats your_lastfm) ?"
   );
   if (!confirmed) return;
 
@@ -98,7 +98,7 @@ document.getElementById("scrobbles-list")?.addEventListener("click", async event
     });
   } catch (error) {
     console.error("Error deleting scrobble locally:", error);
-    window.alert(`Could not delete the scrobble locally: ${error.message}`);
+    window.alert(`Impossible de supprimer le scrobble localement : ${error.message}`);
   }
 });
 
@@ -106,8 +106,8 @@ function timeAgo(timestamp) {
   if (!timestamp) return "";
 
   const diff = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} h ago`;
-  return `${Math.floor(diff / 86400)} days ago`;
+  if (diff < 60) return "à l'instant";
+  if (diff < 3600) return `il y a ${Math.floor(diff / 60)} min`;
+  if (diff < 86400) return `il y a ${Math.floor(diff / 3600)} h`;
+  return `il y a ${Math.floor(diff / 86400)} j`;
 }

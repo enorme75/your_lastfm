@@ -123,6 +123,14 @@ Deezer (Spotify non requis).
 - Point en suspens : identité git auto-détectée (`@MacBook-Air-de-Martin.local`)
   à corriger avec `git config --global user.email` avant le premier push.
   **Réglé** (2026-10-17) : `enorme75 <29152882+enorme75@users.noreply.github.com>`.
+- **Interface traduite en français** (2026-10-17) : tous les libellés du HTML
+  et des modules `public/js/*`, plus les chaînes backend visibles dans l'UI
+  (messages de synchro `sync.js`, notes de comparaison `dashboardFilter.js`,
+  erreurs `filters.js`/`leaderboardRange.js`/`api.js`). Les tests qui
+  verrouillaient les libellés anglais ont été mis à jour. Dates au format
+  JJ/MM/AAAA via `public/js/dates.js`. « Scrobbles » et noms propres
+  (Last.fm, YourLastFM) conservés. `public/js/csv.js` est du code mort
+  non importé, non traduit.
 - **Feature 2 faite** (2026-10-17) : heatmap d'activité 12 mois (DOM/CSS
   pur, pas de plugin Chart.js), plays per week (bar), top artists over
   time (line, top 6 par mois). **Déplacés sur une page « Insights »

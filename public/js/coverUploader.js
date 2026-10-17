@@ -20,14 +20,14 @@ export function renderCover({
       <img
         src="${escapeAttribute(imageUrl)}"
         class="cover-img"
-        alt="${escapeAttribute(`${album || "Album"} cover`)}"
+        alt="${escapeAttribute(`${album || "Album"} — pochette`)}"
         loading="lazy"
       />
 
       ${!hasImage ? `
         <div class="cover-overlay">
-          <span>＋ Add cover</span>
-          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Upload cover for ${escapeAttribute(album)}" />
+          <span>＋ Ajouter une pochette</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Envoyer une pochette pour ${escapeAttribute(album)}" />
         </div>
       ` : ""}
     </div>
@@ -64,7 +64,7 @@ export function initCoverUploads() {
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-          throw new Error(data.error || "Cover upload failed");
+          throw new Error(data.error || "Échec de l'envoi de la pochette");
         }
 
         wrapper.innerHTML = `

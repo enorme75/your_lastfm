@@ -34,21 +34,21 @@ test("accepts an inclusive custom range", () => {
 test("rejects invalid, future, reversed, and oversized ranges", () => {
   assert.throws(
     () => parseLeaderboardRange({ from: "2026-02-30", to: "2026-03-01" }, { now: FIXED_NOW }),
-    /not a valid date/
+    /pas une date valide/
   );
   assert.throws(
     () => parseLeaderboardRange({ from: "2026-08-03", to: "2026-08-03" }, { now: FIXED_NOW }),
-    /future/
+    /futur/
   );
   assert.throws(
     () => parseLeaderboardRange({ from: "2026-08-01", to: "2026-07-01" }, { now: FIXED_NOW }),
-    /before or equal/
+    /antérieure ou égale/
   );
   assert.throws(
     () => parseLeaderboardRange({ from: "2025-01-01", to: "2026-08-02" }, {
       now: FIXED_NOW,
       maxDays: 366
     }),
-    /limited to 366 days/
+    /limitées à 366 jours/
   );
 });

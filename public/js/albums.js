@@ -25,7 +25,7 @@ export function renderAlbums(albums = []) {
         href="${escapeAttribute(album.url || "#")}"
         target="_blank"
         rel="noopener noreferrer"
-        title="Open album on Last.fm"
+        title="Ouvrir l'album sur Last.fm"
       >
         <strong>${escapeHTML(album.album)}</strong>
         <i class="mdi mdi-open-in-new"></i>
@@ -35,7 +35,7 @@ export function renderAlbums(albums = []) {
         href="${escapeAttribute(album.artist_url || "#")}"
         target="_blank"
         rel="noopener noreferrer"
-        title="Open artist on Last.fm"
+        title="Ouvrir l'artiste sur Last.fm"
       >${escapeHTML(album.artist)}</a>
       <small>${Number(album.plays).toLocaleString()} plays</small>
     `;
