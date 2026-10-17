@@ -122,6 +122,17 @@ Deezer (Spotify non requis).
     (72 px sur mobile).
 - Point en suspens : identité git auto-détectée (`@MacBook-Air-de-Martin.local`)
   à corriger avec `git config --global user.email` avant le premier push.
+  **Réglé** (2026-10-17) : `enorme75 <29152882+enorme75@users.noreply.github.com>`.
+- **Feature 2 faite** (2026-10-17) : heatmap d'activité 12 mois (DOM/CSS
+  pur, pas de plugin Chart.js), plays per week (bar), top artists over
+  time (line, top 6 par mois). Backend dans `src/services/dashboard.js`
+  (`getActivityCalendar`, `getPlaysPerWeek`, `getArtistEvolution`),
+  servis via le payload combiné `/api/dashboard` (donc cachés par
+  `dashboard_cache`). Front : `charts.js` (`renderActivityHeatmap`,
+  `renderWeeklyChart`, `renderArtistEvolution`), câblés dans `main.js`.
+  Notes : l'heatmap est volontairement indépendante des filtres (toujours
+  12 derniers mois, tz du navigateur) ; l'évolution artistes suit le
+  filtre de période sélectionné.
 - Reste : ajustements éventuels du layout, puis feature 2 (nouveaux
   graphiques) et feature 3 (pages artistes + bios) selon la roadmap.
 

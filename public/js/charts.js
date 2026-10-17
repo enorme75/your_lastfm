@@ -103,6 +103,119 @@ export function renderListeningClock(data = {}) {
     : `Peak: ${String(peakHour).padStart(2, "0")}:00–${String((peakHour + 1) % 24).padStart(2, "0")}:00 local time · ${Number(data.peakPlays || 0).toLocaleString()} plays`;
 }
 
+export function renderWeeklyChart(data = []) {
+  const options = commonOptions();
+  options.scales.x.ticks.maxTicksLimit = 12;
+  options.plugins.legend.display = false;
+
+  replaceChart("weekly", {
+    type: "bar",
+    data: {
+      labels: data.map(item => item.week),
+      datasets: [{
+        label: "Plays per week",
+        data: data.map(item => item.plays),
+        backgroundColor: "rgba(255, 115, 2, 0.6)",
+        borderRadius: 4,
+        maxBarThickness: 20
+      }]
+    },
+    options
+  });
+}
+
+const EVOLUTION_COLORS = [
+  "#ff7302",
+  "#5ddc81",
+  "#5ca8ff",
+  "#ffd166",
+  "#c792ea",
+  "#ff6b8a"
+];
+
+export function renderArtistEvolution(evolution = {}) {
+  const artists = Array.isArray(evolution.artists) ? evolution.artists : [];
+  const months = Array.isArray(evolution.months) ? evolution.months : [];
+  const series = Array.isArray(evolution.series) ? evolution.series : [];
+
+  const playsByArtist = new Map(
+    artists.map(artist => [
+      artist,
+      new Map(
+        series
+          .filter(row => row.artist === artist)
+          .map(row => [row.month, Number(row.plays)])
+      )
+    ])
+  );
+
+  replaceChart("artists-evolution", {
+    type: "line",
+    data: {
+      labels: months,
+      datasets: artists.map((artist, index) => ({
+        label: artist,
+        data: months.map(month => playsByArtist.get(artist)?.get(month) || 0),
+        borderColor: EVOLUTION_COLORS[index % EVOLUTION_COLORS.length],
+        backgroundColor: EVOLUTION_COLORS[index % EVOLUTION_COLORS.length],
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.3,
+        fill: false
+      }))
+    },
+    options: commonOptions()
+  });
+}
+
+function localDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function activityLevel(plays, max) {
+  if (plays <= 0) return 0;
+  return Math.min(4, Math.ceil((plays / max) * 4));
+}
+
+export function renderActivityHeatmap(days = []) {
+  const container = document.getElementById("activity-heatmap");
+  if (!container) return;
+
+  const playsByDay = new Map(days.map(item => [item.day, Number(item.plays)]));
+  const maxPlays = Math.max(1, ...days.map(item => Number(item.plays)));
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const weekdayOffset = (today.getDay() + 6) % 7;
+  const start = new Date(today);
+  start.setDate(today.getDate() - weekdayOffset - 52 * 7);
+
+  let html = "";
+  for (let week = 0; week < 53; week++) {
+    html += '<div class="heatmap-col">';
+    for (let weekday = 0; weekday < 7; weekday++) {
+      const cellDate = new Date(start);
+      cellDate.setDate(start.getDate() + week * 7 + weekday);
+
+      if (cellDate > today) {
+        html += '<div class="heatmap-cell heatmap-future"></div>';
+        continue;
+      }
+
+      const key = localDateKey(cellDate);
+      const plays = playsByDay.get(key) || 0;
+      const level = activityLevel(plays, maxPlays);
+      html += `<div class="heatmap-cell level-${level}" title="${key} · ${plays.toLocaleString()} plays"></div>`;
+    }
+    html += "</div>";
+  }
+
+  container.innerHTML = html;
+}
+
 export async function loadChart({ url, canvasId, labelKey, valueKey, label }) {
   const data = await fetchJSON(`${url}${buildQuery()}`);
 

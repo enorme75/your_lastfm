@@ -245,6 +245,57 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-12">
+                            <div class="card bg-light shadow-sm">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-calendar-month-outline text-green"></i>
+                                        <span>Activity (last 12 months)</span>
+                                    </div>
+                                    <div class="heatmap-scroll">
+                                        <div id="activity-heatmap" class="heatmap-grid"></div>
+                                    </div>
+                                    <div class="heatmap-legend">
+                                        <span class="text-muted me-1">Less</span>
+                                        <span class="heatmap-cell level-0"></span>
+                                        <span class="heatmap-cell level-1"></span>
+                                        <span class="heatmap-cell level-2"></span>
+                                        <span class="heatmap-cell level-3"></span>
+                                        <span class="heatmap-cell level-4"></span>
+                                        <span class="text-muted ms-1">More</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-md-12">
+                            <div class="card bg-light shadow-sm h-100">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-calendar-week text-green"></i>
+                                        <span>Plays per Week</span>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="weekly"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-md-12">
+                            <div class="card bg-light shadow-sm h-100">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-chart-areaspline text-green"></i>
+                                        <span>Top Artists Over Time</span>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="artists-evolution"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </section>
                 </section>
 

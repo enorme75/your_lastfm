@@ -139,6 +139,72 @@ function getListeningClock(filter, timezoneOffset) {
   };
 }
 
+function getPlaysPerWeek(filter) {
+  return db.prepare(`
+    SELECT
+      strftime('%Y-%W', played_at, 'unixepoch') AS week,
+      COUNT(*) AS plays
+    FROM scrobbles
+    ${whereClause(filter)}
+    GROUP BY week
+    ORDER BY week
+  `).all(...filter.params);
+}
+
+function getActivityCalendar(timezoneOffset, now = Date.now()) {
+  const modifier = `${timezoneOffset > 0 ? "-" : "+"}${Math.abs(timezoneOffset)} minutes`;
+  const shifted = new Date(now - timezoneOffset * 60000);
+  const start = new Date(shifted.getTime() - 370 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+
+  return db.prepare(`
+    SELECT
+      date(played_at, 'unixepoch', ?) AS day,
+      COUNT(*) AS plays
+    FROM scrobbles
+    WHERE date(played_at, 'unixepoch', ?) >= ?
+    GROUP BY day
+    ORDER BY day
+  `).all(modifier, modifier, start);
+}
+
+function getArtistEvolution(filter, topCount = 6) {
+  const topArtists = db.prepare(`
+    SELECT artist
+    FROM scrobbles
+    ${whereClause(filter)}
+    GROUP BY artist
+    ORDER BY COUNT(*) DESC
+    LIMIT ?
+  `).all(...filter.params, topCount);
+
+  if (topArtists.length === 0) {
+    return { artists: [], months: [], series: [] };
+  }
+
+  const placeholders = topArtists.map(() => "?").join(", ");
+  const series = db.prepare(`
+    SELECT
+      artist,
+      strftime('%Y-%m', played_at, 'unixepoch') AS month,
+      COUNT(*) AS plays
+    FROM scrobbles
+    WHERE artist IN (${placeholders})
+      ${filter.where ? `AND ${filter.where}` : ""}
+    GROUP BY artist, month
+    ORDER BY month
+  `).all(...topArtists.map(row => row.artist), ...filter.params);
+
+  const months = [...new Set(series.map(row => row.month))].sort();
+
+  return {
+    artists: topArtists.map(row => row.artist),
+    months,
+    series
+  };
+}
+
 function createLookupTasks(artists, albums, tracks) {
   const tasks = new Map();
 
@@ -225,7 +291,10 @@ async function buildDashboard(query, context) {
   const albumRows = getTopAlbumRows(context.current);
   const trackRows = getTopTrackRows(context.current);
   const playsPerDay = getPlaysPerDay(context.current, query);
+  const playsPerWeek = getPlaysPerWeek(context.current);
   const listeningClock = getListeningClock(context.current, context.timezoneOffset);
+  const activityCalendar = getActivityCalendar(context.timezoneOffset);
+  const artistEvolution = getArtistEvolution(context.current);
   const lists = await enrichDashboardLists(artistRows, albumRows, trackRows);
 
   return {
@@ -234,7 +303,10 @@ async function buildDashboard(query, context) {
     topAlbums: lists.albums,
     topTracks: lists.tracks,
     playsPerDay,
-    listeningClock
+    playsPerWeek,
+    listeningClock,
+    activityCalendar,
+    artistEvolution
   };
 }
 
