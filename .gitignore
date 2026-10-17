@@ -5,4 +5,5 @@
 /data/stats.db
 
 pnpm-lock.yaml
-pnpm-workspace.yaml/DEV-NOTES.md
+pnpm-workspace.yaml
+/DEV-NOTES.md
