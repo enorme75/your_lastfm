@@ -835,6 +835,12 @@ strong {
   cursor: pointer;
 }
 
+#top-artists-podium .top-row:hover,
+#top-artists .top-row:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+}
+
 @media (max-width: 650px) {
   .artist-header {
     flex-direction: column;

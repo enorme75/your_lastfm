@@ -16,6 +16,7 @@ function artistRow(artist, index) {
         data-fallback="/images/artist-placeholder.png"
       />
       <div class="meta">
+        <strong>${escapeHTML(artist.artist)}</strong>
         <a
           class="music-link artist-name-link"
           href="${escapeAttribute(artist.url || "#")}"
@@ -23,10 +24,9 @@ function artistRow(artist, index) {
           rel="noopener noreferrer"
           title="${t("dashboard.openArtistOnLastfm")}"
         >
-          <strong>${escapeHTML(artist.artist)}</strong>
           <i class="mdi mdi-open-in-new"></i>
         </a>
-        <small>${Number(artist.plays).toLocaleString()} plays</small>
+        <small>${Number(artist.plays).toLocaleString()} ${escapeHTML(t("common.playsUnit"))}</small>
       </div>
     </div>
   `;
