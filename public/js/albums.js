@@ -2,7 +2,7 @@ import { t } from "./i18n.js";
 import { fetchJSON } from "./api.js";
 import { buildQuery } from "./filters.js";
 import { renderCover, initCoverUploads } from "./coverUploader.js";
-import { showAlbumModal } from "./albumModal.js";
+import { showAlbum } from "./albumPage.js";
 import { escapeAttribute, escapeHTML } from "./dom.js";
 
 export function renderAlbums(albums = []) {
@@ -42,12 +42,7 @@ export function renderAlbums(albums = []) {
     card.querySelector(".cover-wrapper")?.addEventListener("click", event => {
       if (event.target.matches("input, .cover-overlay, .cover-overlay *")) return;
 
-      showAlbumModal({
-        album: album.album,
-        artist: album.artist,
-        image: album.album_image,
-        plays: album.plays
-      });
+      showAlbum(album.artist, album.album);
     });
 
     fragment.appendChild(card);

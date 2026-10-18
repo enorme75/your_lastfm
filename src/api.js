@@ -21,6 +21,7 @@ const { getLastFmImage } = require("./utils/lastfmImage");
 const { getUserLibraryTrackUrl } = require("./utils/lastfmUrl");
 const { deleteScrobbleLocally } = require("./services/scrobbleDeletion");
 const { getArtistPage } = require("./services/artistPage");
+const { getAlbumPage } = require("./services/albumPage");
 const { ensureAlbumCover } = require("./services/albumCoverCache");
 const { ensureArtistImage } = require("./services/artistImageCache");
 const { importScrobbleCSV } = require("./services/importScrobbleCSV");
@@ -168,6 +169,24 @@ app.get("/api/artist/:name", asyncRoute(async (req, res) => {
 
   if (!page || !page.artist) {
     const error = new Error("Artist not found in your library");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  res.set({
+    "X-Dashboard-Cache": page.cache.hit ? "HIT" : "MISS",
+    "X-Dashboard-Cache-Age": String(page.cache.ageMs)
+  });
+  res.json(page);
+}));
+
+app.get("/api/album/:artist/:album", asyncRoute(async (req, res) => {
+  setNoStore(res);
+
+  const page = await getAlbumPage(req.params.artist, req.params.album);
+
+  if (!page || !page.album) {
+    const error = new Error("Album not found in your library");
     error.statusCode = 404;
     throw error;
   }

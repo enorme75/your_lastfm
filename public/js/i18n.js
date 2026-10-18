@@ -267,6 +267,12 @@ const DICTIONARY = {
     viewPage: { fr: "Voir la page de l'artiste", en: "Open the artist page" },
     loadError: { fr: "Impossible de charger la page artiste", en: "Could not load the artist page" }
   },
+  album: {
+    back: { fr: "Retour", en: "Back" },
+    tracks: { fr: "Titres de l'album", en: "Album tracks" },
+    tracksStat: { fr: "{count} titres", en: "{count} tracks" },
+    viewPage: { fr: "Voir la page de l'album", en: "Open the album page" }
+  },
   months: {
     jan: { fr: "Janvier", en: "January" },
     feb: { fr: "Février", en: "February" },

@@ -14,6 +14,7 @@ import { initSharePage } from "./share.js";
 import { loadFriends } from "./friends.js";
 import { loadLeaderboards } from "./leaderboards.js";
 import { loadArtist, showArtist, getCurrentArtist } from "./artistPage.js";
+import { loadAlbum, showAlbum, getCurrentAlbum } from "./albumPage.js";
 
 const UI = {
   loading: document.getElementById("global-loading"),
@@ -224,7 +225,10 @@ window.addEventListener("resize", () => {
 
 function toggleView(viewName) {
   if (!document.getElementById(`${viewName}-view`)) viewName = "dashboard";
-  if (viewName !== "artist" && location.hash.startsWith("#artist/")) {
+  if (viewName !== "artist" && viewName !== "album" && location.hash.startsWith("#artist/")) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  if (viewName !== "album" && viewName !== "artist" && location.hash.startsWith("#album/")) {
     history.replaceState(null, "", location.pathname + location.search);
   }
   localStorage.setItem("activeView", viewName);
@@ -256,6 +260,14 @@ function toggleView(viewName) {
     case "artist":
       loadArtist(getCurrentArtist());
       break;
+    case "album": {
+      const current = getCurrentAlbum();
+      if (current) {
+        const [artist, album] = current.split("\u0000");
+        loadAlbum(artist, album);
+      }
+      break;
+    }
     case "account":
       loadAccount();
       break;
@@ -269,12 +281,38 @@ function parseArtistHash() {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
+function parseAlbumHash() {
+  const match = /^#album\/(.+)\/(.+)$/.exec(location.hash);
+  return match
+    ? { artist: decodeURIComponent(match[1]), album: decodeURIComponent(match[2]) }
+    : null;
+}
+
 function initArtistRouting() {
   document.getElementById("artist-back")?.addEventListener("click", () => {
     toggleView("dashboard");
   });
 
+  document.getElementById("album-back")?.addEventListener("click", () => {
+    const current = getCurrentAlbum();
+    if (current) {
+      const [artist] = current.split("\u0000");
+      if (artist) {
+        showArtist(artist);
+        return;
+      }
+    }
+    toggleView("dashboard");
+  });
+
   window.addEventListener("hashchange", () => {
+    const album = parseAlbumHash();
+    if (album) {
+      loadAlbum(album.artist, album.album);
+      toggleView("album");
+      return;
+    }
+
     const artist = parseArtistHash();
     if (!artist) return;
     loadArtist(artist);
@@ -282,6 +320,16 @@ function initArtistRouting() {
   });
 
   document.addEventListener("click", event => {
+    const albumTarget = event.target.closest("[data-album]");
+    const albumParts = albumTarget?.dataset?.album?.split("\u0000");
+    if (albumParts?.length === 2 && !event.target.closest("a[href]")) {
+      document.querySelectorAll(".modal.show").forEach(modal => {
+        window.bootstrap?.getInstance(modal)?.hide();
+      });
+      showAlbum(albumParts[0], albumParts[1]);
+      return;
+    }
+
     if (event.target.closest("a[href]")) return;
     const target = event.target.closest("[data-artist]");
     const artist = target?.dataset?.artist;
@@ -331,11 +379,15 @@ document.addEventListener("DOMContentLoaded", () => {
   initLocaleToggle();
   initArtistRouting();
 
+  const albumFromHash = parseAlbumHash();
   const artistFromHash = parseArtistHash();
-  const savedView = artistFromHash
-    ? "artist"
-    : localStorage.getItem("activeView") || "dashboard";
+  const savedView = albumFromHash
+    ? "album"
+    : artistFromHash
+      ? "artist"
+      : localStorage.getItem("activeView") || "dashboard";
 
   toggleView(savedView);
+  if (albumFromHash) loadAlbum(albumFromHash.artist, albumFromHash.album);
   if (artistFromHash) loadArtist(artistFromHash);
 });

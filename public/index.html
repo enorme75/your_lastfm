@@ -315,21 +315,21 @@
                 </section>
 
                 <section id="artist-view" class="d-none mt-4">
-                    <div class="artist-header">
+                    <div class="detail-header">
                         <img
                             id="artist-image"
-                            class="artist-image"
+                            class="detail-image"
                             src="/images/artist-placeholder.png"
                             alt=""
                             data-fallback="/images/artist-placeholder.png"
                         >
-                        <div class="artist-header-copy">
+                        <div class="detail-copy">
                             <button id="artist-back" class="btn btn-outline-light btn-sm mb-3">
                                 <i class="mdi mdi-arrow-left"></i>
                                 <span data-i18n="artist.back">Retour</span>
                             </button>
                             <h1 id="artist-name"></h1>
-                            <div id="artist-stats" class="artist-stats mb-2"></div>
+                            <div id="artist-stats" class="detail-stats mb-2"></div>
                             <a
                                 id="artist-lastfm"
                                 class="music-link"
@@ -345,7 +345,7 @@
 
                     <div class="card bg-light shadow-sm mb-4">
                         <div class="card-body text-light">
-                            <div id="artist-bio" class="artist-bio"></div>
+                            <div id="artist-bio" class="detail-bio"></div>
                         </div>
                     </div>
 
@@ -374,6 +374,51 @@
                             </div>
                         </div>
                     </section>
+                </section>
+
+                <section id="album-view" class="d-none mt-4">
+                    <div class="detail-header">
+                        <img
+                            id="album-image"
+                            class="detail-image"
+                            src="/images/cover-placeholder.svg"
+                            alt=""
+                            data-fallback="/images/cover-placeholder.svg"
+                        >
+                        <div class="detail-copy">
+                            <button id="album-back" class="btn btn-outline-light btn-sm mb-3">
+                                <i class="mdi mdi-arrow-left"></i>
+                                <span data-i18n="album.back">Retour</span>
+                            </button>
+                            <h1 id="album-name"></h1>
+                            <div class="mb-2">
+                                <a id="album-artist" class="music-link" data-artist="" title="">
+                                    <strong></strong>
+                                </a>
+                            </div>
+                            <div id="album-stats" class="detail-stats mb-2"></div>
+                            <a
+                                id="album-lastfm"
+                                class="music-link"
+                                href="#"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <i class="mdi mdi-open-in-new"></i>
+                                <span data-i18n="dashboard.openAlbumOnLastfm">Ouvrir l'album sur Last.fm</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light shadow-sm">
+                        <div class="card-body text-light">
+                            <div class="card-header-title mb-3">
+                                <i class="mdi mdi-playlist-music-outline text-green"></i>
+                                <span data-i18n="album.tracks">Titres de l'album</span>
+                            </div>
+                            <div id="album-tracks" class="top-list top-rest artist-tracks"></div>
+                        </div>
+                    </div>
                 </section>
 
                 <section id="scrobbles-view" class="d-none mt-4">
@@ -764,24 +809,6 @@
                         </div>
                         <div id="leaderboard-detail-error" class="alert alert-danger d-none"></div>
                         <div id="leaderboard-detail-list" class="leaderboard-detail-list d-none"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="album-cover-modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title" id="album-modal-title"></h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img id="album-modal-image" class="album-modal-cover mb-3" alt="">
-                        <div id="album-modal-artist" class="text-secondary"></div>
-                        <small id="album-modal-plays" class="mt-1"></small>
-
-                        <div id="album-modal-tracks" class="album-modal-tracks text-start mt-3"></div>
                     </div>
                 </div>
             </div>
