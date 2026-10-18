@@ -314,13 +314,74 @@
                     </section>
                 </section>
 
+                <section id="artist-view" class="d-none mt-4">
+                    <div class="artist-header">
+                        <img
+                            id="artist-image"
+                            class="artist-image"
+                            src="/images/artist-placeholder.png"
+                            alt=""
+                            data-fallback="/images/artist-placeholder.png"
+                        >
+                        <div class="artist-header-copy">
+                            <button id="artist-back" class="btn btn-outline-light btn-sm mb-3">
+                                <i class="mdi mdi-arrow-left"></i>
+                                <span data-i18n="artist.back">Retour</span>
+                            </button>
+                            <h1 id="artist-name"></h1>
+                            <div id="artist-stats" class="artist-stats mb-2"></div>
+                            <a
+                                id="artist-lastfm"
+                                class="music-link"
+                                href="#"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <i class="mdi mdi-open-in-new"></i>
+                                <span data-i18n="dashboard.openArtistOnLastfm">Ouvrir l'artiste sur Last.fm</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light shadow-sm mb-4">
+                        <div class="card-body text-light">
+                            <div id="artist-bio" class="artist-bio"></div>
+                        </div>
+                    </div>
+
+                    <section class="row gy-4">
+                        <div class="col-xl-5 col-md-12">
+                            <div class="card bg-light shadow-sm h-100">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-playlist-music-outline text-green"></i>
+                                        <span data-i18n="artist.topTracks">Top titres</span>
+                                    </div>
+                                    <div id="artist-top-tracks" class="top-list top-rest"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-7 col-md-12">
+                            <div class="card bg-light shadow-sm h-100">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-album text-green"></i>
+                                        <span data-i18n="artist.albums">Albums écoutés</span>
+                                    </div>
+                                    <div id="artist-albums" class="artist-albums"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
                 <section id="scrobbles-view" class="d-none mt-4">
                     <div class="mb-3">
                         <i class="mdi mdi-history me-1 text-green"></i>
                         <span data-i18n="dashboard.recentScrobbles">Scrobbles récents</span>
                     </div>
-                    <div id="scrobbles-list" class="scrobbles-list"></div>
-                    <div class="text-center mt-4">
+                    <div id="scrobbles-list" class="scrobbles-list"></div>                    <div class="text-center mt-4">
                         <button
                             id="load-more-scrobbles"
                             class="btn btn-outline-light d-none"

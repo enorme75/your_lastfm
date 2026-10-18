@@ -254,6 +254,18 @@ const DICTIONARY = {
       en: "Could not connect to YourLastFM. Check whether the server is still running."
     }
   },
+  artist: {
+    back: { fr: "Retour", en: "Back" },
+    topTracks: { fr: "Top titres", en: "Top tracks" },
+    albums: { fr: "Albums écoutés", en: "Albums listened" },
+    noBio: { fr: "Pas de biographie disponible.", en: "No biography available." },
+    playsStat: { fr: "{count} écoutes", en: "{count} plays" },
+    tracksStat: { fr: "{count} titres", en: "{count} tracks" },
+    albumsStat: { fr: "{count} albums", en: "{count} albums" },
+    firstListen: { fr: "Première écoute", en: "First listen" },
+    lastListen: { fr: "Dernière écoute", en: "Last listen" },
+    loadError: { fr: "Impossible de charger la page artiste", en: "Could not load the artist page" }
+  },
   months: {
     jan: { fr: "Janvier", en: "January" },
     feb: { fr: "Février", en: "February" },

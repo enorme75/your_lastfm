@@ -741,6 +741,117 @@ strong {
 }
 
 /* =========================
+   ARTIST PAGE
+========================= */
+.artist-header {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.artist-image {
+  width: 240px;
+  height: 240px;
+  border-radius: 18px;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+.artist-header-copy {
+  min-width: 0;
+}
+
+.artist-header-copy h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  overflow-wrap: break-word;
+}
+
+.artist-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.artist-stats strong {
+  color: var(--text-primary);
+}
+
+.artist-stat {
+  white-space: nowrap;
+}
+
+.artist-bio {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #d6d6d6;
+}
+
+.artist-albums {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.artist-album {
+  text-align: center;
+}
+
+.artist-album img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+
+.artist-album strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.artist-album small {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.artist-album-year {
+  color: var(--brand-orange);
+  font-weight: 600;
+}
+
+#top-artists-podium .top-row,
+#top-artists .top-row {
+  cursor: pointer;
+}
+
+@media (max-width: 650px) {
+  .artist-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .artist-image {
+    width: 180px;
+    height: 180px;
+  }
+
+  .artist-header-copy h1 {
+    font-size: 2.2rem;
+  }
+}
+
+/* =========================
    SIDEBAR
 ========================= */
 .sidebar {

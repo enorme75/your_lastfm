@@ -53,6 +53,26 @@ db.prepare(`
 `).run();
 
 db.prepare(`
+  CREATE TABLE IF NOT EXISTS artist_info (
+    artist TEXT PRIMARY KEY,
+    lang TEXT,
+    bio TEXT,
+    lastfm_url TEXT,
+    updated_at INTEGER
+  )
+`).run();
+
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS album_info (
+    artist TEXT NOT NULL,
+    album TEXT NOT NULL,
+    release_year INTEGER,
+    updated_at INTEGER,
+    PRIMARY KEY (artist, album)
+  )
+`).run();
+
+db.prepare(`
   CREATE TABLE IF NOT EXISTS metadata (
     key TEXT PRIMARY KEY,
     value TEXT

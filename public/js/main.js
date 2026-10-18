@@ -13,6 +13,7 @@ import { loadAccount } from "./account.js";
 import { initSharePage } from "./share.js";
 import { loadFriends } from "./friends.js";
 import { loadLeaderboards } from "./leaderboards.js";
+import { loadArtist, showArtist, getCurrentArtist } from "./artistPage.js";
 
 const UI = {
   loading: document.getElementById("global-loading"),
@@ -223,6 +224,9 @@ window.addEventListener("resize", () => {
 
 function toggleView(viewName) {
   if (!document.getElementById(`${viewName}-view`)) viewName = "dashboard";
+  if (viewName !== "artist" && location.hash.startsWith("#artist/")) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
   localStorage.setItem("activeView", viewName);
 
   UI.sidebarButtons.forEach(button => {
@@ -249,12 +253,42 @@ function toggleView(viewName) {
     case "insights":
       loadInsights();
       break;
+    case "artist":
+      loadArtist(getCurrentArtist());
+      break;
     case "account":
       loadAccount();
       break;
   }
 
   closeSidebarOnMobile();
+}
+
+function parseArtistHash() {
+  const match = /^#artist\/(.+)$/.exec(location.hash);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function initArtistRouting() {
+  document.getElementById("artist-back")?.addEventListener("click", () => {
+    toggleView("dashboard");
+  });
+
+  window.addEventListener("hashchange", () => {
+    const artist = parseArtistHash();
+    if (!artist) return;
+    toggleView("artist");
+    loadArtist(artist);
+  });
+
+  for (const containerId of ["top-artists-podium", "top-artists"]) {
+    document.getElementById(containerId)?.addEventListener("click", event => {
+      if (event.target.closest("a")) return;
+      const row = event.target.closest(".top-row");
+      const artist = row?.dataset?.artist;
+      if (artist) showArtist(artist);
+    });
+  }
 }
 
 UI.sidebarButtons.forEach(button => {
@@ -291,7 +325,13 @@ document.addEventListener("DOMContentLoaded", () => {
   initSharePage();
   initSyncControls();
   initLocaleToggle();
+  initArtistRouting();
 
-  const savedView = localStorage.getItem("activeView") || "dashboard";
+  const artistFromHash = parseArtistHash();
+  const savedView = artistFromHash
+    ? "artist"
+    : localStorage.getItem("activeView") || "dashboard";
+
   toggleView(savedView);
+  if (artistFromHash) loadArtist(artistFromHash);
 });

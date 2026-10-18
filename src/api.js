@@ -20,6 +20,7 @@ const { sanitizeError } = require("./utils/sanitizeAxios");
 const { getLastFmImage } = require("./utils/lastfmImage");
 const { getUserLibraryTrackUrl } = require("./utils/lastfmUrl");
 const { deleteScrobbleLocally } = require("./services/scrobbleDeletion");
+const { getArtistPage } = require("./services/artistPage");
 const { ensureAlbumCover } = require("./services/albumCoverCache");
 const { ensureArtistImage } = require("./services/artistImageCache");
 const { importScrobbleCSV } = require("./services/importScrobbleCSV");
@@ -155,6 +156,27 @@ app.get("/api/insights", asyncRoute(async (req, res) => {
     "X-Dashboard-Cache-Age": String(insights.cache.ageMs)
   });
   res.json(insights);
+}));
+
+app.get("/api/artist/:name", asyncRoute(async (req, res) => {
+  setNoStore(res);
+  const lang = /^[a-z]{2}$/.test(String(req.query.lang || ""))
+    ? String(req.query.lang)
+    : "en";
+
+  const page = await getArtistPage(req.params.name, { lang });
+
+  if (!page || !page.artist) {
+    const error = new Error("Artist not found in your library");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  res.set({
+    "X-Dashboard-Cache": page.cache.hit ? "HIT" : "MISS",
+    "X-Dashboard-Cache-Age": String(page.cache.ageMs)
+  });
+  res.json(page);
 }));
 
 app.get("/api/top-artists", asyncRoute(async (req, res) => {

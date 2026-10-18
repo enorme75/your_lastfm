@@ -5,7 +5,7 @@ import { escapeAttribute, escapeHTML, installImageFallbacks, safeImageUrl } from
 
 function artistRow(artist, index) {
   return `
-    <div class="top-row">
+    <div class="top-row" data-artist="${escapeAttribute(artist.artist)}">
       <span class="rank">${index + 1}</span>
       <img
         src="${escapeAttribute(safeImageUrl(artist.image))}"
