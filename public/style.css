@@ -830,6 +830,25 @@ strong {
   font-weight: 600;
 }
 
+/* Artist page top tracks: no cover column, wider rows */
+.artist-tracks .top-row {
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.artist-tracks .top-row .rank {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.artist-tracks .top-row .meta strong {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 #top-artists-podium .top-row,
 #top-artists .top-row {
   cursor: pointer;
