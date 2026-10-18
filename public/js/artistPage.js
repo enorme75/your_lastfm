@@ -5,6 +5,7 @@ import { escapeAttribute, escapeHTML, installImageFallbacks, safeImageUrl } from
 
 let currentArtist = null;
 let loadId = 0;
+let activeRequest = null;
 
 export function getCurrentArtist() {
   return currentArtist;
@@ -13,6 +14,19 @@ export function getCurrentArtist() {
 export function showArtist(name) {
   if (!name) return;
   location.hash = `artist/${encodeURIComponent(name)}`;
+}
+
+function showLoadingState() {
+  const name = document.getElementById("artist-name");
+  if (name) name.textContent = "…";
+
+  for (const id of ["artist-stats", "artist-bio", "artist-top-tracks", "artist-albums"]) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = "";
+  }
+
+  const image = document.getElementById("artist-image");
+  if (image) image.src = "/images/artist-placeholder.png";
 }
 
 function renderArtistStats(data) {
@@ -116,8 +130,12 @@ function renderArtist(data) {
 
 export async function loadArtist(name) {
   if (!name) return;
+  if (name === currentArtist && activeRequest) return;
+
   currentArtist = name;
-  const requestId = ++loadId;
+  const request = ++loadId;
+  activeRequest = request;
+  showLoadingState();
 
   try {
     const lang = getLocale().slice(0, 2);
@@ -126,9 +144,11 @@ export async function loadArtist(name) {
       { cache: "no-store" }
     );
 
-    if (requestId !== loadId || currentArtist !== name) return;
+    if (request !== loadId || currentArtist !== name) return;
     renderArtist(data);
   } catch (error) {
     console.error("Error loading artist page:", error);
+  } finally {
+    if (activeRequest === request) activeRequest = null;
   }
 }

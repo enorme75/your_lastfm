@@ -277,8 +277,8 @@ function initArtistRouting() {
   window.addEventListener("hashchange", () => {
     const artist = parseArtistHash();
     if (!artist) return;
-    toggleView("artist");
     loadArtist(artist);
+    toggleView("artist");
   });
 
   document.addEventListener("click", event => {
