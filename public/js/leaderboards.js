@@ -288,7 +288,7 @@ function renderItems(result) {
           decoding="async"
           referrerpolicy="no-referrer"
         >
-        <div class="leaderboard-item-copy">
+        <div class="leaderboard-item-copy" data-artist="${escapeAttribute(item.artist || item.name)}">
           <strong>${title}</strong>
           ${item.artist ? `<span>${escapeHTML(item.artist)}</span>` : ""}
           <small>

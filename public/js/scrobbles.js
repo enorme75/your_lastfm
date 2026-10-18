@@ -26,7 +26,7 @@ export async function loadScrobbles(reset = true) {
     });
 
     const html = (data.tracks || []).map(scrobble => `
-      <div class="scrobble-item">
+      <div class="scrobble-item" data-artist="${escapeAttribute(scrobble.artist)}">
         <div class="scrobble-cover">
           ${scrobble.image
             ? `<img

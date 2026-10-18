@@ -30,10 +30,8 @@ function songCopy(row) {
       </a>
       <a
         class="music-link song-artist"
-        href="${escapeAttribute(row.artist_url || "#")}"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="${t("dashboard.openArtistOnLastfm")}"
+        data-artist="${escapeAttribute(row.artist)}"
+        title="${t("artist.viewPage")}"
       >${escapeHTML(row.artist)}</a>
     </div>
   `;

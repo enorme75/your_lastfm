@@ -96,7 +96,7 @@ async function loadComparison(friendUsername) {
 
 function renderCommonItem(item, friendUsername) {
   return `
-    <div class="common-item">
+    <div class="common-item" data-artist="${escapeAttribute(item.artist || item.name)}">
       <div class="common-img-wrap">
         <img
           src="${escapeAttribute(safeImageUrl(item.image, PLACEHOLDER_COVER))}"

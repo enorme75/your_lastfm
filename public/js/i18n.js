@@ -264,6 +264,7 @@ const DICTIONARY = {
     albumsStat: { fr: "{count} albums", en: "{count} albums" },
     firstListen: { fr: "Première écoute", en: "First listen" },
     lastListen: { fr: "Dernière écoute", en: "Last listen" },
+    viewPage: { fr: "Voir la page de l'artiste", en: "Open the artist page" },
     loadError: { fr: "Impossible de charger la page artiste", en: "Could not load the artist page" }
   },
   months: {

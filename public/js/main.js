@@ -281,14 +281,18 @@ function initArtistRouting() {
     loadArtist(artist);
   });
 
-  for (const containerId of ["top-artists-podium", "top-artists"]) {
-    document.getElementById(containerId)?.addEventListener("click", event => {
-      if (event.target.closest("a")) return;
-      const row = event.target.closest(".top-row");
-      const artist = row?.dataset?.artist;
-      if (artist) showArtist(artist);
+  document.addEventListener("click", event => {
+    if (event.target.closest("a[href]")) return;
+    const target = event.target.closest("[data-artist]");
+    const artist = target?.dataset?.artist;
+    if (!artist) return;
+
+    document.querySelectorAll(".modal.show").forEach(modal => {
+      window.bootstrap?.getInstance(modal)?.hide();
     });
-  }
+
+    showArtist(artist);
+  });
 }
 
 UI.sidebarButtons.forEach(button => {

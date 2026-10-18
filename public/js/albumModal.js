@@ -8,9 +8,11 @@ let requestId = 0;
 
 export async function showAlbumModal({ album, artist, image, plays }) {
   const currentRequest = ++requestId;
+  const artistElement = document.getElementById("album-modal-artist");
   document.getElementById("album-modal-title").textContent = album;
-  document.getElementById("album-modal-artist").textContent = artist;
-  document.getElementById("album-modal-plays").textContent = `${plays} écoutes`;
+  artistElement.textContent = artist;
+  artistElement.dataset.artist = artist;
+  document.getElementById("album-modal-plays").textContent = `${plays} ${t("common.playsUnit")}`;
 
   const imageElement = document.getElementById("album-modal-image");
   imageElement.src = safeImageUrl(image, PLACEHOLDER);

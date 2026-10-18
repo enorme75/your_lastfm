@@ -854,6 +854,10 @@ strong {
   cursor: pointer;
 }
 
+[data-artist] {
+  cursor: pointer;
+}
+
 #top-artists-podium .top-row:hover,
 #top-artists .top-row:hover {
   background-color: rgba(255, 255, 255, 0.04);

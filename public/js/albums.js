@@ -33,12 +33,10 @@ export function renderAlbums(albums = []) {
       </a>
       <a
         class="music-link album-artist-link"
-        href="${escapeAttribute(album.artist_url || "#")}"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="${t("dashboard.openArtistOnLastfm")}"
+        data-artist="${escapeAttribute(album.artist)}"
+        title="${t("artist.viewPage")}"
       >${escapeHTML(album.artist)}</a>
-      <small>${Number(album.plays).toLocaleString()} plays</small>
+      <small>${Number(album.plays).toLocaleString()} ${escapeHTML(t("common.playsUnit"))}</small>
     `;
 
     card.querySelector(".cover-wrapper")?.addEventListener("click", event => {
