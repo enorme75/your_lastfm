@@ -71,7 +71,7 @@ function renderAlbums(data) {
   if (!container) return;
 
   container.innerHTML = (data.albums || []).map(album => `
-    <div class="artist-album" data-album="${escapeAttribute(data.artist + "\u0000" + album.album)}">
+    <div class="artist-album" data-album-artist="${escapeAttribute(data.artist)}" data-album-name="${escapeAttribute(album.album)}">
       <a class="music-link" title="${escapeAttribute(t("album.viewPage"))}">
         <img
           src="${escapeAttribute(safeImageUrl(album.image))}

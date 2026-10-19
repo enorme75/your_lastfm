@@ -320,13 +320,14 @@ function initArtistRouting() {
   });
 
   document.addEventListener("click", event => {
-    const albumTarget = event.target.closest("[data-album]");
-    const albumParts = albumTarget?.dataset?.album?.split("\u0000");
-    if (albumParts?.length === 2 && !event.target.closest("a[href]")) {
+    const albumTarget = event.target.closest("[data-album-artist]");
+    const albumArtist = albumTarget?.dataset?.albumArtist;
+    const albumName = albumTarget?.dataset?.albumName;
+    if (albumArtist && albumName && !event.target.closest("a[href]")) {
       document.querySelectorAll(".modal.show").forEach(modal => {
         window.bootstrap?.getInstance(modal)?.hide();
       });
-      showAlbum(albumParts[0], albumParts[1]);
+      showAlbum(albumArtist, albumName);
       return;
     }
 
