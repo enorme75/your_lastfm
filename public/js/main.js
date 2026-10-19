@@ -400,7 +400,8 @@ function initArtistRouting() {
     const albumTarget = event.target.closest("[data-album-artist]");
     const albumArtist = albumTarget?.dataset?.albumArtist;
     const albumName = albumTarget?.dataset?.albumName;
-    if (albumArtist && albumName && !event.target.closest("a[href]")) {
+    const onUploadOverlay = event.target.closest(".cover-overlay") || event.target.tagName === "INPUT";
+    if (albumArtist && albumName && !event.target.closest("a[href]") && !onUploadOverlay) {
       document.querySelectorAll(".modal.show").forEach(modal => {
         window.bootstrap?.getInstance(modal)?.hide();
       });

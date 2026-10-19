@@ -18,14 +18,21 @@ function formatDuration(totalSeconds) {
 function songCopy(row) {
   return `
     <div class="song-copy">
+      <strong
+        class="song-title"
+        data-track-artist="${escapeAttribute(row.artist)}"
+        data-track-name="${escapeAttribute(row.track)}"
+        title="${t("track.viewPage")}"
+      >
+        ${escapeHTML(row.track)}
+      </strong>
       <a
-        class="music-link song-title"
+        class="music-link"
         href="${escapeAttribute(row.url || "#")}"
         target="_blank"
         rel="noopener noreferrer"
         title="${t("dashboard.openTrackOnLastfm")}"
       >
-        ${escapeHTML(row.track)}
         <i class="mdi mdi-open-in-new"></i>
       </a>
       <a
@@ -37,18 +44,27 @@ function songCopy(row) {
   `;
 }
 
+function albumCoverTarget(row) {
+  if (!row.album) return renderCover({ image: row.album_image, artist: row.artist, album: row.album });
+  return `
+    <div
+      class="song-cover-target"
+      data-album-artist="${escapeAttribute(row.artist)}"
+      data-album-name="${escapeAttribute(row.album)}"
+    >
+      ${renderCover({ image: row.album_image, artist: row.artist, album: row.album })}
+    </div>
+  `;
+}
+
 function songPodiumItem(row, index) {
   return `
     <div class="top-podium-item">
       <span class="rank">${index + 1}</span>
-      ${renderCover({
-        image: row.album_image,
-        artist: row.artist,
-        album: row.album
-      })}
+      ${albumCoverTarget(row)}
       <div>
         ${songCopy(row)}
-        <span class="top-podium-plays">${Number(row.plays).toLocaleString()} plays</span>
+        <span class="top-podium-plays">${Number(row.plays).toLocaleString()} ${escapeHTML(t("common.playsUnit"))}</span>
       </div>
     </div>
   `;
@@ -59,11 +75,7 @@ function songRow(row, index) {
     <div class="top-song-row">
       <span class="song-position">${index + 1}</span>
       <div class="song-main">
-        ${renderCover({
-          image: row.album_image,
-          artist: row.artist,
-          album: row.album
-        })}
+        ${albumCoverTarget(row)}
         ${songCopy(row)}
       </div>
       <span>${Number(row.plays).toLocaleString()}</span>

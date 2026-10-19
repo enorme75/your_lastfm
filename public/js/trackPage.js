@@ -75,6 +75,13 @@ function renderTrackPage(data) {
   if (image) {
     image.src = safeImageUrl(data.image) || "/images/cover-placeholder.svg";
     image.alt = data.track;
+    if (data.album) {
+      image.dataset.albumArtist = data.artist;
+      image.dataset.albumName = data.album;
+    } else {
+      delete image.dataset.albumArtist;
+      delete image.dataset.albumName;
+    }
     installImageFallbacks(image.parentElement);
   }
 
@@ -86,6 +93,20 @@ function renderTrackPage(data) {
     artistLink.dataset.artist = data.artist;
     artistLink.title = t("artist.viewPage");
     artistLink.querySelector("strong").textContent = data.artist;
+  }
+
+  const albumWrapper = document.getElementById("track-album-wrapper");
+  const albumLink = document.getElementById("track-album");
+  if (albumWrapper && albumLink) {
+    if (data.album) {
+      albumWrapper.classList.remove("d-none");
+      albumLink.dataset.albumArtist = data.artist;
+      albumLink.dataset.albumName = data.album;
+      albumLink.title = t("album.viewPage");
+      albumLink.textContent = data.album;
+    } else {
+      albumWrapper.classList.add("d-none");
+    }
   }
 
   renderTrackStats(data);

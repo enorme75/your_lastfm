@@ -37,8 +37,17 @@ export async function loadScrobbles(reset = true) {
             : '<div class="cover-placeholder"></div>'}
         </div>
         <div class="scrobble-info">
-          <div class="scrobble-track">${escapeHTML(scrobble.track)}</div>
-          <div class="scrobble-artist">${escapeHTML(scrobble.artist)}</div>
+          <div
+            class="scrobble-track"
+            data-track-artist="${escapeAttribute(scrobble.artist)}"
+            data-track-name="${escapeAttribute(scrobble.track)}"
+            title="${escapeAttribute(t("track.viewPage"))}"
+          >${escapeHTML(scrobble.track)}</div>
+          <div
+            class="scrobble-artist"
+            data-artist="${escapeAttribute(scrobble.artist)}"
+            title="${escapeAttribute(t("artist.viewPage"))}"
+          >${escapeHTML(scrobble.artist)}</div>
           <div class="scrobble-time">
             ${scrobble.nowPlaying
               ? `<i class="mdi mdi-access-point me-1 text-green"></i>${t("scrobbles.listeningNow")}`

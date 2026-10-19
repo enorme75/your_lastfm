@@ -951,6 +951,16 @@ strong {
   cursor: pointer;
 }
 
+.song-cover-target {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.scrobble-track:hover,
+.scrobble-artist:hover {
+  text-decoration: underline;
+}
+
 .search-query + .row {
   min-height: 60px;
 }
