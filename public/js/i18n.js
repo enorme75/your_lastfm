@@ -273,6 +273,11 @@ const DICTIONARY = {
     tracksStat: { fr: "{count} titres", en: "{count} tracks" },
     viewPage: { fr: "Voir la page de l'album", en: "Open the album page" }
   },
+  search: {
+    placeholder: { fr: "Rechercher artiste, album, titre...", en: "Search artist, album, track..." },
+    title: { fr: "Recherche", en: "Search" },
+    noResults: { fr: "Aucun résultat pour « {query} »", en: "No results for \"{query}\"" }
+  },
   months: {
     jan: { fr: "Janvier", en: "January" },
     feb: { fr: "Février", en: "February" },

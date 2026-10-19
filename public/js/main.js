@@ -15,6 +15,7 @@ import { loadFriends } from "./friends.js";
 import { loadLeaderboards } from "./leaderboards.js";
 import { loadArtist, showArtist, getCurrentArtist } from "./artistPage.js";
 import { loadAlbum, showAlbum, getCurrentAlbum } from "./albumPage.js";
+import { loadSearch, showSearch, getCurrentSearch } from "./search.js";
 
 const UI = {
   loading: document.getElementById("global-loading"),
@@ -225,10 +226,13 @@ window.addEventListener("resize", () => {
 
 function toggleView(viewName) {
   if (!document.getElementById(`${viewName}-view`)) viewName = "dashboard";
-  if (viewName !== "artist" && viewName !== "album" && location.hash.startsWith("#artist/")) {
+  if (viewName !== "artist" && viewName !== "album" && viewName !== "search" && location.hash.startsWith("#artist/")) {
     history.replaceState(null, "", location.pathname + location.search);
   }
-  if (viewName !== "album" && viewName !== "artist" && location.hash.startsWith("#album/")) {
+  if (viewName !== "album" && viewName !== "artist" && viewName !== "search" && location.hash.startsWith("#album/")) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  if (viewName !== "search" && viewName !== "artist" && viewName !== "album" && location.hash.startsWith("#search/")) {
     history.replaceState(null, "", location.pathname + location.search);
   }
   localStorage.setItem("activeView", viewName);
@@ -268,6 +272,9 @@ function toggleView(viewName) {
       }
       break;
     }
+    case "search":
+      loadSearch(getCurrentSearch());
+      break;
     case "account":
       loadAccount();
       break;
@@ -286,6 +293,11 @@ function parseAlbumHash() {
   return match
     ? { artist: decodeURIComponent(match[1]), album: decodeURIComponent(match[2]) }
     : null;
+}
+
+function parseSearchHash() {
+  const match = /^#search\/(.+)$/.exec(location.hash);
+  return match ? decodeURIComponent(match[1]) : null;
 }
 
 function initArtistRouting() {
@@ -313,10 +325,26 @@ function initArtistRouting() {
       return;
     }
 
+    const search = parseSearchHash();
+    if (search) {
+      loadSearch(search);
+      toggleView("search");
+      return;
+    }
+
     const artist = parseArtistHash();
     if (!artist) return;
     loadArtist(artist);
     toggleView("artist");
+  });
+
+  document.getElementById("search-form")?.addEventListener("submit", event => {
+    event.preventDefault();
+    const input = document.getElementById("search-input");
+    const query = input?.value?.trim();
+    if (!query || query.length < 2) return;
+    input.blur();
+    showSearch(query);
   });
 
   document.addEventListener("click", event => {
@@ -381,14 +409,18 @@ document.addEventListener("DOMContentLoaded", () => {
   initArtistRouting();
 
   const albumFromHash = parseAlbumHash();
+  const searchFromHash = parseSearchHash();
   const artistFromHash = parseArtistHash();
   const savedView = albumFromHash
     ? "album"
-    : artistFromHash
-      ? "artist"
-      : localStorage.getItem("activeView") || "dashboard";
+    : searchFromHash
+      ? "search"
+      : artistFromHash
+        ? "artist"
+        : localStorage.getItem("activeView") || "dashboard";
 
   toggleView(savedView);
   if (albumFromHash) loadAlbum(albumFromHash.artist, albumFromHash.album);
+  if (searchFromHash) loadSearch(searchFromHash);
   if (artistFromHash) loadArtist(artistFromHash);
 });

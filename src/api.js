@@ -22,6 +22,7 @@ const { getUserLibraryTrackUrl } = require("./utils/lastfmUrl");
 const { deleteScrobbleLocally } = require("./services/scrobbleDeletion");
 const { getArtistPage } = require("./services/artistPage");
 const { getAlbumPage } = require("./services/albumPage");
+const { searchLibrary } = require("./services/search");
 const { ensureAlbumCover } = require("./services/albumCoverCache");
 const { ensureArtistImage } = require("./services/artistImageCache");
 const { importScrobbleCSV } = require("./services/importScrobbleCSV");
@@ -157,6 +158,19 @@ app.get("/api/insights", asyncRoute(async (req, res) => {
     "X-Dashboard-Cache-Age": String(insights.cache.ageMs)
   });
   res.json(insights);
+}));
+
+app.get("/api/search", asyncRoute(async (req, res) => {
+  setNoStore(res);
+  const query = String(req.query.q || "").trim();
+
+  if (query.length < 2 || query.length > 100) {
+    const error = new Error("Search query must be between 2 and 100 characters");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  res.json(searchLibrary(query));
 }));
 
 app.get("/api/artist/:name", asyncRoute(async (req, res) => {

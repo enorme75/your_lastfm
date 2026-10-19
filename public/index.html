@@ -34,6 +34,20 @@
                         <span>YourLastFM</span>
                     </div>
 
+                    <form id="search-form" class="search-form" role="search">
+                        <div class="search-box">
+                            <i class="mdi mdi-magnify"></i>
+                            <input
+                                id="search-input"
+                                type="search"
+                                autocomplete="off"
+                                spellcheck="false"
+                                data-i18n-placeholder="search.placeholder"
+                                placeholder="Rechercher artiste, album, titre..."
+                            >
+                        </div>
+                    </form>
+
                     <nav class="sidebar-menu">
                         <button class="sidebar-link active" data-view="dashboard">
                             <i class="mdi mdi-view-dashboard"></i> <span data-i18n="nav.dashboard">Tableau de bord</span>
@@ -419,6 +433,54 @@
                             <div id="album-tracks" class="top-list top-rest artist-tracks"></div>
                         </div>
                     </div>
+                </section>
+
+                <section id="search-view" class="d-none mt-4">
+                    <div class="mb-3">
+                        <i class="mdi mdi-magnify me-1 text-green"></i>
+                        <span data-i18n="search.title">Recherche</span>
+                    </div>
+                    <h2 id="search-query" class="search-query mb-4"></h2>
+
+                    <div id="search-empty" class="text-center text-secondary py-5 d-none"></div>
+
+                    <section class="row gy-4">
+                        <div class="col-12">
+                            <div class="card bg-light shadow-sm">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-account-music-outline text-green"></i>
+                                        <span data-i18n="common.topArtists">Top artistes</span>
+                                    </div>
+                                    <div id="search-artists" class="top-list top-rest"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-md-12">
+                            <div class="card bg-light shadow-sm h-100">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-album text-green"></i>
+                                        <span data-i18n="common.topAlbums">Top albums</span>
+                                    </div>
+                                    <div id="search-albums" class="artist-albums"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-md-12">
+                            <div class="card bg-light shadow-sm h-100">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-playlist-music-outline text-green"></i>
+                                        <span data-i18n="common.topTracks">Top morceaux</span>
+                                    </div>
+                                    <div id="search-tracks" class="top-list top-rest artist-tracks"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </section>
 
                 <section id="scrobbles-view" class="d-none mt-4">
