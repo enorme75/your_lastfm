@@ -15,8 +15,8 @@ export function renderCover({
   return `
     <div
       class="cover-wrapper ${escapeAttribute(size)}"
-      data-artist="${escapeAttribute(artist)}"
-      data-album="${escapeAttribute(album)}"
+      data-upload-artist="${escapeAttribute(artist)}"
+      data-upload-album="${escapeAttribute(album)}"
     >
       <img
         src="${escapeAttribute(imageUrl)}"
@@ -45,8 +45,8 @@ export function initCoverUploads() {
       if (!file) return;
 
       const wrapper = event.target.closest(".cover-wrapper");
-      const artist = wrapper?.dataset.artist;
-      const album = wrapper?.dataset.album;
+      const artist = wrapper?.dataset.uploadArtist;
+      const album = wrapper?.dataset.uploadAlbum;
       if (!wrapper || !artist || !album) return;
 
       const form = new FormData();
