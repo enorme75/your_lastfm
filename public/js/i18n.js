@@ -278,6 +278,16 @@ const DICTIONARY = {
     title: { fr: "Recherche", en: "Search" },
     noResults: { fr: "Aucun résultat pour « {query} »", en: "No results for \"{query}\"" }
   },
+  track: {
+    back: { fr: "Retour", en: "Back" },
+    history: { fr: "Historique d'écoute", en: "Listening history" },
+    rank: { fr: "N° {rank} de l'artiste", en: "Artist rank #{rank}" },
+    scrobbleNote: {
+      fr: "{shown} derniers affichés sur {total} scrobbles",
+      en: "{shown} latest shown out of {total} scrobbles"
+    },
+    viewPage: { fr: "Voir la page du titre", en: "Open the track page" }
+  },
   months: {
     jan: { fr: "Janvier", en: "January" },
     feb: { fr: "Février", en: "February" },

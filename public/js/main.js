@@ -16,6 +16,7 @@ import { loadLeaderboards } from "./leaderboards.js";
 import { loadArtist, showArtist, getCurrentArtist } from "./artistPage.js";
 import { loadAlbum, showAlbum, getCurrentAlbum } from "./albumPage.js";
 import { loadSearch, showSearch, getCurrentSearch } from "./search.js";
+import { loadTrack, showTrack, getCurrentTrack } from "./trackPage.js";
 
 const UI = {
   loading: document.getElementById("global-loading"),
@@ -232,7 +233,10 @@ function toggleView(viewName) {
   if (viewName !== "album" && viewName !== "artist" && viewName !== "search" && location.hash.startsWith("#album/")) {
     history.replaceState(null, "", location.pathname + location.search);
   }
-  if (viewName !== "search" && viewName !== "artist" && viewName !== "album" && location.hash.startsWith("#search/")) {
+  if (viewName !== "search" && viewName !== "artist" && viewName !== "album" && viewName !== "track" && location.hash.startsWith("#search/")) {
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  if (viewName !== "track" && viewName !== "artist" && viewName !== "album" && viewName !== "search" && location.hash.startsWith("#track/")) {
     history.replaceState(null, "", location.pathname + location.search);
   }
   localStorage.setItem("activeView", viewName);
@@ -275,6 +279,14 @@ function toggleView(viewName) {
     case "search":
       loadSearch(getCurrentSearch());
       break;
+    case "track": {
+      const current = getCurrentTrack();
+      if (current) {
+        const [artist, track] = current.split("\u0000");
+        loadTrack(artist, track);
+      }
+      break;
+    }
     case "account":
       loadAccount();
       break;
@@ -300,6 +312,13 @@ function parseSearchHash() {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
+function parseTrackHash() {
+  const match = /^#track\/(.+)\/(.+)$/.exec(location.hash);
+  return match
+    ? { artist: decodeURIComponent(match[1]), track: decodeURIComponent(match[2]) }
+    : null;
+}
+
 function initArtistRouting() {
   document.getElementById("artist-back")?.addEventListener("click", () => {
     toggleView("dashboard");
@@ -317,7 +336,26 @@ function initArtistRouting() {
     toggleView("dashboard");
   });
 
+  document.getElementById("track-back")?.addEventListener("click", () => {
+    const current = getCurrentTrack();
+    if (current) {
+      const [artist] = current.split("\u0000");
+      if (artist) {
+        showArtist(artist);
+        return;
+      }
+    }
+    toggleView("dashboard");
+  });
+
   window.addEventListener("hashchange", () => {
+    const track = parseTrackHash();
+    if (track) {
+      loadTrack(track.artist, track.track);
+      toggleView("track");
+      return;
+    }
+
     const album = parseAlbumHash();
     if (album) {
       loadAlbum(album.artist, album.album);
@@ -348,6 +386,17 @@ function initArtistRouting() {
   });
 
   document.addEventListener("click", event => {
+    const trackTarget = event.target.closest("[data-track-artist]");
+    const trackArtist = trackTarget?.dataset?.trackArtist;
+    const trackName = trackTarget?.dataset?.trackName;
+    if (trackArtist && trackName && !event.target.closest("a[href]")) {
+      document.querySelectorAll(".modal.show").forEach(modal => {
+        window.bootstrap?.getInstance(modal)?.hide();
+      });
+      showTrack(trackArtist, trackName);
+      return;
+    }
+
     const albumTarget = event.target.closest("[data-album-artist]");
     const albumArtist = albumTarget?.dataset?.albumArtist;
     const albumName = albumTarget?.dataset?.albumName;
@@ -408,18 +457,22 @@ document.addEventListener("DOMContentLoaded", () => {
   initLocaleToggle();
   initArtistRouting();
 
+  const trackFromHash = parseTrackHash();
   const albumFromHash = parseAlbumHash();
   const searchFromHash = parseSearchHash();
   const artistFromHash = parseArtistHash();
-  const savedView = albumFromHash
-    ? "album"
-    : searchFromHash
-      ? "search"
-      : artistFromHash
-        ? "artist"
-        : localStorage.getItem("activeView") || "dashboard";
+  const savedView = trackFromHash
+    ? "track"
+    : albumFromHash
+      ? "album"
+      : searchFromHash
+        ? "search"
+        : artistFromHash
+          ? "artist"
+          : localStorage.getItem("activeView") || "dashboard";
 
   toggleView(savedView);
+  if (trackFromHash) loadTrack(trackFromHash.artist, trackFromHash.track);
   if (albumFromHash) loadAlbum(albumFromHash.artist, albumFromHash.album);
   if (searchFromHash) loadSearch(searchFromHash);
   if (artistFromHash) loadArtist(artistFromHash);

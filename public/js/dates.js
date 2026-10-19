@@ -24,3 +24,10 @@ export function formatTimestampDate(timestampMs) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   return `${day}/${month}/${date.getFullYear()}`;
 }
+
+export function formatTimestampDateTime(timestampMs) {
+  const date = new Date(Number(timestampMs));
+  if (Number.isNaN(date.getTime())) return "";
+  const time = `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  return `${formatTimestampDate(date.getTime())} ${time}`;
+}

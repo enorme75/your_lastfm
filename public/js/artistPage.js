@@ -47,9 +47,10 @@ function renderTopTracks(data) {
   if (!container) return;
 
   container.innerHTML = (data.topTracks || []).map((row, index) => `
-    <div class="top-row">
+    <div class="top-row" data-track-artist="${escapeAttribute(data.artist)}" data-track-name="${escapeAttribute(row.track)}">
       <span class="rank">${index + 1}</span>
       <div class="meta">
+        <strong title="${escapeAttribute(t("track.viewPage"))}">${escapeHTML(row.track)}</strong>
         <a
           class="music-link"
           href="${escapeAttribute(row.url || "#")}"
@@ -57,7 +58,6 @@ function renderTopTracks(data) {
           rel="noopener noreferrer"
           title="${escapeAttribute(t("dashboard.openTrackOnLastfm"))}"
         >
-          <strong>${escapeHTML(row.track)}</strong>
           <i class="mdi mdi-open-in-new"></i>
         </a>
         <small>${Number(row.plays || 0).toLocaleString()} ${escapeHTML(t("common.playsUnit"))}</small>

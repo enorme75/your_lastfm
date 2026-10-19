@@ -23,6 +23,7 @@ const { deleteScrobbleLocally } = require("./services/scrobbleDeletion");
 const { getArtistPage } = require("./services/artistPage");
 const { getAlbumPage } = require("./services/albumPage");
 const { searchLibrary } = require("./services/search");
+const { getTrackPage } = require("./services/trackPage");
 const { ensureAlbumCover } = require("./services/albumCoverCache");
 const { ensureArtistImage } = require("./services/artistImageCache");
 const { importScrobbleCSV } = require("./services/importScrobbleCSV");
@@ -171,6 +172,24 @@ app.get("/api/search", asyncRoute(async (req, res) => {
   }
 
   res.json(searchLibrary(query));
+}));
+
+app.get("/api/track/:artist/:track", asyncRoute(async (req, res) => {
+  setNoStore(res);
+
+  const page = await getTrackPage(req.params.artist, req.params.track);
+
+  if (!page || !page.track) {
+    const error = new Error("Track not found in your library");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  res.set({
+    "X-Dashboard-Cache": page.cache.hit ? "HIT" : "MISS",
+    "X-Dashboard-Cache-Age": String(page.cache.ageMs)
+  });
+  res.json(page);
 }));
 
 app.get("/api/artist/:name", asyncRoute(async (req, res) => {

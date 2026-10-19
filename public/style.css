@@ -909,6 +909,48 @@ strong {
   color: var(--text-primary);
 }
 
+/* =========================
+   TRACK HISTORY
+========================= */
+.track-history {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.track-history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.track-history-row:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.track-history-date {
+  color: var(--text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.track-history-row small {
+  color: var(--text-secondary);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+[data-track-artist] {
+  cursor: pointer;
+}
+
 .search-query + .row {
   min-height: 60px;
 }
