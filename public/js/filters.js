@@ -1,4 +1,7 @@
-let activeRange = "";
+import { t } from "./i18n.js";
+import { escapeHTML } from "./dom.js";
+
+let activeRange = "week";
 
 export function buildQuery(extra = {}) {
   const params = new URLSearchParams();
@@ -27,13 +30,15 @@ export function initFilters(onChange) {
   const monthSelect = document.getElementById("month");
   const currentYear = new Date().getFullYear();
 
-  yearSelect.innerHTML = '<option value="">All</option>';
+  yearSelect.innerHTML = `<option value="">${escapeHTML(t("dashboard.all"))}</option>`;
   for (let year = currentYear; year >= 2002; year--) {
     const option = document.createElement("option");
     option.value = year;
     option.textContent = year;
     yearSelect.appendChild(option);
   }
+
+  document.querySelector('.range-pill[data-range="week"]')?.classList.add("active");
 
   function handleManualChange() {
     activeRange = "";
