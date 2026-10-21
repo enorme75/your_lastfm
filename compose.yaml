@@ -10,17 +10,3 @@ services:
     ports:
       - "1533:1533"
     restart: unless-stopped
-
-    develop:
-      watch:
-        - action: sync
-          path: .
-          target: /app
-          ignore:
-            - node_modules/
-            - data/
-            - .git/
-        - action: rebuild
-          path: package.json
-        - action: rebuild
-          path: package-lock.json
