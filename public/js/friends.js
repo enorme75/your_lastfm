@@ -166,7 +166,7 @@ function renderComparison(data, container) {
 
     <div class="comparison-grid">
       <div class="comp-card">
-        <span class="comp-card-title">Total Scrobbles</span>
+        <span class="comp-card-title">${t("friends.totalScrobbles")}</span>
         <div class="comp-card-values">
           <span class="val-you">${format(user.scrobbles)}</span>
           <span class="val-vs">vs</span>
@@ -174,7 +174,15 @@ function renderComparison(data, container) {
         </div>
       </div>
       <div class="comp-card">
-        <span class="comp-card-title">Total Albums</span>
+        <span class="comp-card-title">${t("friends.totalArtists")}</span>
+        <div class="comp-card-values">
+          <span class="val-you">${format(user.artistsCount)}</span>
+          <span class="val-vs">vs</span>
+          <span class="val-friend">${format(friend.artistsCount)}</span>
+        </div>
+      </div>
+      <div class="comp-card">
+        <span class="comp-card-title">${t("friends.totalAlbums")}</span>
         <div class="comp-card-values">
           <span class="val-you">${format(user.albumsCount)}</span>
           <span class="val-vs">vs</span>

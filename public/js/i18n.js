@@ -237,6 +237,9 @@ const DICTIONARY = {
     compMedium: { fr: "MOYEN", en: "MEDIUM" },
     compLow: { fr: "FAIBLE", en: "LOW" },
     compVeryLow: { fr: "TRÈS FAIBLE", en: "VERY LOW" },
+    totalScrobbles: { fr: "Scrobbles totaux", en: "Total scrobbles" },
+    totalArtists: { fr: "Artistes totaux", en: "Total artists" },
+    totalAlbums: { fr: "Albums totaux", en: "Total albums" },
     yourAvatar: { fr: "Votre avatar", en: "Your avatar" }
   },
   covers: {

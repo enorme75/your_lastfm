@@ -271,7 +271,11 @@ async function compareWithFriend(db, friendUsername) {
             WHERE album IS NOT NULL AND TRIM(album) != ''
             GROUP BY artist, album
           )
-        ) AS albumsCount
+        ) AS albumsCount,
+        (
+          SELECT COUNT(DISTINCT artist)
+          FROM scrobbles
+        ) AS artistsCount
       FROM scrobbles
     `).get();
 
@@ -280,17 +284,24 @@ async function compareWithFriend(db, friendUsername) {
       10
     );
 
+    const friendTotalArtists = Number.parseInt(
+      artistsRes.data?.topartists?.["@attr"]?.total || "0",
+      10
+    );
+
     return {
       user: {
         username: "You",
         scrobbles: myStats.scrobbles,
-        albumsCount: myStats.albumsCount
+        albumsCount: myStats.albumsCount,
+        artistsCount: myStats.artistsCount
       },
       friend: {
         username: friendData.name,
         avatar: toImageProxyUrl(getLastFmImage(friendData.image)) || AVATAR_PLACEHOLDER,
         scrobbles: Number.parseInt(friendData.playcount || "0", 10),
         albumsCount: friendTotalAlbums,
+        artistsCount: friendTotalArtists,
         url: friendData.url
       },
       compatibilityScore: calculateCompatibilityScore(
