@@ -82,7 +82,7 @@ async function loadComparison(friendUsername) {
     const data = await fetchJSON(`/api/friends/compare/${encodeURIComponent(friendUsername)}`, {
       cache: "no-store"
     });
-    renderComparison(data, container);
+    renderComparison(data, container, await getMyAvatar());
   } catch (error) {
     container.innerHTML = `
       <p class="text-danger">${escapeHTML(error.message)}</p>
@@ -120,14 +120,34 @@ function renderCommonItem(item, friendUsername) {
   `;
 }
 
-function renderComparison(data, container) {
+let cachedMyAvatar = null;
+
+async function getMyAvatar() {
+  const sidebarAvatar = document.querySelector(".profile-avatar img")?.src;
+  if (
+    sidebarAvatar
+    && sidebarAvatar !== PLACEHOLDER_AVATAR
+    && !sidebarAvatar.includes("artist-placeholder")
+  ) {
+    return safeImageUrl(sidebarAvatar, PLACEHOLDER_AVATAR);
+  }
+
+  if (cachedMyAvatar) return cachedMyAvatar;
+
+  try {
+    const data = await fetchJSON("/api/user-stats", { cache: "no-store" });
+    cachedMyAvatar = safeImageUrl(data.avatar, PLACEHOLDER_AVATAR);
+  } catch (error) {
+    cachedMyAvatar = PLACEHOLDER_AVATAR;
+  }
+
+  return cachedMyAvatar;
+}
+
+function renderComparison(data, container, myAvatar) {
   const { user, friend, commonArtists, commonAlbums, commonTracks, compatibilityScore } = data;
   const format = number => new Intl.NumberFormat("pt-BR").format(number || 0);
   const compatibility = getCompatibilityStatus(compatibilityScore || 0);
-  const myAvatar = safeImageUrl(
-    document.querySelector(".profile-avatar img")?.src,
-    PLACEHOLDER_AVATAR
-  );
 
   container.innerHTML = `
     <button class="btn-back mb-4" type="button">← Back</button>
