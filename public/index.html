@@ -105,16 +105,16 @@
                     <section class="filters-bar mb-4">
                         <div class="range-filters">
                             <button class="range-pill" data-range="day" data-i18n="dashboard.rangeDay">
-                                Last day
+                                Day
                             </button>
                             <button class="range-pill" data-range="week" data-i18n="dashboard.rangeWeek">
-                                Last week
+                                Week
                             </button>
                             <button class="range-pill" data-range="month" data-i18n="dashboard.rangeMonth">
-                                Last month
+                                Month
                             </button>
                             <button class="range-pill" data-range="year" data-i18n="dashboard.rangeYear">
-                                Last year
+                                Year
                             </button>
                         </div>
 
@@ -145,8 +145,8 @@
                         </div>
                     </section>
 
-                    <section class="row g-3 mb-4" id="summary-cards">
-                        <div class="col-lg-4 col-md-6">
+                    <section class="mb-4" id="summary-cards">
+                        <div>
                             <div class="card text-dark bg-light shadow-sm">
                                 <div class="card-body text-center text-gray">
                                     <i
@@ -158,19 +158,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6">
+                        <div>
                             <div class="card text-dark bg-light shadow-sm">
                                 <div class="card-body text-center text-gray">
                                     <i
                                         class="mdi mdi-calendar-range me-1 text-green"
                                     ></i>
-                                    <span data-i18n="dashboard.dailyAverage">Moyenne quotidienne</span>
+                                    <span id="avg-label" data-i18n="dashboard.dailyAverage">Moyenne quotidienne</span>
                                     <p class="card-text fs-2 mb-1" id="avg">0</p>
                                     <div class="metric-trend" id="avg-trend"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6">
+                        <div>
                             <div class="card text-dark bg-light shadow-sm">
                                 <div class="card-body text-center text-gray">
                                     <i

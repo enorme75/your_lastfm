@@ -1,4 +1,4 @@
-const { getDateRange } = require("./dateRange");
+const { getDateRange, parseTimezoneOffset } = require("./dateRange");
 
 const ALLOWED_RANGES = new Set(["day", "week", "month", "year"]);
 
@@ -30,11 +30,12 @@ const getActiveFilter = (query = {}) => {
   const rawRange = String(query.range || "").trim();
   const parsedYear = parseYear(query.year);
   const parsedMonth = parseMonth(query.month);
+  const timezoneOffset = parseTimezoneOffset(query.tzOffset);
 
   if (rawRange) {
     if (!ALLOWED_RANGES.has(rawRange)) invalidFilter("Filtre de période invalide");
 
-    const { from, to } = getDateRange(rawRange);
+    const { from, to } = getDateRange(rawRange, null, null, new Date(), timezoneOffset);
     return {
       where: "played_at >= ? AND played_at <= ?",
       params: [

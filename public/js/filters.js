@@ -1,7 +1,7 @@
 import { t } from "./i18n.js";
 import { escapeHTML } from "./dom.js";
 
-let activeRange = "week";
+let activeRange = "day";
 
 export function buildQuery(extra = {}) {
   const params = new URLSearchParams();
@@ -15,6 +15,8 @@ export function buildQuery(extra = {}) {
     if (year) params.append("year", year);
     if (month) params.append("month", month);
   }
+
+  params.set("tzOffset", String(new Date().getTimezoneOffset()));
 
   for (const [key, value] of Object.entries(extra)) {
     if (value !== undefined && value !== null && value !== "") {
@@ -38,7 +40,7 @@ export function initFilters(onChange) {
     yearSelect.appendChild(option);
   }
 
-  document.querySelector('.range-pill[data-range="week"]')?.classList.add("active");
+  document.querySelector('.range-pill[data-range="day"]')?.classList.add("active");
 
   function handleManualChange() {
     activeRange = "";

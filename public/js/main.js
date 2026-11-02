@@ -166,7 +166,7 @@ async function reloadDashboardData({ skipSyncRefresh = false } = {}) {
   UI.loading.style.display = "flex";
 
   try {
-    const query = buildQuery({ tzOffset: new Date().getTimezoneOffset() });
+    const query = buildQuery();
     const data = await fetchJSON(`/api/dashboard${query}`, {
       cache: "no-store",
       signal: dashboardAbortController.signal

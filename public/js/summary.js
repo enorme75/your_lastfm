@@ -1,14 +1,40 @@
 import { fetchJSON } from "./api.js";
 import { t } from "./i18n.js";
 import { buildQuery } from "./filters.js";
+import { escapeHTML } from "./dom.js";
+
+let avgScope = "filter";
+
+function applyAvgLabel() {
+  const element = document.getElementById("avg-label");
+  if (!element) return;
+
+  if (avgScope === "year") {
+    element.removeAttribute("data-i18n");
+    element.innerHTML = `
+      <span>${escapeHTML(t("dashboard.dailyAverageYearMain"))}</span><br>
+      <small class="avg-label-detail">${escapeHTML(t("dashboard.dailyAverageYearDetail"))}</small>
+    `;
+    return;
+  }
+
+  element.dataset.i18n = "dashboard.dailyAverage";
+  element.textContent = t("dashboard.dailyAverage");
+}
+
+window.addEventListener("localechange", applyAvgLabel);
 
 function renderTrend(elementId, metric, label, note) {
   const element = document.getElementById(elementId);
   if (!element) return;
 
+  const resolvedLabel = metric?.labelKey
+    ? t(`comparison.${metric.labelKey}`)
+    : metric?.label || label;
+
   element.className = "metric-trend";
 
-  if (!metric || !label) {
+  if (!metric || !resolvedLabel) {
     element.innerHTML = `<i class="mdi mdi-history"></i> ${note || t("dashboard.allHistory")}`;
     return;
   }
@@ -26,10 +52,13 @@ function renderTrend(elementId, metric, label, note) {
       })}%`;
 
   element.classList.add(direction);
-  element.innerHTML = `<i class="mdi ${icon}"></i> ${value} vs ${label}`;
+  element.innerHTML = `<i class="mdi ${icon}"></i> ${value} vs ${resolvedLabel}`;
 }
 
 export function renderSummary(data = {}) {
+  avgScope = data.avgPerDayScope === "year" ? "year" : "filter";
+  applyAvgLabel();
+
   document.getElementById("hours").textContent = Number(data.totalMinutes || 0).toLocaleString();
   document.getElementById("plays").textContent = Number(data.totalPlays || 0).toLocaleString();
   document.getElementById("avg").textContent = Number(data.avgPerDay || 0).toLocaleString(undefined, {

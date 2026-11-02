@@ -15,6 +15,19 @@ test("builds the previous equivalent rolling window", () => {
   assert.equal(context.timezoneOffset, 180);
 });
 
+test("builds a since-local-midnight day compared with yesterday", () => {
+  const context = getDashboardFilterContext(
+    { range: "day", tzOffset: "-60" },
+    new Date("2026-08-03T10:30:00.000Z")
+  );
+
+  assert.deepEqual(context.current.params, [1785711600, 1785753000]);
+  assert.deepEqual(context.previous.params, [1785625200, 1785711599]);
+  assert.equal(context.comparisonLabel, "hier");
+  assert.equal(context.comparisonLabelKey, "yesterday");
+  assert.ok(context.cacheKey.includes("day=2026-08-03"), context.cacheKey);
+});
+
 test("compares a selected month with the previous calendar month", () => {
   const context = getDashboardFilterContext({ year: "2026", month: "3" });
 

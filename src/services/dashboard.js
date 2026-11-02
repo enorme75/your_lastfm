@@ -1,5 +1,5 @@
 const db = require("../db");
-const { fillMissingDates } = require("../utils/dateRange");
+const { fillMissingDates, getLocalDayModifier, getLocalYearToDate, parseTimezoneOffset } = require("../utils/dateRange");
 const { getDashboardFilterContext, getTimezoneOffset } = require("../utils/dashboardFilter");
 const { getArtistUrl, getAlbumUrl, getTrackUrl } = require("../utils/lastfmUrl");
 const { calculateChange, normalizeSummary } = require("../utils/dashboardMetrics");
@@ -30,7 +30,38 @@ function getSummaryRow(filter) {
   `).get(AVG_TRACK_SECONDS, ...filter.params);
 }
 
-function getSummary(context) {
+function toRangeFilter(from, to) {
+  return {
+    where: "played_at >= ? AND played_at <= ?",
+    params: [
+      Math.floor(from.getTime() / 1000),
+      Math.floor(to.getTime() / 1000)
+    ]
+  };
+}
+
+function roundAvg(plays, days) {
+  return Math.round((plays / days) * 10) / 10;
+}
+
+function getYearAverageSummary(timezoneOffset) {
+  const ytd = getLocalYearToDate(timezoneOffset);
+  const yearPlays = getSummaryRow(toRangeFilter(ytd.current.from, ytd.current.to)).totalPlays;
+  const lastYearPlays = getSummaryRow(toRangeFilter(ytd.previous.from, ytd.previous.to)).totalPlays;
+  const yearAvg = roundAvg(yearPlays, ytd.daysElapsed);
+  const lastYearAvg = roundAvg(lastYearPlays, ytd.daysElapsed);
+
+  return {
+    avgPerDay: yearAvg,
+    comparison: {
+      ...calculateChange(yearAvg, lastYearAvg),
+      label: "année précédente",
+      labelKey: "previousYear"
+    }
+  };
+}
+
+function getSummary(context, query = {}) {
   const current = normalizeSummary(getSummaryRow(context.current));
   if (!context.previous) {
     return {
@@ -42,16 +73,29 @@ function getSummary(context) {
   }
 
   const previous = normalizeSummary(getSummaryRow(context.previous));
-  return {
-    ...current,
-    comparison: {
-      label: context.comparisonLabel,
-      labelKey: context.comparisonLabelKey,
-      totalPlays: calculateChange(current.totalPlays, previous.totalPlays),
-      totalMinutes: calculateChange(current.totalMinutes, previous.totalMinutes),
-      avgPerDay: calculateChange(current.avgPerDay, previous.avgPerDay)
-    }
+  const comparison = {
+    label: context.comparisonLabel,
+    labelKey: context.comparisonLabelKey,
+    totalPlays: calculateChange(current.totalPlays, previous.totalPlays),
+    totalMinutes: calculateChange(current.totalMinutes, previous.totalMinutes),
+    avgPerDay: calculateChange(current.avgPerDay, previous.avgPerDay)
   };
+
+  if (query.range === "day") {
+    const yearAverage = getYearAverageSummary(context.timezoneOffset);
+
+    return {
+      ...current,
+      avgPerDay: yearAverage.avgPerDay,
+      avgPerDayScope: "year",
+      comparison: {
+        ...comparison,
+        avgPerDay: yearAverage.comparison
+      }
+    };
+  }
+
+  return { ...current, comparison };
 }
 
 function getTopArtistRows(filter) {
@@ -101,17 +145,21 @@ function getTopTrackRows(filter) {
 }
 
 function getPlaysPerDay(filter, query) {
+  const useLocalDays = query.range === "day";
+  const timezoneOffset = useLocalDays ? parseTimezoneOffset(query.tzOffset) : 0;
+  const dayModifier = useLocalDays ? getLocalDayModifier(timezoneOffset) : null;
+
   const rows = db.prepare(`
     SELECT
-      date(played_at, 'unixepoch') AS day,
+      ${dayModifier ? "date(played_at, 'unixepoch', ?)" : "date(played_at, 'unixepoch')"} AS day,
       COUNT(*) AS plays
     FROM scrobbles
     ${whereClause(filter)}
     GROUP BY day
     ORDER BY day
-  `).all(...filter.params);
+  `).all(...(dayModifier ? [dayModifier] : []), ...filter.params);
 
-  return fillMissingDates(rows, query.range, query.year, query.month);
+  return fillMissingDates(rows, query.range, query.year, query.month, timezoneOffset);
 }
 
 function getListeningClock(filter, timezoneOffset) {
@@ -288,7 +336,7 @@ async function enrichDashboardLists(artists, albums, tracks) {
 }
 
 async function buildDashboard(query, context) {
-  const summary = getSummary(context);
+  const summary = getSummary(context, query);
   const artistRows = getTopArtistRows(context.current);
   const albumRows = getTopAlbumRows(context.current);
   const trackRows = getTopTrackRows(context.current);

@@ -12,7 +12,7 @@ const { createCanvas, loadImage } = require("canvas");
 const db = require("./db");
 const { startSync, getSyncStatus } = require("./sync");
 const { getActiveFilter } = require("./utils/filters");
-const { fillMissingDates } = require("./utils/dateRange");
+const { fillMissingDates, getLocalDayModifier, parseTimezoneOffset } = require("./utils/dateRange");
 const { fetchWithRetry } = require("./utils/fetchRetry");
 const { assertLastFmResponse } = require("./utils/lastfmResponse");
 const { mapWithConcurrency } = require("./utils/mapWithConcurrency");
@@ -332,18 +332,21 @@ app.post("/api/sync", asyncRoute(async (req, res) => {
 app.get("/api/plays-per-day", (req, res) => {
   setNoStore(res);
   const filter = getActiveFilter(req.query);
+  const useLocalDays = req.query.range === "day";
+  const timezoneOffset = useLocalDays ? parseTimezoneOffset(req.query.tzOffset) : 0;
+  const dayModifier = useLocalDays ? getLocalDayModifier(timezoneOffset) : null;
 
   const rows = db.prepare(`
     SELECT
-      date(played_at, 'unixepoch') AS day,
+      ${dayModifier ? "date(played_at, 'unixepoch', ?)" : "date(played_at, 'unixepoch')"} AS day,
       COUNT(*) AS plays
     FROM scrobbles
     ${filter.where ? `WHERE ${filter.where}` : ""}
     GROUP BY day
     ORDER BY day
-  `).all(...filter.params);
+  `).all(...(dayModifier ? [dayModifier] : []), ...filter.params);
 
-  res.json(fillMissingDates(rows, req.query.range, req.query.year, req.query.month));
+  res.json(fillMissingDates(rows, req.query.range, req.query.year, req.query.month, timezoneOffset));
 });
 
 app.get("/api/summary", (req, res) => {

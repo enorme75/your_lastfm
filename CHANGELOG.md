@@ -2,6 +2,22 @@
 
 All notable changes to YourLastFM are documented in this file.
 
+## [1.5.0] - 2026-11-02
+
+### Changed
+
+- Le filtre "Jour" couvre desormais les ecoutes du jour depuis 00h00 heure locale du navigateur, au lieu des dernieres 24 heures glissantes, et repart de zero a minuit.
+- Le dashboard s'ouvre par defaut sur le filtre "Jour".
+- Sur le filtre "Jour", la carte "Moyenne par jour (annee en cours)" affiche la moyenne quotidienne depuis le 1er janvier, comparee a la meme periode l'annee precedente ; les autres filtres gardent la moyenne du filtre.
+- Les libelles des pilules de filtre sont raccourcis ("Jour", "Semaine", "Mois", "Annee").
+- Le graphique des ecoutes par jour regroupe par jour local pour le filtre "Jour".
+- La cle de cache du dashboard inclut le jour courant pour basculer immediatement a minuit.
+
+### Fixed
+
+- Les trois cartes du resume gardent des dimensions identiques a toutes les tailles d'ecran.
+- Les pilules de filtre ont toutes la meme largeur.
+
 ## [1.3.0] - 2026-08-02
 
 ### Added

@@ -1,8 +1,8 @@
-const { getDateRange } = require("./dateRange");
+const { getDateRange, getLocalDayKey, parseTimezoneOffset, shiftLocalDays } = require("./dateRange");
 const { getActiveFilter } = require("./filters");
 
 const ROLLING_LABELS = {
-  day: "24 dernières heures",
+  day: "hier",
   week: "7 derniers jours",
   month: "mois précédent",
   year: "année précédente"
@@ -10,7 +10,7 @@ const ROLLING_LABELS = {
 
 // i18n keys resolved by the front (public/js/i18n.js -> comparison.*)
 const ROLLING_LABEL_KEYS = {
-  day: "previous24h",
+  day: "yesterday",
   week: "previous7d",
   month: "previousMonth",
   year: "previousYear"
@@ -70,14 +70,19 @@ function getDashboardFilterContext(query = {}, referenceDate = new Date()) {
   let comparisonNote = month && !year
     ? "Tous les mois correspondants dans l'historique"
     : "Tout l'historique disponible";
+  let currentDayKey = null;
 
   if (range) {
-    const { from, to } = getDateRange(range, null, null, referenceDate);
+    const { from, to } = getDateRange(range, null, null, referenceDate, timezoneOffset);
+    const previousFrom = range === "day"
+      ? shiftLocalDays(from, timezoneOffset, -1)
+      : shiftStartBack(from, range);
     current = toSqlFilter(from, to);
-    previous = toSqlFilter(shiftStartBack(from, range), new Date(from.getTime() - 1));
+    previous = toSqlFilter(previousFrom, new Date(from.getTime() - 1));
     comparisonLabel = ROLLING_LABELS[range];
     comparisonLabelKey = ROLLING_LABEL_KEYS[range];
     comparisonNote = null;
+    if (range === "day") currentDayKey = getLocalDayKey(from, timezoneOffset);
   } else if (year) {
     const { from, to } = getDateRange(null, year, month || null, referenceDate);
     const unit = month ? "month" : "year";
@@ -92,7 +97,8 @@ function getDashboardFilterContext(query = {}, referenceDate = new Date()) {
     `range=${range}`,
     `year=${year}`,
     `month=${month}`,
-    `tzOffset=${timezoneOffset}`
+    `tzOffset=${timezoneOffset}`,
+    ...(currentDayKey ? [`day=${currentDayKey}`] : [])
   ].join("&");
 
   return {
