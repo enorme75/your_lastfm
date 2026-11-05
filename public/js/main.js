@@ -17,6 +17,7 @@ import { loadArtist, showArtist, getCurrentArtist } from "./artistPage.js";
 import { loadAlbum, showAlbum, getCurrentAlbum } from "./albumPage.js";
 import { loadSearch, showSearch, getCurrentSearch } from "./search.js";
 import { loadTrack, showTrack, getCurrentTrack } from "./trackPage.js";
+import { initLightbox } from "./lightbox.js";
 
 const UI = {
   loading: document.getElementById("global-loading"),
@@ -457,6 +458,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initSyncControls();
   initLocaleToggle();
   initArtistRouting();
+  initLightbox();
 
   const trackFromHash = parseTrackHash();
   const albumFromHash = parseAlbumHash();

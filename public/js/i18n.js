@@ -19,7 +19,8 @@ const DICTIONARY = {
     loading: { fr: "Chargement...", en: "Loading..." },
     never: { fr: "jamais", en: "never" },
     days: { fr: "jour", en: "day" },
-    daysPlural: { fr: "jours", en: "days" }
+    daysPlural: { fr: "jours", en: "days" },
+    viewImage: { fr: "Voir l'image en grand", en: "View large image" }
   },
   dashboard: {
     sync: { fr: "Synchroniser", en: "Sync" },
