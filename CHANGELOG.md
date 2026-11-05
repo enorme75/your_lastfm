@@ -2,6 +2,19 @@
 
 All notable changes to YourLastFM are documented in this file.
 
+## [1.6.0] - 2026-11-05
+
+### Added
+
+- Le visuel d'en-tête des pages artiste et album s'ouvre en plein écran au clic (fermeture par Échap, clic ou bouton), avec la pochette en haute résolution lorsque la source le permet.
+- Liens Discogs vers l'artiste ou l'album sur les fiches, avec logos officiels en pastilles (lookup via l'API publique Discogs, token optionnel `DISCOGS_TOKEN`, mise en cache locale).
+- Page artiste : membres du groupe en chips (membres inactifs estompés).
+- Page album : tracklist dans l'ordre original de l'album, rapprochée des écoutes locales (variantes de version regroupées et sommées), chips genres/styles et label.
+
+### Changed
+
+- Le titre d'un album du top du dashboard ouvre la page album au lieu de Last.fm.
+
 ## [1.5.0] - 2026-11-02
 
 ### Changed
