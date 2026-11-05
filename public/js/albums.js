@@ -23,13 +23,11 @@ export function renderAlbums(albums = []) {
       })}
       <a
         class="music-link album-title-link"
-        href="${escapeAttribute(album.url || "#")}"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="${t("dashboard.openAlbumOnLastfm")}"
+        data-album-artist="${escapeAttribute(album.artist)}"
+        data-album-name="${escapeAttribute(album.album)}"
+        title="${t("album.viewPage")}"
       >
         <strong>${escapeHTML(album.album)}</strong>
-        <i class="mdi mdi-open-in-new"></i>
       </a>
       <a
         class="music-link album-artist-link"
