@@ -89,13 +89,13 @@ function renderDiscogsTracklist(data) {
 
   const localTracks = buildLocalTrackIndex(data.tracks);
 
-  container.innerHTML = (data.discogsTracklist || []).map(entry => {
+  container.innerHTML = (data.discogsTracklist || []).map((entry, index) => {
     const local = localTracks.get(normalizeName(entry.title));
 
     if (!local) {
       return `
         <div class="top-row top-row-external">
-          <span class="rank">${escapeHTML(entry.position || "·")}</span>
+          <span class="rank">${index + 1}</span>
           <div class="meta">
             <strong>${escapeHTML(entry.title)}</strong>
             <small>—</small>
@@ -106,7 +106,7 @@ function renderDiscogsTracklist(data) {
 
     return `
       <div class="top-row" data-track-artist="${escapeAttribute(data.artist)}" data-track-name="${escapeAttribute(local.best.track)}">
-        <span class="rank">${escapeHTML(entry.position || "·")}</span>
+        <span class="rank">${index + 1}</span>
         <div class="meta">
           <strong title="${escapeAttribute(t("track.viewPage"))}">${escapeHTML(entry.title)}</strong>
           <a
