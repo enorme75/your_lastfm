@@ -115,6 +115,16 @@ function renderArtist(data) {
     }
   }
 
+  const discogsLink = document.getElementById("artist-discogs");
+  if (discogsLink) {
+    if (data.discogsUrl) {
+      discogsLink.href = data.discogsUrl;
+      discogsLink.classList.remove("d-none");
+    } else {
+      discogsLink.classList.add("d-none");
+    }
+  }
+
   const bio = document.getElementById("artist-bio");
   if (bio) bio.textContent = data.bio || t("artist.noBio");
 

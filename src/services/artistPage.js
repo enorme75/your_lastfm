@@ -5,6 +5,7 @@ const { ensureArtistImage } = require("./artistImageCache");
 const { ensureAlbumCover } = require("./albumCoverCache");
 const { ensureArtistInfo } = require("./artistInfoCache");
 const { ensureAlbumYear } = require("./albumYearCache");
+const { ensureDiscogsArtistLink } = require("./discogsCache");
 const { withDashboardCache } = require("./dashboardCache");
 
 const EXTERNAL_REQUEST_CONCURRENCY = Math.max(
@@ -56,9 +57,10 @@ async function buildArtistPage(artist, lang) {
   const topTracks = getArtistTopTracks.all(artist);
   const albums = getArtistAlbums.all(artist);
 
-  const [image, info, enrichedAlbums] = await Promise.all([
+  const [image, info, discogsUrl, enrichedAlbums] = await Promise.all([
     ensureArtistImage(artist).catch(() => null),
     ensureArtistInfo(artist, lang).catch(() => null),
+    ensureDiscogsArtistLink(artist).catch(() => null),
     mapWithConcurrency(albums, EXTERNAL_REQUEST_CONCURRENCY, async row => {
       const [cover, year] = await Promise.all([
         ensureAlbumCover(artist, row.album).catch(() => null),
@@ -85,6 +87,7 @@ async function buildArtistPage(artist, lang) {
     image: image || info?.image || null,
     bio: info?.bio || null,
     lastfmUrl: info?.lastfmUrl || null,
+    discogsUrl: discogsUrl || null,
     topTracks: topTracks.map(row => ({
       track: row.track,
       plays: row.plays,

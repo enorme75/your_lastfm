@@ -835,6 +835,11 @@ strong {
   min-width: 0;
 }
 
+.detail-header .music-link {
+  display: block;
+  width: fit-content;
+}
+
 .detail-copy h1 {
   font-size: 3rem;
   font-weight: 800;

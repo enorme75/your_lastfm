@@ -73,6 +73,17 @@ db.prepare(`
 `).run();
 
 db.prepare(`
+  CREATE TABLE IF NOT EXISTS discogs_links (
+    kind TEXT NOT NULL,
+    artist TEXT NOT NULL,
+    album TEXT NOT NULL DEFAULT '',
+    url TEXT,
+    updated_at INTEGER,
+    PRIMARY KEY (kind, artist, album)
+  )
+`).run();
+
+db.prepare(`
   CREATE TABLE IF NOT EXISTS metadata (
     key TEXT PRIMARY KEY,
     value TEXT

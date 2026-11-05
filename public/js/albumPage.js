@@ -98,6 +98,16 @@ function renderAlbumPage(data) {
     }
   }
 
+  const discogsLink = document.getElementById("album-discogs");
+  if (discogsLink) {
+    if (data.discogsUrl) {
+      discogsLink.href = data.discogsUrl;
+      discogsLink.classList.remove("d-none");
+    } else {
+      discogsLink.classList.add("d-none");
+    }
+  }
+
   renderTracks(data);
 }
 

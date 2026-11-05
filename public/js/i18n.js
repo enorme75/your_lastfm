@@ -78,7 +78,9 @@ const DICTIONARY = {
       en: "All available history"
     },
     openAlbumOnLastfm: { fr: "Ouvrir l'album sur Last.fm", en: "Open album on Last.fm" },
+    openAlbumOnDiscogs: { fr: "Ouvrir l'album sur Discogs", en: "Open album on Discogs" },
     openArtistOnLastfm: { fr: "Ouvrir l'artiste sur Last.fm", en: "Open artist on Last.fm" },
+    openArtistOnDiscogs: { fr: "Ouvrir l'artiste sur Discogs", en: "Open artist on Discogs" },
     openTrackOnLastfm: { fr: "Ouvrir le morceau sur Last.fm", en: "Open track on Last.fm" }
   },
   insights: {
