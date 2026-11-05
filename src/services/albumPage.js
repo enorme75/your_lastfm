@@ -32,7 +32,7 @@ async function buildAlbumPage(artist, album) {
   if (!stats || stats.plays === 0) return null;
 
   const tracks = getAlbumTracks.all(artist, album);
-  const [cover, year, discogsUrl] = await Promise.all([
+  const [cover, year, discogs] = await Promise.all([
     ensureAlbumCover(artist, album).catch(() => null),
     ensureAlbumYear(artist, album),
     ensureDiscogsAlbumLink(artist, album).catch(() => null)
@@ -49,7 +49,11 @@ async function buildAlbumPage(artist, album) {
     year: year || null,
     url: getAlbumUrl(artist, album),
     artistUrl: getArtistUrl(artist),
-    discogsUrl: discogsUrl || null,
+    discogsUrl: discogs?.url || null,
+    genres: discogs?.genres || null,
+    styles: discogs?.styles || null,
+    label: discogs?.label || null,
+    discogsTracklist: discogs?.tracklist || null,
     tracks: tracks.map(row => ({
       track: row.track,
       plays: row.plays,

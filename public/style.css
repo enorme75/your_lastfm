@@ -841,6 +841,20 @@ strong {
   gap: 10px;
 }
 
+#artist-members .artist-members-label {
+  color: var(--text-secondary);
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.artist-member-inactive {
+  opacity: 0.45;
+}
+
+.top-row-external {
+  opacity: 0.55;
+}
+
 .detail-brand-link {
   display: inline-flex;
   align-items: center;

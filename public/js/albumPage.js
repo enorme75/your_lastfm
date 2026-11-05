@@ -29,24 +29,110 @@ function showLoadingState() {
   if (image) image.src = "/images/cover-placeholder.svg";
 }
 
-function renderAlbumStats(data) {
-  const element = document.getElementById("album-stats");
-  if (!element) return;
+function chipsFromData(data) {
+  const genreChip = [...(data.genres || []), ...(data.styles || [])]
+    .map(item => escapeHTML(item))
+    .join(" · ");
 
-  const chips = [
+  return [
     data.year ? `<span class="detail-stat"><strong>${escapeHTML(String(data.year))}</strong></span>` : "",
+    genreChip ? `<span class="detail-stat">${genreChip}</span>` : "",
+    data.label ? `<span class="detail-stat">${escapeHTML(data.label)}</span>` : "",
     `<span class="detail-stat"><strong>${Number(data.plays || 0).toLocaleString()}</strong> ${escapeHTML(t("common.playsUnit"))}</span>`,
     `<span class="detail-stat"><strong>${Number(data.uniqueTracks || 0).toLocaleString()}</strong> ${escapeHTML(t("album.tracksStat", { count: "" }).trim())}</span>`,
     `<span class="detail-stat">${escapeHTML(t("artist.firstListen"))} : <strong>${escapeHTML(formatTimestampDate((data.firstPlay || 0) * 1000))}</strong></span>`,
     `<span class="detail-stat">${escapeHTML(t("artist.lastListen"))} : <strong>${escapeHTML(formatTimestampDate((data.lastPlay || 0) * 1000))}</strong></span>`
   ].filter(Boolean);
+}
 
-  element.innerHTML = chips.join("");
+function renderAlbumStats(data) {
+  const element = document.getElementById("album-stats");
+  if (!element) return;
+
+  element.innerHTML = chipsFromData(data).join("");
+}
+
+function stripNameVariant(value) {
+  return String(value || "").replace(/\s*\(.*\)\s*$/, "").trim();
+}
+
+function normalizeName(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .trim();
+}
+
+function buildLocalTrackIndex(tracks) {
+  const index = new Map();
+
+  for (const row of tracks || []) {
+    const base = normalizeName(stripNameVariant(row.track));
+    const entry = index.get(base) || { plays: 0, best: null };
+
+    entry.plays += Number(row.plays || 0);
+    if (!entry.best || Number(row.plays || 0) > Number(entry.best.plays || 0)) {
+      entry.best = row;
+    }
+
+    index.set(base, entry);
+  }
+
+  return index;
+}
+
+function renderDiscogsTracklist(data) {
+  const container = document.getElementById("album-tracks");
+  if (!container) return;
+
+  const localTracks = buildLocalTrackIndex(data.tracks);
+
+  container.innerHTML = (data.discogsTracklist || []).map(entry => {
+    const local = localTracks.get(normalizeName(entry.title));
+
+    if (!local) {
+      return `
+        <div class="top-row top-row-external">
+          <span class="rank">${escapeHTML(entry.position || "·")}</span>
+          <div class="meta">
+            <strong>${escapeHTML(entry.title)}</strong>
+            <small>—</small>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="top-row" data-track-artist="${escapeAttribute(data.artist)}" data-track-name="${escapeAttribute(local.best.track)}">
+        <span class="rank">${escapeHTML(entry.position || "·")}</span>
+        <div class="meta">
+          <strong title="${escapeAttribute(t("track.viewPage"))}">${escapeHTML(entry.title)}</strong>
+          <a
+            class="music-link"
+            href="${escapeAttribute(local.best.url || "#")}"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="${escapeAttribute(t("dashboard.openTrackOnLastfm"))}"
+          >
+            <i class="mdi mdi-open-in-new"></i>
+          </a>
+          <small>${Number(local.plays || 0).toLocaleString()} ${escapeHTML(t("common.playsUnit"))}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
 function renderTracks(data) {
   const container = document.getElementById("album-tracks");
   if (!container) return;
+
+  if (Array.isArray(data.discogsTracklist) && data.discogsTracklist.length) {
+    renderDiscogsTracklist(data);
+    return;
+  }
 
   container.innerHTML = (data.tracks || []).map((row, index) => `
     <div class="top-row" data-track-artist="${escapeAttribute(data.artist)}" data-track-name="${escapeAttribute(row.track)}">

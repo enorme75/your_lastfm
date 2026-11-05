@@ -273,6 +273,7 @@ const DICTIONARY = {
     firstListen: { fr: "Première écoute", en: "First listen" },
     lastListen: { fr: "Dernière écoute", en: "Last listen" },
     viewPage: { fr: "Voir la page de l'artiste", en: "Open the artist page" },
+    members: { fr: "Membres :", en: "Members:" },
     loadError: { fr: "Impossible de charger la page artiste", en: "Could not load the artist page" }
   },
   album: {

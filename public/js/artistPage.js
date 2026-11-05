@@ -20,7 +20,7 @@ function showLoadingState() {
   const name = document.getElementById("artist-name");
   if (name) name.textContent = "…";
 
-  for (const id of ["artist-stats", "artist-bio", "artist-top-tracks", "artist-albums"]) {
+  for (const id of ["artist-stats", "artist-members", "artist-bio", "artist-top-tracks", "artist-albums"]) {
     const element = document.getElementById(id);
     if (element) element.textContent = "";
   }
@@ -104,6 +104,18 @@ function renderArtist(data) {
   if (name) name.textContent = data.artist;
 
   renderArtistStats(data);
+
+  const members = document.getElementById("artist-members");
+  if (members) {
+    const list = data.members || [];
+    members.textContent = "";
+    if (list.length) {
+      members.innerHTML = [
+        `<span class="artist-members-label">${escapeHTML(t("artist.members"))}</span>`,
+        ...list.map(member => `<span class="artist-stat${member.active ? "" : " artist-member-inactive"}">${escapeHTML(member.name)}</span>`)
+      ].join("");
+    }
+  }
 
   const lastfmLink = document.getElementById("artist-lastfm");
   if (lastfmLink) {

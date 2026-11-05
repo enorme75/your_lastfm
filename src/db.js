@@ -83,6 +83,11 @@ db.prepare(`
   )
 `).run();
 
+const discogsColumns = db.prepare("PRAGMA table_info(discogs_links)").all();
+if (!discogsColumns.some(column => column.name === "payload")) {
+  db.prepare("ALTER TABLE discogs_links ADD COLUMN payload TEXT").run();
+}
+
 db.prepare(`
   CREATE TABLE IF NOT EXISTS metadata (
     key TEXT PRIMARY KEY,
