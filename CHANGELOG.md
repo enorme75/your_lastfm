@@ -2,6 +2,27 @@
 
 All notable changes to YourLastFM are documented in this file.
 
+## [1.7.0] - 2026-11-07
+
+### Added
+
+- Nouvelle page d'accueil façon profil Last.fm : en-tête avatar et pseudo, tuiles globales (scrobbles, artistes, albums, morceaux), derniers scrobbles en liste compacte avec suppression locale et bouton "Voir tout", et tops albums / artistes / morceaux filtrables (7 jours, 30 jours, 365 jours, tout) — chaque top a ses propres pilules de filtre, indépendantes.
+- Trois pages Statistiques dédiées (Mois, Année, Tout) reprenant les modules du tableau de bord : cartes de résumé (dont une nouvelle carte "Artistes écoutés"), top albums / artistes / morceaux, graphique et horloge d'écoute ; sélecteurs année / mois selon la page.
+- Sur les pages Statistiques, le module d'écoute est unifié avec pilules de granularité : jour / semaine (Mois), jour / semaine / mois (Année), mois / année (Tout) ; le changement de granularité se re-rend localement, sans nouvelle requête.
+- Clic sur une barre du graphique (jour, semaine, mois ou année) : la page Scrobbles s'ouvre filtrée sur cette période, avec bandeau récapitulatif et total d'écoutes (nouvel endpoint `GET /api/scrobbles` sur la base locale), heure d'écoute affichée, suppression locale et pagination dédiées.
+- Page Scrobbles : titres de jour localisés insérés entre les groupes ("Samedi 7 novembre 2026"), y compris à travers la pagination.
+- Nouvelle plage de filtre "30 derniers jours" côté back (comparaison avec les 30 jours précédents).
+
+### Changed
+
+- Page Scrobbles : 50 scrobbles par page (au lieu de 20) ; accueil : 20 derniers scrobbles.
+- Les semaines des graphiques s'affichent en bornes de dates ("26 oct. – 1 nov.", lundi-dimanche) au lieu du numéro de semaine ; le graphique Insights "Écoutes par semaine" bénéficie du même libellé.
+- Sur la page "Tout", le graphique principal regroupe par mois (le regroupement par jour sur tout l'historique était illisible).
+
+### Fixed
+
+- Le libellé des semaines du graphique Insights n'affichait plus la clé brute SQLite ("2026-43") : le format combinait les clés ISO et SQLite sans distinction.
+
 ## [1.6.0] - 2026-11-05
 
 ### Added
