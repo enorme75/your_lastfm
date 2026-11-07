@@ -88,6 +88,7 @@ const DICTIONARY = {
     openArtistOnDiscogs: { fr: "Ouvrir l'artiste sur Discogs", en: "Open artist on Discogs" },
     openTrackOnLastfm: { fr: "Ouvrir le morceau sur Last.fm", en: "Open track on Last.fm" },
     playsPerMonth: { fr: "Écoutes par mois", en: "Plays per Month" },
+    playsPerYear: { fr: "Écoutes par année", en: "Plays per Year" },
     artistsListened: { fr: "Artistes écoutés", en: "Artists listened" },
     byMonth: { fr: "Par mois", en: "By month" },
     byYear: { fr: "Par année", en: "By year" },

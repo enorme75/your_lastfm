@@ -1,8 +1,14 @@
 import { fetchJSON } from "./api.js";
-import { initStatsFilters, buildStatsQuery, setStatsMode } from "./filters.js";
+import { initStatsFilters, buildStatsQuery, setStatsMode, getStatsMode } from "./filters.js";
 import { renderSummary } from "./summary.js";
 import { renderAlbums } from "./albums.js";
-import { renderDailyChart, renderMonthlyChart, renderListeningClock } from "./charts.js";
+import {
+  renderDailyChart,
+  renderMonthlyChart,
+  renderWeeklyChart,
+  renderYearlyChart,
+  renderListeningClock
+} from "./charts.js";
 import { loadInsights } from "./insights.js";
 import { formatTimestampDate } from "./dates.js";
 import { t, setLocale, getNextLocale, applyStaticTranslations } from "./i18n.js";
@@ -165,10 +171,48 @@ function initSyncControls() {
 }
 
 function setPlaysChartTitle(i18nKey) {
-  const element = document.getElementById("plays-chart-title");
+  setChartTitle("plays-chart-title", i18nKey);
+}
+
+function setChartTitle(elementId, i18nKey) {
+  const element = document.getElementById(elementId);
   if (!element) return;
   element.dataset.i18n = i18nKey;
   element.textContent = t(i18nKey);
+}
+
+const SECONDARY_TIMELINES = {
+  month: {
+    titleKey: "insights.playsPerWeek",
+    key: "playsPerWeek",
+    render: data => renderWeeklyChart(data, "secondary-timeline")
+  },
+  year: {
+    titleKey: "dashboard.playsPerMonth",
+    key: "playsPerMonth",
+    render: data => renderMonthlyChart(data, "secondary-timeline")
+  },
+  all: {
+    titleKey: "dashboard.playsPerYear",
+    key: "playsPerYear",
+    render: data => renderYearlyChart(data, "secondary-timeline")
+  }
+};
+
+function renderStatsTimelines(data) {
+  const mode = getStatsMode();
+  const secondary = SECONDARY_TIMELINES[mode] || SECONDARY_TIMELINES.all;
+
+  if (mode === "all") {
+    setPlaysChartTitle("dashboard.playsPerMonth");
+    renderMonthlyChart(data.playsPerMonth || []);
+  } else {
+    setPlaysChartTitle("dashboard.playsPerDay");
+    renderDailyChart(data.playsPerDay || []);
+  }
+
+  setChartTitle("secondary-timeline-title", secondary.titleKey);
+  secondary.render(data[secondary.key] || []);
 }
 
 function renderDashboard(data) {
@@ -176,13 +220,7 @@ function renderDashboard(data) {
   renderAlbums(data.topAlbums);
   renderTopSongs(data.topTracks);
   renderTopArtists(data.topArtists);
-  if (data.timeline === "month") {
-    setPlaysChartTitle("dashboard.playsPerMonth");
-    renderMonthlyChart(data.playsPerMonth);
-  } else {
-    setPlaysChartTitle("dashboard.playsPerDay");
-    renderDailyChart(data.playsPerDay);
-  }
+  renderStatsTimelines(data);
   renderListeningClock(data.listeningClock);
   renderDashboardCacheState(data.cache);
 }

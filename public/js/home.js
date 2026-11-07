@@ -5,7 +5,7 @@ import { renderAlbums } from "./albums.js";
 import { renderTopArtists } from "./artists.js";
 import { renderTopSongs } from "./topSongs.js";
 import { formatTimestampDate } from "./dates.js";
-import { installImageFallback, installImageFallbacks, safeImageUrl } from "./dom.js";
+import { installImageFallback, safeImageUrl } from "./dom.js";
 import { showToast } from "./toast.js";
 
 const HOME_SCROBBLE_LIMIT = 50;
@@ -17,19 +17,43 @@ const RANGE_BY_PILL = {
 };
 const DEFAULT_PILL = "7d";
 
-let activePill = DEFAULT_PILL;
+const MODULES = {
+  albums: {
+    elementId: "home-albums-module",
+    render: data => renderAlbums(data.topAlbums, "home-albums-grid")
+  },
+  artists:
+  {
+    elementId: "home-artists-module",
+    render: data => renderTopArtists(data.topArtists, {
+      podiumId: "home-artists-podium",
+      restId: "home-artists"
+    })
+  },
+  songs: {
+    elementId: "home-songs-module",
+    render: data => renderTopSongs(data.topTracks, {
+      podiumId: "home-songs-podium",
+      listId: "home-songs"
+    })
+  }
+};
+
+const activePills = { albums: DEFAULT_PILL, artists: DEFAULT_PILL, songs: DEFAULT_PILL };
+const loadCounters = { albums: 0, artists: 0, songs: 0 };
+const abortControllers = {};
+
 let homeLoadCounter = 0;
 let homeAbortController = null;
-let topsLoadCounter = 0;
-let topsAbortController = null;
 
 export function isHomeVisible() {
   return !document.getElementById("home-view")?.classList.contains("d-none");
 }
 
-function topsQuery(pill) {
+function moduleQuery(module) {
   const params = new URLSearchParams();
-  if (RANGE_BY_PILL[pill]) params.append("range", RANGE_BY_PILL[pill]);
+  const range = RANGE_BY_PILL[activePills[module]];
+  if (range) params.append("range", range);
   params.set("tzOffset", String(new Date().getTimezoneOffset()));
   return `?${params.toString()}`;
 }
@@ -73,39 +97,46 @@ async function loadHomeScrobbles(signal) {
     .join("");
 }
 
-export function loadHomeTops() {
-  const loadId = ++topsLoadCounter;
-  topsAbortController?.abort();
-  topsAbortController = new AbortController();
+export function loadHomeModule(module) {
+  const config = MODULES[module];
+  if (!config) return;
 
-  const loading = document.getElementById("home-tops-loading");
-  const content = document.getElementById("home-tops-content");
-  loading?.classList.remove("d-none");
-  content?.classList.add("is-loading");
+  const loadId = ++loadCounters[module];
+  abortControllers[module]?.abort();
+  abortControllers[module] = new AbortController();
 
-  fetchJSON(`/api/dashboard${topsQuery(activePill)}`, {
+  const element = document.getElementById(config.elementId);
+  element?.classList.add("is-loading");
+
+  fetchJSON(`/api/dashboard${moduleQuery(module)}`, {
     cache: "no-store",
-    signal: topsAbortController.signal
+    signal: abortControllers[module].signal
   })
     .then(data => {
-      if (loadId !== topsLoadCounter) return;
-      renderAlbums(data.topAlbums, "home-albums-grid");
-      renderTopArtists(data.topArtists, { podiumId: "home-artists-podium", restId: "home-artists" });
-      renderTopSongs(data.topTracks, { podiumId: "home-songs-podium", listId: "home-songs" });
+      if (loadId !== loadCounters[module]) return;
+      config.render(data);
     })
     .catch(error => {
-      if (error.name === "AbortError" || loadId !== topsLoadCounter) return;
-      console.error("Error loading home tops:", error);
+      if (error.name === "AbortError" || loadId !== loadCounters[module]) return;
+      console.error(`Error loading home "${module}":`, error);
       showToast(error.message || t("home.topsError"), "error");
     })
     .finally(() => {
-      if (loadId !== topsLoadCounter) return;
-      loading?.classList.add("d-none");
-      content?.classList.remove("is-loading");
+      if (loadId !== loadCounters[module]) return;
+      element?.classList.remove("is-loading");
     });
 }
 
-export async function loadHome() {
+function setActivePills() {
+  document.querySelectorAll("[data-module]").forEach(group => {
+    const module = group.dataset.module;
+    group.querySelectorAll("[data-home-range]").forEach(pill => {
+      pill.classList.toggle("active", pill.dataset.homeRange === activePills[module]);
+    });
+  });
+}
+
+export function loadHome() {
   const loadId = ++homeLoadCounter;
   homeAbortController?.abort();
   homeAbortController = new AbortController();
@@ -126,30 +157,30 @@ export async function loadHome() {
     })
   ];
 
-  await Promise.allSettled(jobs);
-  if (loadId === homeLoadCounter) loading.style.display = "none";
+  if (loadId === homeLoadCounter) {
+    for (const module of Object.keys(MODULES)) loadHomeModule(module);
+  }
 
-  loadHomeTops();
-}
-
-function setActivePill() {
-  document.querySelectorAll("[data-home-range]").forEach(pill => {
-    pill.classList.toggle("active", pill.dataset.homeRange === activePill);
+  Promise.allSettled(jobs).then(() => {
+    if (loadId === homeLoadCounter) loading.style.display = "none";
   });
 }
 
 function initHome() {
-  document.querySelectorAll("[data-home-range]").forEach(pill => {
-    pill.addEventListener("click", () => {
-      if (pill.dataset.homeRange === activePill) return;
-      activePill = pill.dataset.homeRange;
-      setActivePill();
-      loadHomeTops();
+  document.querySelectorAll("[data-module]").forEach(group => {
+    group.querySelectorAll("[data-home-range]").forEach(pill => {
+      pill.addEventListener("click", () => {
+        const module = group.dataset.module;
+        if (pill.dataset.homeRange === activePills[module]) return;
+        activePills[module] = pill.dataset.homeRange;
+        setActivePills();
+        loadHomeModule(module);
+      });
     });
   });
 
   bindScrobbleDelete(document.getElementById("home-scrobbles-list"));
-  setActivePill();
+  setActivePills();
 }
 
 initHome();

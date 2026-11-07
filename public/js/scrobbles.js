@@ -1,9 +1,37 @@
 import { fetchJSON } from "./api.js";
-import { t } from "./i18n.js";
+import { t, getLocale } from "./i18n.js";
 import { escapeAttribute, escapeHTML, safeImageUrl } from "./dom.js";
 
 let currentPage = 1;
 let loading = false;
+let lastDayKey = null;
+
+function dayHeaderHTML(date) {
+  const locale = getLocale() === "en" ? "en-GB" : "fr-FR";
+  const label = new Intl.DateTimeFormat(locale, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  }).format(date);
+  const capitalized = label.charAt(0).toUpperCase() + label.slice(1);
+
+  return `<div class="scrobbles-day-header">${escapeHTML(capitalized)}</div>`;
+}
+
+function scrobbleBlocks(scrobble) {
+  const blocks = [];
+  const date = new Date(scrobble.date ?? Date.now());
+  const dayKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+
+  if (dayKey !== lastDayKey) {
+    lastDayKey = dayKey;
+    blocks.push(dayHeaderHTML(date));
+  }
+
+  blocks.push(scrobbleItemHTML(scrobble));
+  return blocks.join("");
+}
 
 export function scrobbleItemHTML(scrobble, { compact = false } = {}) {
   return `
@@ -85,6 +113,7 @@ export async function loadScrobbles(reset = true) {
 
   if (reset) {
     currentPage = 1;
+    lastDayKey = null;
     button.classList.add("d-none");
     container.innerHTML = "";
   }
@@ -98,7 +127,7 @@ export async function loadScrobbles(reset = true) {
 
     container.insertAdjacentHTML(
       "beforeend",
-      (data.tracks || []).map(scrobble => scrobbleItemHTML(scrobble)).join("")
+      (data.tracks || []).map(scrobbleBlocks).join("")
     );
     button.classList.toggle("d-none", !data.hasMore);
     currentPage++;

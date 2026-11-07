@@ -268,6 +268,18 @@ function getArtistEvolution(filter, topCount = 6) {
   };
 }
 
+function getPlaysPerYear(filter) {
+  return db.prepare(`
+    SELECT
+      strftime('%Y', played_at, 'unixepoch') AS year,
+      COUNT(*) AS plays
+    FROM scrobbles
+    ${whereClause(filter)}
+    GROUP BY year
+    ORDER BY year
+  `).all(...filter.params);
+}
+
 function createLookupTasks(artists, albums, tracks) {
   const tasks = new Map();
 
@@ -355,7 +367,9 @@ async function buildDashboard(query, context) {
   const trackRows = getTopTrackRows(context.current);
   const isAllTime = !query.range && !query.year && !query.month;
   const playsPerDay = isAllTime ? [] : getPlaysPerDay(context.current, query);
-  const playsPerMonth = isAllTime ? getPlaysPerMonth(context.current) : [];
+  const playsPerWeek = getPlaysPerWeek(context.current);
+  const playsPerMonth = getPlaysPerMonth(context.current);
+  const playsPerYear = getPlaysPerYear(context.current);
   const listeningClock = getListeningClock(context.current, context.timezoneOffset);
   const lists = await enrichDashboardLists(artistRows, albumRows, trackRows);
 
@@ -364,9 +378,10 @@ async function buildDashboard(query, context) {
     topArtists: lists.artists,
     topAlbums: lists.albums,
     topTracks: lists.tracks,
-    timeline: isAllTime ? "month" : "day",
     playsPerDay,
+    playsPerWeek,
     playsPerMonth,
+    playsPerYear,
     listeningClock
   };
 }

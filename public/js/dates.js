@@ -1,5 +1,5 @@
 const DAY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
-const WEEK_PATTERN = /^(\d{4})-W(\d{1,2})$/;
+const WEEK_PATTERN = /^(\d{4})-W?(\d{1,2})$/;
 const MONTH_PATTERN = /^(\d{4})-(\d{2})$/;
 
 export function formatDay(day) {

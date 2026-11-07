@@ -182,72 +182,76 @@
                     </section>
 
                     <section class="mb-5">
-                        <div class="home-tops-header mb-3">
-                            <div class="card-header-title mb-0">
-                                <i class="mdi mdi-trophy-outline text-green"></i>
-                                <span data-i18n="home.topTitles">Les plus écoutés</span>
-                            </div>
-                            <div class="range-filters home-range-filters">
-                                <button class="range-pill" data-home-range="7d" data-i18n="home.pill7">
-                                    7 jours
-                                </button>
-                                <button class="range-pill" data-home-range="30d" data-i18n="home.pill30">
-                                    30 jours
-                                </button>
-                                <button class="range-pill" data-home-range="365d" data-i18n="home.pill365">
-                                    365 jours
-                                </button>
-                                <button class="range-pill" data-home-range="all" data-i18n="home.pillAll">
-                                    Tout
-                                </button>
-                            </div>
+                        <div class="mb-3">
+                            <i class="mdi mdi-trophy-outline me-1 text-green"></i>
+                            <span data-i18n="home.topTitles">Les plus écoutés</span>
                         </div>
 
-                        <div id="home-tops-loading" class="home-tops-loading d-none">
-                            <div class="spinner-border text-light" role="status"></div>
+                        <div id="home-albums-module" class="home-module mb-4">
+                            <div class="home-module-header mb-2">
+                                <div>
+                                    <i class="mdi mdi-album me-1 text-green"></i>
+                                    <span data-i18n="common.topAlbums">Top albums</span>
+                                </div>
+                                <div class="range-filters home-range-filters" data-module="albums">
+                                    <button class="range-pill" data-home-range="7d" data-i18n="home.pill7">7 jours</button>
+                                    <button class="range-pill" data-home-range="30d" data-i18n="home.pill30">30 jours</button>
+                                    <button class="range-pill" data-home-range="365d" data-i18n="home.pill365">365 jours</button>
+                                    <button class="range-pill" data-home-range="all" data-i18n="home.pillAll">Tout</button>
+                                </div>
+                            </div>
+                            <div class="albums-scroll" id="home-albums-grid"></div>
                         </div>
 
-                        <div id="home-tops-content">
-                            <div class="mb-2">
-                                <i class="mdi mdi-album me-1 text-green"></i>
-                                <span data-i18n="common.topAlbums">Top albums</span>
-                            </div>
-                            <div class="albums-scroll mb-4" id="home-albums-grid"></div>
-
-                            <div class="row gy-4">
-                                <div class="col-xl-6 col-md-12">
-                                    <div class="card bg-light shadow-sm h-100">
-                                        <div class="card-body d-flex flex-column text-light">
-                                            <div class="card-header-title mb-3">
+                        <div class="row gy-4">
+                            <div class="col-xl-6 col-md-12">
+                                <div class="card bg-light shadow-sm h-100" id="home-artists-module">
+                                    <div class="card-body d-flex flex-column text-light">
+                                        <div class="home-module-header mb-3">
+                                            <div class="card-header-title mb-0">
                                                 <i class="mdi mdi-account-music-outline text-green"></i>
                                                 <span data-i18n="common.topArtists">Top artistes</span>
                                             </div>
-                                            <div class="top-split">
-                                                <div class="top-list top-podium" id="home-artists-podium"></div>
-                                                <div class="top-list top-rest" id="home-artists"></div>
+                                            <div class="range-filters home-range-filters" data-module="artists">
+                                                <button class="range-pill" data-home-range="7d" data-i18n="home.pill7">7 jours</button>
+                                                <button class="range-pill" data-home-range="30d" data-i18n="home.pill30">30 jours</button>
+                                                <button class="range-pill" data-home-range="365d" data-i18n="home.pill365">365 jours</button>
+                                                <button class="range-pill" data-home-range="all" data-i18n="home.pillAll">Tout</button>
                                             </div>
+                                        </div>
+                                        <div class="top-split">
+                                            <div class="top-list top-podium" id="home-artists-podium"></div>
+                                            <div class="top-list top-rest" id="home-artists"></div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="col-xl-6 col-md-12">
-                                    <div class="card bg-light shadow-sm h-100">
-                                        <div class="card-body d-flex flex-column text-light">
-                                            <div class="card-header-title mb-3">
+                            <div class="col-xl-6 col-md-12">
+                                <div class="card bg-light shadow-sm h-100" id="home-songs-module">
+                                    <div class="card-body d-flex flex-column text-light">
+                                        <div class="home-module-header mb-3">
+                                            <div class="card-header-title mb-0">
                                                 <i class="mdi mdi-playlist-music-outline text-green"></i>
                                                 <span data-i18n="dashboard.topSongs">Top morceaux</span>
                                             </div>
-                                            <div class="top-split flex-grow-1">
-                                                <div class="top-list top-podium" id="home-songs-podium"></div>
-                                                <div class="top-songs-list flex-grow-1">
-                                                    <div class="top-songs-header">
-                                                        <span>#</span>
-                                                        <span data-i18n="dashboard.songArtistHeader">Morceau / Artiste</span>
-                                                        <span data-i18n="dashboard.playsHeader">Écoutes</span>
-                                                        <span>Total</span>
-                                                    </div>
-                                                    <div id="home-songs"></div>
+                                            <div class="range-filters home-range-filters" data-module="songs">
+                                                <button class="range-pill" data-home-range="7d" data-i18n="home.pill7">7 jours</button>
+                                                <button class="range-pill" data-home-range="30d" data-i18n="home.pill30">30 jours</button>
+                                                <button class="range-pill" data-home-range="365d" data-i18n="home.pill365">365 jours</button>
+                                                <button class="range-pill" data-home-range="all" data-i18n="home.pillAll">Tout</button>
+                                            </div>
+                                        </div>
+                                        <div class="top-split flex-grow-1">
+                                            <div class="top-list top-podium" id="home-songs-podium"></div>
+                                            <div class="top-songs-list flex-grow-1">
+                                                <div class="top-songs-header">
+                                                    <span>#</span>
+                                                    <span data-i18n="dashboard.songArtistHeader">Morceau / Artiste</span>
+                                                    <span data-i18n="dashboard.playsHeader">Écoutes</span>
+                                                    <span>Total</span>
                                                 </div>
+                                                <div id="home-songs"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -425,6 +429,20 @@
                                     </div>
                                     <div class="chart-container listening-clock-container">
                                         <canvas id="listening-clock"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card bg-light shadow-sm">
+                                <div class="card-body text-light">
+                                    <div class="card-header-title mb-3">
+                                        <i class="mdi mdi-chart-bar text-green"></i>
+                                        <span id="secondary-timeline-title" data-i18n="insights.playsPerWeek">Écoutes par semaine</span>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="secondary-timeline"></canvas>
                                     </div>
                                 </div>
                             </div>

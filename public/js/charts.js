@@ -40,11 +40,11 @@ function commonOptions() {
   };
 }
 
-export function renderDailyChart(data = []) {
+export function renderDailyChart(data = [], canvasId = "daily") {
   const options = commonOptions();
   options.scales.x.ticks.maxTicksLimit = 12;
 
-  replaceChart("daily", {
+  replaceChart(canvasId, {
     type: "bar",
     data: {
       labels: data.map(item => formatDay(item.day)),
@@ -52,6 +52,67 @@ export function renderDailyChart(data = []) {
         label: t("dashboard.playsPerDay"),
         data: data.map(item => item.plays),
         backgroundColor: "rgba(255, 115, 2, 0.78)",
+        borderRadius: 6,
+        maxBarThickness: 50
+      }]
+    },
+    options
+  });
+}
+
+export function renderMonthlyChart(data = [], canvasId = "daily") {
+  const options = commonOptions();
+  options.scales.x.ticks.maxTicksLimit = 14;
+
+  replaceChart(canvasId, {
+    type: "bar",
+    data: {
+      labels: data.map(item => formatMonth(item.month)),
+      datasets: [{
+        label: t("dashboard.playsPerMonth"),
+        data: data.map(item => item.plays),
+        backgroundColor: "rgba(255, 115, 2, 0.6)",
+        borderRadius: 4,
+        maxBarThickness: 20
+      }]
+    },
+    options
+  });
+}
+
+export function renderWeeklyChart(data = [], canvasId = "weekly") {
+  const options = commonOptions();
+  options.scales.x.ticks.maxTicksLimit = 12;
+  options.plugins.legend.display = false;
+
+  replaceChart(canvasId, {
+    type: "bar",
+    data: {
+      labels: data.map(item => formatWeek(item.week)),
+      datasets: [{
+        label: t("insights.playsPerWeek"),
+        data: data.map(item => item.plays),
+        backgroundColor: "rgba(255, 115, 2, 0.74)",
+        borderRadius: 6,
+        maxBarThickness: 50
+      }]
+    },
+    options
+  });
+}
+
+export function renderYearlyChart(data = [], canvasId = "daily") {
+  const options = commonOptions();
+  options.plugins.legend.display = false;
+
+  replaceChart(canvasId, {
+    type: "bar",
+    data: {
+      labels: data.map(item => item.year),
+      datasets: [{
+        label: t("dashboard.playsPerYear"),
+        data: data.map(item => item.plays),
+        backgroundColor: "rgba(255, 115, 2, 0.74)",
         borderRadius: 6,
         maxBarThickness: 50
       }]
@@ -105,47 +166,6 @@ export function renderListeningClock(data = {}) {
         to: `${String((peakHour + 1) % 24).padStart(2, "0")}:00`,
         count: Number(data.peakPlays || 0).toLocaleString()
       });
-}
-
-export function renderWeeklyChart(data = []) {
-  const options = commonOptions();
-  options.scales.x.ticks.maxTicksLimit = 12;
-  options.plugins.legend.display = false;
-
-  replaceChart("weekly", {
-    type: "bar",
-    data: {
-      labels: data.map(item => formatWeek(item.week)),
-      datasets: [{
-        label: t("insights.playsPerWeek"),
-        data: data.map(item => item.plays),
-        backgroundColor: "rgba(255, 115, 2, 0.6)",
-        borderRadius: 4,
-        maxBarThickness: 20
-      }]
-    },
-    options
-  });
-}
-
-export function renderMonthlyChart(data = []) {
-  const options = commonOptions();
-  options.scales.x.ticks.maxTicksLimit = 14;
-
-  replaceChart("daily", {
-    type: "bar",
-    data: {
-      labels: data.map(item => formatMonth(item.month)),
-      datasets: [{
-        label: t("dashboard.playsPerMonth"),
-        data: data.map(item => item.plays),
-        backgroundColor: "rgba(255, 115, 2, 0.6)",
-        borderRadius: 4,
-        maxBarThickness: 20
-      }]
-    },
-    options
-  });
 }
 
 const EVOLUTION_COLORS = [

@@ -2963,25 +2963,50 @@ strong {
   flex-wrap: wrap;
 }
 
-.home-tops-header {
+.home-module-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
-.home-tops-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 0;
-}
-
-#home-tops-content.is-loading {
-  opacity: 0.4;
+.home-module.is-loading {
+  opacity: 0.45;
   pointer-events: none;
   transition: opacity var(--transition-fast);
+}
+
+.home-range-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.home-range-filters .range-pill {
+  padding: 4px 10px;
+  font-size: 0.72rem;
+}
+
+/* =========================
+   SCROBBLES — SÉPARATEURS DE JOUR
+========================= */
+.scrobbles-day-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 10px 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--brand-orange);
+}
+
+.scrobbles-day-header::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 115, 2, 0.25);
 }
 
 .home-scrobbles-list .scrobble-item.compact {
@@ -3049,8 +3074,13 @@ strong {
     flex-direction: column;
   }
 
-  .home-tops-header .range-filters {
-    grid-template-columns: repeat(4, minmax(72px, 1fr));
-    width: 100%;
+  .home-module-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .home-range-filters .range-pill {
+    padding: 5px 10px;
   }
 }
