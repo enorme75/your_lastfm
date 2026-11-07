@@ -22,9 +22,19 @@ test("calculates dashboard trend percentages", () => {
 });
 
 test("normalizes summary rows into display values", () => {
-  assert.deepEqual(normalizeSummary({ totalPlays: 21, totalSeconds: 3600, days: 3 }), {
-    totalPlays: 21,
-    totalMinutes: 60,
-    avgPerDay: 7
+  assert.deepEqual(
+    normalizeSummary({ totalPlays: 21, totalArtists: 7, totalSeconds: 3600, days: 3 }),
+    {
+      totalPlays: 21,
+      totalArtists: 7,
+      totalMinutes: 60,
+      avgPerDay: 7
+    }
+  );
+  assert.deepEqual(normalizeSummary({}), {
+    totalPlays: 0,
+    totalArtists: 0,
+    totalMinutes: 0,
+    avgPerDay: 0
   });
 });

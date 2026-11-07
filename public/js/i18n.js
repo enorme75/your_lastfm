@@ -1,6 +1,11 @@
 const DICTIONARY = {
   nav: {
     dashboard: { fr: "Tableau de bord", en: "Dashboard" },
+    home: { fr: "Accueil", en: "Home" },
+    stats: { fr: "Statistiques", en: "Statistics" },
+    statsMonth: { fr: "Mois", en: "Month" },
+    statsYear: { fr: "Année", en: "Year" },
+    statsAll: { fr: "Tout", en: "All time" },
     scrobbles: { fr: "Scrobbles", en: "Scrobbles" },
     friends: { fr: "Amis", en: "Friends" },
     leaderboards: { fr: "Classements", en: "Leaderboards" },
@@ -81,7 +86,25 @@ const DICTIONARY = {
     openAlbumOnDiscogs: { fr: "Ouvrir l'album sur Discogs", en: "Open album on Discogs" },
     openArtistOnLastfm: { fr: "Ouvrir l'artiste sur Last.fm", en: "Open artist on Last.fm" },
     openArtistOnDiscogs: { fr: "Ouvrir l'artiste sur Discogs", en: "Open artist on Discogs" },
-    openTrackOnLastfm: { fr: "Ouvrir le morceau sur Last.fm", en: "Open track on Last.fm" }
+    openTrackOnLastfm: { fr: "Ouvrir le morceau sur Last.fm", en: "Open track on Last.fm" },
+    playsPerMonth: { fr: "Écoutes par mois", en: "Plays per Month" },
+    artistsListened: { fr: "Artistes écoutés", en: "Artists listened" },
+    byMonth: { fr: "Par mois", en: "By month" },
+    byYear: { fr: "Par année", en: "By year" },
+    allTimeTitle: { fr: "Tout l'historique", en: "All time" }
+  },
+  home: {
+    memberSince: {
+      fr: "Écoutes suivies depuis le {date}",
+      en: "Tracking listening since {date}"
+    },
+    pill7: { fr: "7 jours", en: "7 days" },
+    pill30: { fr: "30 jours", en: "30 days" },
+    pill365: { fr: "365 jours", en: "365 days" },
+    pillAll: { fr: "Tout", en: "All time" },
+    topTitles: { fr: "Les plus écoutés", en: "Most played" },
+    loadError: { fr: "Erreur de chargement de l'accueil", en: "Error loading the home page" },
+    topsError: { fr: "Erreur de chargement des tops", en: "Error loading top lists" }
   },
   insights: {
     title: { fr: "Analyses", en: "Insights" },
@@ -105,6 +128,7 @@ const DICTIONARY = {
     hoursAgo: { fr: "il y a {count} h", en: "{count} h ago" },
     daysAgo: { fr: "il y a {count} j", en: "{count} days ago" },
     showMore: { fr: "Voir plus", en: "Show more" },
+    seeAll: { fr: "Voir tout", en: "See all" },
     deleteConfirm: {
       fr: "Supprimer aussi ce scrobble de la base locale (stats your_lastfm) ?",
       en: "Also remove this scrobble from the local database (your_lastfm stats)?"
@@ -315,6 +339,7 @@ const DICTIONARY = {
     yesterday: { fr: "hier", en: "yesterday" },
     previous24h: { fr: "24 dernières heures", en: "previous 24 hours" },
     previous7d: { fr: "7 derniers jours", en: "previous 7 days" },
+    previous30d: { fr: "30 jours précédents", en: "previous 30 days" },
     previousMonth: { fr: "mois précédent", en: "previous month" },
     previousYear: { fr: "année précédente", en: "previous year" },
     allHistory: { fr: "Tout l'historique disponible", en: "All available history" },

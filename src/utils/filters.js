@@ -1,6 +1,6 @@
 const { getDateRange, parseTimezoneOffset } = require("./dateRange");
 
-const ALLOWED_RANGES = new Set(["day", "week", "month", "year"]);
+const ALLOWED_RANGES = new Set(["day", "week", "30days", "month", "year"]);
 
 function invalidFilter(message) {
   const error = new Error(message);

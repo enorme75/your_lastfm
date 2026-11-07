@@ -1,8 +1,8 @@
 import { fetchJSON } from "./api.js";
-import { initFilters, buildQuery } from "./filters.js";
+import { initStatsFilters, buildStatsQuery, setStatsMode } from "./filters.js";
 import { renderSummary } from "./summary.js";
 import { renderAlbums } from "./albums.js";
-import { renderDailyChart, renderListeningClock } from "./charts.js";
+import { renderDailyChart, renderMonthlyChart, renderListeningClock } from "./charts.js";
 import { loadInsights } from "./insights.js";
 import { formatTimestampDate } from "./dates.js";
 import { t, setLocale, getNextLocale, applyStaticTranslations } from "./i18n.js";
@@ -13,6 +13,8 @@ import { loadAccount } from "./account.js";
 import { initSharePage } from "./share.js";
 import { loadFriends } from "./friends.js";
 import { loadLeaderboards } from "./leaderboards.js";
+import { loadHome, isHomeVisible } from "./home.js";
+import { showToast } from "./toast.js";
 import { loadArtist, showArtist, getCurrentArtist } from "./artistPage.js";
 import { loadAlbum, showAlbum, getCurrentAlbum } from "./albumPage.js";
 import { loadSearch, showSearch, getCurrentSearch } from "./search.js";
@@ -35,8 +37,19 @@ let syncPollTimer = null;
 let dashboardLoadCounter = 0;
 let dashboardAbortController = null;
 
-function isDashboardVisible() {
-  return !document.getElementById("dashboard-view")?.classList.contains("d-none");
+function isStatsViewVisible() {
+  return !document.getElementById("stats-view")?.classList.contains("d-none");
+}
+
+const VIEW_SECTIONS = {
+  home: "home-view",
+  "stats-month": "stats-view",
+  "stats-year": "stats-view",
+  "stats-all": "stats-view"
+};
+
+function getSectionId(viewName) {
+  return VIEW_SECTIONS[viewName] || `${viewName}-view`;
 }
 
 function syncStatusText(status = {}) {
@@ -111,7 +124,8 @@ async function pollSyncUntilFinished() {
     }
 
     showToast(syncStatusText(data.status) || t("dashboard.syncCompleted"), "success");
-    if (isDashboardVisible()) await reloadDashboardData({ skipSyncRefresh: true });
+    if (isHomeVisible()) await loadHome({ skipSyncRefresh: true });
+    if (isStatsViewVisible()) await reloadDashboardData({ skipSyncRefresh: true });
   } catch (error) {
     console.error("Could not read sync status:", error);
     syncPollTimer = setTimeout(pollSyncUntilFinished, 3000);
@@ -150,12 +164,25 @@ function initSyncControls() {
     .catch(error => console.error("Could not load sync status:", error));
 }
 
+function setPlaysChartTitle(i18nKey) {
+  const element = document.getElementById("plays-chart-title");
+  if (!element) return;
+  element.dataset.i18n = i18nKey;
+  element.textContent = t(i18nKey);
+}
+
 function renderDashboard(data) {
   renderSummary(data.summary);
   renderAlbums(data.topAlbums);
   renderTopSongs(data.topTracks);
   renderTopArtists(data.topArtists);
-  renderDailyChart(data.playsPerDay);
+  if (data.timeline === "month") {
+    setPlaysChartTitle("dashboard.playsPerMonth");
+    renderMonthlyChart(data.playsPerMonth);
+  } else {
+    setPlaysChartTitle("dashboard.playsPerDay");
+    renderDailyChart(data.playsPerDay);
+  }
   renderListeningClock(data.listeningClock);
   renderDashboardCacheState(data.cache);
 }
@@ -167,7 +194,7 @@ async function reloadDashboardData({ skipSyncRefresh = false } = {}) {
   UI.loading.style.display = "flex";
 
   try {
-    const query = buildQuery();
+    const query = buildStatsQuery();
     const data = await fetchJSON(`/api/dashboard${query}`, {
       cache: "no-store",
       signal: dashboardAbortController.signal
@@ -185,19 +212,6 @@ async function reloadDashboardData({ skipSyncRefresh = false } = {}) {
   } finally {
     if (loadId === dashboardLoadCounter) UI.loading.style.display = "none";
   }
-}
-
-function showToast(message, type = "info") {
-  const toast = document.createElement("div");
-  toast.className = `sync-toast ${type}`;
-  toast.textContent = message;
-
-  document.getElementById("toast-container")?.appendChild(toast);
-
-  setTimeout(() => {
-    toast.classList.add("hide");
-    setTimeout(() => toast.remove(), 300);
-  }, 5000);
 }
 
 function closeSidebarOnMobile() {
@@ -226,8 +240,20 @@ window.addEventListener("resize", () => {
   }
 });
 
+const STATS_PAGE_TITLES = {
+  "stats-month": "dashboard.byMonth",
+  "stats-year": "dashboard.byYear",
+  "stats-all": "dashboard.allTimeTitle"
+};
+
+function renderStatsPageTitle(viewName) {
+  const element = document.getElementById("stats-page-title");
+  if (!element) return;
+  element.textContent = t(STATS_PAGE_TITLES[viewName] || "dashboard.allTimeTitle");
+}
+
 function toggleView(viewName) {
-  if (!document.getElementById(`${viewName}-view`)) viewName = "dashboard";
+  if (!document.getElementById(getSectionId(viewName))) viewName = "home";
   if (viewName !== "artist" && viewName !== "album" && viewName !== "search" && location.hash.startsWith("#artist/")) {
     history.replaceState(null, "", location.pathname + location.search);
   }
@@ -247,11 +273,18 @@ function toggleView(viewName) {
   });
 
   UI.sections.forEach(section => {
-    section.classList.toggle("d-none", section.id !== `${viewName}-view`);
+    section.classList.toggle("d-none", section.id !== getSectionId(viewName));
   });
 
   switch (viewName) {
-    case "dashboard":
+    case "home":
+      loadHome();
+      break;
+    case "stats-month":
+    case "stats-year":
+    case "stats-all":
+      setStatsMode(viewName);
+      renderStatsPageTitle(viewName);
       reloadDashboardData();
       break;
     case "scrobbles":
@@ -322,7 +355,7 @@ function parseTrackHash() {
 
 function initArtistRouting() {
   document.getElementById("artist-back")?.addEventListener("click", () => {
-    toggleView("dashboard");
+    toggleView("home");
   });
 
   document.getElementById("album-back")?.addEventListener("click", () => {
@@ -334,7 +367,7 @@ function initArtistRouting() {
         return;
       }
     }
-    toggleView("dashboard");
+    toggleView("home");
   });
 
   document.getElementById("track-back")?.addEventListener("click", () => {
@@ -346,7 +379,7 @@ function initArtistRouting() {
         return;
       }
     }
-    toggleView("dashboard");
+    toggleView("home");
   });
 
   window.addEventListener("hashchange", () => {
@@ -428,8 +461,12 @@ UI.sidebarButtons.forEach(button => {
   button.addEventListener("click", () => toggleView(button.dataset.view));
 });
 
-initFilters(() => {
-  if (isDashboardVisible()) reloadDashboardData();
+document.getElementById("home-scrobbles-see-all")?.addEventListener("click", () => {
+  toggleView("scrobbles");
+});
+
+initStatsFilters(() => {
+  if (isStatsViewVisible()) reloadDashboardData();
 });
 
 function updateLocaleToggleLabel() {
@@ -446,7 +483,7 @@ function initLocaleToggle() {
 
   window.addEventListener("localechange", () => {
     updateLocaleToggleLabel();
-    const currentView = localStorage.getItem("activeView") || "dashboard";
+    const currentView = localStorage.getItem("activeView") || "home";
     toggleView(currentView);
   });
 }
@@ -472,7 +509,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ? "search"
         : artistFromHash
           ? "artist"
-          : localStorage.getItem("activeView") || "dashboard";
+          : localStorage.getItem("activeView") || "home";
 
   toggleView(savedView);
   if (trackFromHash) loadTrack(trackFromHash.artist, trackFromHash.track);

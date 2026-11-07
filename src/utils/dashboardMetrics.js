@@ -20,11 +20,13 @@ function calculateChange(current, previous) {
 
 function normalizeSummary(row) {
   const totalPlays = Number(row?.totalPlays || 0);
+  const totalArtists = Number(row?.totalArtists || 0);
   const totalMinutes = Math.round(Number(row?.totalSeconds || 0) / 60);
   const days = Number(row?.days || 0);
 
   return {
     totalPlays,
+    totalArtists,
     totalMinutes,
     avgPerDay: days ? Math.round((totalPlays / days) * 10) / 10 : 0
   };

@@ -1,6 +1,4 @@
-import { fetchJSON } from "./api.js";
 import { t } from "./i18n.js";
-import { buildQuery } from "./filters.js";
 import { escapeHTML } from "./dom.js";
 
 let avgScope = "filter";
@@ -61,6 +59,7 @@ export function renderSummary(data = {}) {
 
   document.getElementById("hours").textContent = Number(data.totalMinutes || 0).toLocaleString();
   document.getElementById("plays").textContent = Number(data.totalPlays || 0).toLocaleString();
+  document.getElementById("artists-count").textContent = Number(data.totalArtists || 0).toLocaleString();
   document.getElementById("avg").textContent = Number(data.avgPerDay || 0).toLocaleString(undefined, {
     maximumFractionDigits: 1
   });
@@ -90,9 +89,4 @@ export function renderSummary(data = {}) {
     comparisonLabel,
     comparisonNote
   );
-}
-
-export async function loadSummary() {
-  const data = await fetchJSON("/api/summary" + buildQuery());
-  renderSummary(data);
 }

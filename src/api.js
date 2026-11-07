@@ -502,7 +502,10 @@ app.get("/api/recent-scrobbles", asyncRoute(async (req, res) => {
   setNoStore(res);
   const parsedPage = Number.parseInt(req.query.page || "1", 10);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-  const limit = 20;
+  const parsedLimit = Number.parseInt(req.query.limit || "20", 10);
+  const limit = Number.isInteger(parsedLimit) && parsedLimit > 0
+    ? Math.min(parsedLimit, 200)
+    : 20;
 
   const response = await fetchWithRetry(async () => {
     const result = await axios.get("https://ws.audioscrobbler.com/2.0/", {

@@ -1,5 +1,3 @@
-import { fetchJSON } from "./api.js";
-import { buildQuery } from "./filters.js";
 import { formatDay, formatWeek, formatMonth } from "./dates.js";
 import { t } from "./i18n.js";
 
@@ -130,6 +128,26 @@ export function renderWeeklyChart(data = []) {
   });
 }
 
+export function renderMonthlyChart(data = []) {
+  const options = commonOptions();
+  options.scales.x.ticks.maxTicksLimit = 14;
+
+  replaceChart("daily", {
+    type: "bar",
+    data: {
+      labels: data.map(item => formatMonth(item.month)),
+      datasets: [{
+        label: t("dashboard.playsPerMonth"),
+        data: data.map(item => item.plays),
+        backgroundColor: "rgba(255, 115, 2, 0.6)",
+        borderRadius: 4,
+        maxBarThickness: 20
+      }]
+    },
+    options
+  });
+}
+
 const EVOLUTION_COLORS = [
   "#ff7302",
   "#5ddc81",
@@ -220,28 +238,4 @@ export function renderActivityHeatmap(days = []) {
   }
 
   container.innerHTML = html;
-}
-
-export async function loadChart({ url, canvasId, labelKey, valueKey, label }) {
-  const data = await fetchJSON(`${url}${buildQuery()}`);
-
-  if (canvasId === "daily") {
-    renderDailyChart(data);
-    return;
-  }
-
-  replaceChart(canvasId, {
-    type: "bar",
-    data: {
-      labels: data.map(item => item[labelKey]),
-      datasets: [{
-        label,
-        data: data.map(item => item[valueKey]),
-        backgroundColor: "#ff7302",
-        borderRadius: 6,
-        maxBarThickness: 50
-      }]
-    },
-    options: commonOptions()
-  });
 }

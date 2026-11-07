@@ -23,6 +23,7 @@ function getSummaryRow(filter) {
   return db.prepare(`
     SELECT
       COUNT(*) AS totalPlays,
+      COUNT(DISTINCT artist) AS totalArtists,
       COUNT(DISTINCT date(played_at, 'unixepoch')) AS days,
       COALESCE(SUM(COALESCE(track_duration, ?)), 0) AS totalSeconds
     FROM scrobbles
@@ -189,6 +190,18 @@ function getListeningClock(filter, timezoneOffset) {
   };
 }
 
+function getPlaysPerMonth(filter) {
+  return db.prepare(`
+    SELECT
+      strftime('%Y-%m', played_at, 'unixepoch') AS month,
+      COUNT(*) AS plays
+    FROM scrobbles
+    ${whereClause(filter)}
+    GROUP BY month
+    ORDER BY month
+  `).all(...filter.params);
+}
+
 function getPlaysPerWeek(filter) {
   return db.prepare(`
     SELECT
@@ -340,7 +353,9 @@ async function buildDashboard(query, context) {
   const artistRows = getTopArtistRows(context.current);
   const albumRows = getTopAlbumRows(context.current);
   const trackRows = getTopTrackRows(context.current);
-  const playsPerDay = getPlaysPerDay(context.current, query);
+  const isAllTime = !query.range && !query.year && !query.month;
+  const playsPerDay = isAllTime ? [] : getPlaysPerDay(context.current, query);
+  const playsPerMonth = isAllTime ? getPlaysPerMonth(context.current) : [];
   const listeningClock = getListeningClock(context.current, context.timezoneOffset);
   const lists = await enrichDashboardLists(artistRows, albumRows, trackRows);
 
@@ -349,7 +364,9 @@ async function buildDashboard(query, context) {
     topArtists: lists.artists,
     topAlbums: lists.albums,
     topTracks: lists.tracks,
+    timeline: isAllTime ? "month" : "day",
     playsPerDay,
+    playsPerMonth,
     listeningClock
   };
 }

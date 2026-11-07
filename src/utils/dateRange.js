@@ -70,6 +70,9 @@ function getDateRange(range, year, month, referenceDate = new Date(), timezoneOf
       case "week":
         from.setUTCDate(from.getUTCDate() - 7);
         break;
+      case "30days":
+        from.setUTCDate(from.getUTCDate() - 30);
+        break;
       case "month":
         from.setUTCMonth(from.getUTCMonth() - 1);
         break;

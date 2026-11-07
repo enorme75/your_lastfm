@@ -1,68 +1,83 @@
-import { t } from "./i18n.js";
-import { escapeHTML } from "./dom.js";
+const MODE_BY_VIEW = {
+  "stats-month": "month",
+  "stats-year": "year",
+  "stats-all": "all"
+};
 
-let activeRange = "day";
+let statsMode = "all";
 
-export function buildQuery(extra = {}) {
+export function getStatsMode() {
+  return statsMode;
+}
+
+function currentValue(select, fallback) {
+  return select?.value || String(fallback);
+}
+
+export function buildStatsQuery() {
   const params = new URLSearchParams();
+  const now = new Date();
 
-  if (activeRange) {
-    params.append("range", activeRange);
-  } else {
-    const year = document.getElementById("year").value;
-    const month = document.getElementById("month").value;
-
+  if (statsMode === "month" || statsMode === "year") {
+    const year = currentValue(document.getElementById("year"), now.getFullYear());
     if (year) params.append("year", year);
+  }
+
+  if (statsMode === "month") {
+    const month = currentValue(document.getElementById("month"), now.getMonth() + 1);
     if (month) params.append("month", month);
   }
 
   params.set("tzOffset", String(new Date().getTimezoneOffset()));
 
-  for (const [key, value] of Object.entries(extra)) {
-    if (value !== undefined && value !== null && value !== "") {
-      params.set(key, String(value));
-    }
-  }
-
-  return params.toString() ? `?${params.toString()}` : "";
+  return `?${params.toString()}`;
 }
 
-export function initFilters(onChange) {
+function applyModeDefaults() {
+  const yearSelect = document.getElementById("year");
+  const monthSelect = document.getElementById("month");
+  const now = new Date();
+
+  if (!yearSelect || !monthSelect) return;
+
+  if (statsMode === "month" || statsMode === "year") {
+    if (!yearSelect.value) yearSelect.value = String(now.getFullYear());
+  }
+
+  if (statsMode === "month" && !monthSelect.value) {
+    monthSelect.value = String(now.getMonth() + 1);
+  }
+}
+
+function syncSelectVisibility() {
+  document.getElementById("stats-year-group")?.classList.toggle("d-none", statsMode === "all");
+  document.getElementById("stats-month-group")?.classList.toggle("d-none", statsMode !== "month");
+}
+
+export function setStatsMode(viewName) {
+  statsMode = MODE_BY_VIEW[viewName] || "all";
+  applyModeDefaults();
+  syncSelectVisibility();
+}
+
+export function initStatsFilters(onChange) {
   const yearSelect = document.getElementById("year");
   const monthSelect = document.getElementById("month");
   const currentYear = new Date().getFullYear();
 
-  yearSelect.innerHTML = `<option value="">${escapeHTML(t("dashboard.all"))}</option>`;
-  for (let year = currentYear; year >= 2002; year--) {
-    const option = document.createElement("option");
-    option.value = year;
-    option.textContent = year;
-    yearSelect.appendChild(option);
+  if (yearSelect) {
+    yearSelect.innerHTML = "";
+    for (let year = currentYear; year >= 2002; year--) {
+      const option = document.createElement("option");
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    }
+
+    yearSelect.addEventListener("change", onChange);
   }
 
-  document.querySelector('.range-pill[data-range="day"]')?.classList.add("active");
+  monthSelect?.addEventListener("change", onChange);
 
-  function handleManualChange() {
-    activeRange = "";
-    document.querySelectorAll(".range-pill")
-      .forEach(button => button.classList.remove("active"));
-
-    onChange();
-  }
-
-  yearSelect.addEventListener("change", handleManualChange);
-  monthSelect.addEventListener("change", handleManualChange);
-
-  document.querySelectorAll(".range-pill").forEach(button => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".range-pill")
-        .forEach(item => item.classList.remove("active"));
-      button.classList.add("active");
-
-      activeRange = button.dataset.range;
-      yearSelect.value = "";
-      monthSelect.value = "";
-      onChange();
-    });
-  });
+  syncSelectVisibility();
 }

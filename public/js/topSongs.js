@@ -1,6 +1,4 @@
 import { t } from "./i18n.js";
-import { fetchJSON } from "./api.js";
-import { buildQuery } from "./filters.js";
 import { renderCover, initCoverUploads } from "./coverUploader.js";
 import { escapeAttribute, escapeHTML } from "./dom.js";
 
@@ -84,17 +82,16 @@ function songRow(row, index) {
   `;
 }
 
-export function renderTopSongs(data = []) {
-  const podium = document.getElementById("top-songs-podium");
-  const container = document.getElementById("top-songs");
+export function renderTopSongs(
+  data = [],
+  { podiumId = "top-songs-podium", listId = "top-songs" } = {}
+) {
+  const podium = document.getElementById(podiumId);
+  const container = document.getElementById(listId);
+  if (!podium || !container) return;
 
   podium.innerHTML = data.slice(0, 3).map((row, index) => songPodiumItem(row, index)).join("");
   container.innerHTML = data.slice(3).map((row, index) => songRow(row, index + 3)).join("");
 
   initCoverUploads();
-}
-
-export async function loadTopSongs() {
-  const data = await fetchJSON("/api/top-tracks" + buildQuery());
-  renderTopSongs(data);
 }

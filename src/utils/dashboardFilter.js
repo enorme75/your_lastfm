@@ -4,6 +4,7 @@ const { getActiveFilter } = require("./filters");
 const ROLLING_LABELS = {
   day: "hier",
   week: "7 derniers jours",
+  "30days": "30 jours précédents",
   month: "mois précédent",
   year: "année précédente"
 };
@@ -12,6 +13,7 @@ const ROLLING_LABELS = {
 const ROLLING_LABEL_KEYS = {
   day: "yesterday",
   week: "previous7d",
+  "30days": "previous30d",
   month: "previousMonth",
   year: "previousYear"
 };
@@ -36,6 +38,7 @@ function shiftStartBack(from, unit) {
 
   if (unit === "day") previousFrom.setUTCDate(previousFrom.getUTCDate() - 1);
   if (unit === "week") previousFrom.setUTCDate(previousFrom.getUTCDate() - 7);
+  if (unit === "30days") previousFrom.setUTCDate(previousFrom.getUTCDate() - 30);
   if (unit === "month") previousFrom.setUTCMonth(previousFrom.getUTCMonth() - 1);
   if (unit === "year") previousFrom.setUTCFullYear(previousFrom.getUTCFullYear() - 1);
 

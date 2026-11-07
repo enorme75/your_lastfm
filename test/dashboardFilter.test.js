@@ -28,6 +28,20 @@ test("builds a since-local-midnight day compared with yesterday", () => {
   assert.ok(context.cacheKey.includes("day=2026-08-03"), context.cacheKey);
 });
 
+test("builds a rolling 30-day window with its previous equivalent", () => {
+  const reference = new Date("2026-08-02T22:00:00.000Z");
+  const context = getDashboardFilterContext({ range: "30days", tzOffset: "0" }, reference);
+
+  assert.equal(context.current.params[0], 1783116000);
+  assert.equal(
+    context.current.params[1],
+    Math.floor(reference.getTime() / 1000)
+  );
+  assert.equal(context.previous.params[0], context.current.params[0] - 30 * 86400);
+  assert.equal(context.comparisonLabel, "30 jours précédents");
+  assert.equal(context.comparisonLabelKey, "previous30d");
+});
+
 test("compares a selected month with the previous calendar month", () => {
   const context = getDashboardFilterContext({ year: "2026", month: "3" });
 

@@ -1,6 +1,4 @@
 import { t } from "./i18n.js";
-import { fetchJSON } from "./api.js";
-import { buildQuery } from "./filters.js";
 import { escapeAttribute, escapeHTML, installImageFallbacks, safeImageUrl } from "./dom.js";
 
 function artistRow(artist, index) {
@@ -32,18 +30,14 @@ function artistRow(artist, index) {
   `;
 }
 
-export function renderTopArtists(data = []) {
-  const podium = document.getElementById("top-artists-podium");
-  const rest = document.getElementById("top-artists");
+export function renderTopArtists(data = [], { podiumId = "top-artists-podium", restId = "top-artists" } = {}) {
+  const podium = document.getElementById(podiumId);
+  const rest = document.getElementById(restId);
+  if (!podium || !rest) return;
 
   podium.innerHTML = data.slice(0, 3).map((artist, index) => artistRow(artist, index)).join("");
   rest.innerHTML = data.slice(3).map((artist, index) => artistRow(artist, index + 3)).join("");
 
   installImageFallbacks(podium);
   installImageFallbacks(rest);
-}
-
-export async function loadTopArtists() {
-  const data = await fetchJSON("/api/top-artists" + buildQuery());
-  renderTopArtists(data);
 }

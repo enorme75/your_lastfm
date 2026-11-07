@@ -1,12 +1,10 @@
 import { t } from "./i18n.js";
-import { fetchJSON } from "./api.js";
-import { buildQuery } from "./filters.js";
 import { renderCover, initCoverUploads } from "./coverUploader.js";
 import { showAlbum } from "./albumPage.js";
 import { escapeAttribute, escapeHTML } from "./dom.js";
 
-export function renderAlbums(albums = []) {
-  const grid = document.getElementById("albums-grid");
+export function renderAlbums(albums = [], containerId = "albums-grid") {
+  const grid = document.getElementById(containerId);
   const fragment = document.createDocumentFragment();
 
   grid.innerHTML = "";
@@ -48,9 +46,4 @@ export function renderAlbums(albums = []) {
 
   grid.appendChild(fragment);
   initCoverUploads();
-}
-
-export async function loadAlbums() {
-  const albums = await fetchJSON("/api/top-albums" + buildQuery());
-  renderAlbums(albums);
 }
