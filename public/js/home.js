@@ -8,7 +8,7 @@ import { formatTimestampDate } from "./dates.js";
 import { installImageFallback, safeImageUrl } from "./dom.js";
 import { showToast } from "./toast.js";
 
-const HOME_SCROBBLE_LIMIT = 50;
+const HOME_SCROBBLE_LIMIT = 20;
 const RANGE_BY_PILL = {
   "7d": "week",
   "30d": "30days",

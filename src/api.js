@@ -502,10 +502,10 @@ app.get("/api/recent-scrobbles", asyncRoute(async (req, res) => {
   setNoStore(res);
   const parsedPage = Number.parseInt(req.query.page || "1", 10);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-  const parsedLimit = Number.parseInt(req.query.limit || "40", 10);
+  const parsedLimit = Number.parseInt(req.query.limit || "50", 10);
   const limit = Number.isInteger(parsedLimit) && parsedLimit > 0
     ? Math.min(parsedLimit, 200)
-    : 40;
+    : 50;
 
   const response = await fetchWithRetry(async () => {
     const result = await axios.get("https://ws.audioscrobbler.com/2.0/", {
@@ -556,7 +556,7 @@ app.get("/api/scrobbles", asyncRoute(async (req, res) => {
   const from = Number.parseInt(String(req.query.from || ""), 10);
   const to = Number.parseInt(String(req.query.to || ""), 10);
   const parsedPage = Number.parseInt(req.query.page || "1", 10);
-  const parsedLimit = Number.parseInt(req.query.limit || "40", 10);
+  const parsedLimit = Number.parseInt(req.query.limit || "50", 10);
 
   if (!Number.isInteger(from) || !Number.isInteger(to) || from <= 0 || to <= from) {
     const error = new Error("Fenêtre de période invalide");
@@ -567,7 +567,7 @@ app.get("/api/scrobbles", asyncRoute(async (req, res) => {
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const limit = Number.isInteger(parsedLimit) && parsedLimit > 0
     ? Math.min(parsedLimit, 200)
-    : 40;
+    : 50;
   const offset = (page - 1) * limit;
 
   const { total } = db.prepare(`
