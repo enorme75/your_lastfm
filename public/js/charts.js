@@ -1,5 +1,5 @@
-import { formatDay, formatWeek, formatMonth } from "./dates.js";
-import { t } from "./i18n.js";
+import { formatDay, formatWeek, formatMonth, formatWeekRange } from "./dates.js";
+import { t, getLocale } from "./i18n.js";
 
 const state = {
   charts: {}
@@ -11,6 +11,23 @@ function replaceChart(canvasId, configuration) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   state.charts[canvasId] = new Chart(canvas, configuration);
+}
+
+function attachPeriodClick(options, data, onItemPeriod) {
+  if (!onItemPeriod) return;
+
+  options.onClick = (event, elements) => {
+    const element = elements[0];
+    if (!element) return;
+    onItemPeriod(data[element.index], element.index);
+  };
+  options.onHover = (event, elements) => {
+    event.native.target.style.cursor = elements.length ? "pointer" : "default";
+  };
+}
+
+function localeTag() {
+  return getLocale() === "en" ? "en-GB" : "fr-FR";
 }
 
 function commonOptions() {
@@ -40,9 +57,10 @@ function commonOptions() {
   };
 }
 
-export function renderDailyChart(data = [], canvasId = "daily") {
+export function renderDailyChart(data = [], canvasId = "daily", { onItemPeriod } = {}) {
   const options = commonOptions();
   options.scales.x.ticks.maxTicksLimit = 12;
+  attachPeriodClick(options, data, onItemPeriod);
 
   replaceChart(canvasId, {
     type: "bar",
@@ -60,9 +78,10 @@ export function renderDailyChart(data = [], canvasId = "daily") {
   });
 }
 
-export function renderMonthlyChart(data = [], canvasId = "daily") {
+export function renderMonthlyChart(data = [], canvasId = "daily", { onItemPeriod } = {}) {
   const options = commonOptions();
   options.scales.x.ticks.maxTicksLimit = 14;
+  attachPeriodClick(options, data, onItemPeriod);
 
   replaceChart(canvasId, {
     type: "bar",
@@ -80,15 +99,16 @@ export function renderMonthlyChart(data = [], canvasId = "daily") {
   });
 }
 
-export function renderWeeklyChart(data = [], canvasId = "weekly") {
+export function renderWeeklyChart(data = [], canvasId = "weekly", { onItemPeriod } = {}) {
   const options = commonOptions();
   options.scales.x.ticks.maxTicksLimit = 12;
   options.plugins.legend.display = false;
+  attachPeriodClick(options, data, onItemPeriod);
 
   replaceChart(canvasId, {
     type: "bar",
     data: {
-      labels: data.map(item => formatWeek(item.week)),
+      labels: data.map(item => formatWeekRange(item.week, localeTag())),
       datasets: [{
         label: t("insights.playsPerWeek"),
         data: data.map(item => item.plays),
@@ -101,9 +121,10 @@ export function renderWeeklyChart(data = [], canvasId = "weekly") {
   });
 }
 
-export function renderYearlyChart(data = [], canvasId = "daily") {
+export function renderYearlyChart(data = [], canvasId = "daily", { onItemPeriod } = {}) {
   const options = commonOptions();
   options.plugins.legend.display = false;
+  attachPeriodClick(options, data, onItemPeriod);
 
   replaceChart(canvasId, {
     type: "bar",

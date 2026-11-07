@@ -5,6 +5,30 @@ import { escapeAttribute, escapeHTML, safeImageUrl } from "./dom.js";
 let currentPage = 1;
 let loading = false;
 let lastDayKey = null;
+let activePeriod = null;
+
+export function setScrobblePeriod(period) {
+  activePeriod = period;
+  updatePeriodBanner();
+}
+
+export function hasScrobblePeriod() {
+  return Boolean(activePeriod);
+}
+
+function updatePeriodBanner() {
+  const banner = document.getElementById("scrobbles-period-banner");
+  if (!banner) return;
+
+  if (!activePeriod) {
+    banner.classList.add("d-none");
+    return;
+  }
+
+  document.getElementById("scrobbles-period-label").textContent = activePeriod.label;
+  document.getElementById("scrobbles-period-count").textContent = "";
+  banner.classList.remove("d-none");
+}
 
 function dayHeaderHTML(date) {
   const locale = getLocale() === "en" ? "en-GB" : "fr-FR";
@@ -19,7 +43,7 @@ function dayHeaderHTML(date) {
   return `<div class="scrobbles-day-header">${escapeHTML(capitalized)}</div>`;
 }
 
-function scrobbleBlocks(scrobble) {
+function scrobbleBlocks(scrobble, options) {
   const blocks = [];
   const date = new Date(scrobble.date ?? Date.now());
   const dayKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
@@ -29,11 +53,11 @@ function scrobbleBlocks(scrobble) {
     blocks.push(dayHeaderHTML(date));
   }
 
-  blocks.push(scrobbleItemHTML(scrobble));
+  blocks.push(scrobbleItemHTML(scrobble, options));
   return blocks.join("");
 }
 
-export function scrobbleItemHTML(scrobble, { compact = false } = {}) {
+export function scrobbleItemHTML(scrobble, { compact = false, clock = false, localDelete = false, deleteLabel = "" } = {}) {
   return `
     <div class="scrobble-item${compact ? " compact" : ""}" data-artist="${escapeAttribute(scrobble.artist)}">
       <div class="scrobble-cover">
@@ -60,7 +84,9 @@ export function scrobbleItemHTML(scrobble, { compact = false } = {}) {
         <div class="scrobble-time">
           ${scrobble.nowPlaying
             ? `<i class="mdi mdi-access-point me-1 text-green"></i>${t("scrobbles.listeningNow")}`
-            : timeAgo(scrobble.date)}
+            : clock
+              ? clockTime(scrobble.date)
+              : timeAgo(scrobble.date)}
         </div>
       </div>
       ${scrobble.delete_url
@@ -74,9 +100,26 @@ export function scrobbleItemHTML(scrobble, { compact = false } = {}) {
               ? `data-artist="${escapeAttribute(scrobble.artist)}" data-track="${escapeAttribute(scrobble.track)}" data-date="${scrobble.date}"`
               : ""}
           ><i class="mdi mdi-delete-outline"></i></a>`
-        : ""}
+        : localDelete && scrobble.date
+          ? `<button
+              type="button"
+              class="scrobble-delete"
+              title="${escapeAttribute(deleteLabel)}"
+              data-local="1"
+              data-artist="${escapeAttribute(scrobble.artist)}"
+              data-track="${escapeAttribute(scrobble.track)}"
+              data-date="${scrobble.date}"
+            ><i class="mdi mdi-delete-outline"></i></button>`
+          : ""}
     </div>
   `;
+}
+
+function clockTime(timestamp) {
+  const date = new Date(Number(timestamp));
+  if (Number.isNaN(date.getTime()) || !timestamp) return "";
+
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
 export function bindScrobbleDelete(container) {
@@ -84,7 +127,9 @@ export function bindScrobbleDelete(container) {
     const link = event.target.closest(".scrobble-delete");
     if (!link || !link.dataset.date) return;
 
-    const confirmed = window.confirm(t("scrobbles.deleteConfirm"));
+    const confirmed = window.confirm(
+      link.dataset.local === "1" ? t("scrobbles.deleteLocalConfirm") : t("scrobbles.deleteConfirm")
+    );
     if (!confirmed) return;
 
     try {
@@ -97,11 +142,43 @@ export function bindScrobbleDelete(container) {
           date: Number(link.dataset.date)
         })
       });
+
+      if (activePeriod) loadScrobbles(true);
     } catch (error) {
       console.error("Error deleting scrobble locally:", error);
       window.alert(t("scrobbles.deleteFailed", { message: error.message }));
     }
   });
+}
+
+async function fetchScrobblePage(page) {
+  if (activePeriod) {
+    const data = await fetchJSON(
+      `/api/scrobbles?page=${page}&from=${activePeriod.from}&to=${activePeriod.to}`,
+      { cache: "no-store" }
+    );
+
+    document.getElementById("scrobbles-period-count").textContent = t(
+      "scrobbles.periodCount",
+      { count: Number(data.total || 0).toLocaleString() }
+    );
+
+    return {
+      tracks: data.tracks || [],
+      hasMore: Boolean(data.hasMore),
+      options: { clock: true, localDelete: true, deleteLabel: t("scrobbles.deleteLocal") }
+    };
+  }
+
+  const data = await fetchJSON(`/api/recent-scrobbles?page=${page}`, {
+    cache: "no-store"
+  });
+
+  return {
+    tracks: data.tracks || [],
+    hasMore: Boolean(data.hasMore),
+    options: {}
+  };
 }
 
 export async function loadScrobbles(reset = true) {
@@ -116,20 +193,19 @@ export async function loadScrobbles(reset = true) {
     lastDayKey = null;
     button.classList.add("d-none");
     container.innerHTML = "";
+    updatePeriodBanner();
   }
 
   button.disabled = true;
 
   try {
-    const data = await fetchJSON(`/api/recent-scrobbles?page=${currentPage}`, {
-      cache: "no-store"
-    });
+    const { tracks, hasMore, options } = await fetchScrobblePage(currentPage);
 
     container.insertAdjacentHTML(
       "beforeend",
-      (data.tracks || []).map(scrobbleBlocks).join("")
+      tracks.map(scrobble => scrobbleBlocks(scrobble, options)).join("")
     );
-    button.classList.toggle("d-none", !data.hasMore);
+    button.classList.toggle("d-none", !hasMore);
     currentPage++;
   } catch (error) {
     console.error("Error loading scrobbles:", error);
@@ -144,6 +220,11 @@ export async function loadScrobbles(reset = true) {
 
 document.getElementById("load-more-scrobbles")?.addEventListener("click", () => {
   loadScrobbles(false);
+});
+
+document.getElementById("scrobbles-period-clear")?.addEventListener("click", () => {
+  setScrobblePeriod(null);
+  loadScrobbles(true);
 });
 
 bindScrobbleDelete(document.getElementById("scrobbles-list"));

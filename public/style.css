@@ -3009,6 +3009,52 @@ strong {
   background: rgba(255, 115, 2, 0.25);
 }
 
+/* =========================
+   SCROBBLES — BANDEAU DE PÉRIODE
+========================= */
+.scrobbles-period-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 115, 2, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px;
+}
+
+.scrobbles-period-copy {
+  font-weight: 600;
+}
+
+.scrobbles-period-copy .text-secondary {
+  margin-left: 6px;
+  font-size: 0.85rem;
+}
+
+/* =========================
+   STATS — PILULES DE GRANULARITÉ
+========================= */
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.timeline-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.timeline-filters .range-pill {
+  padding: 4px 10px;
+  font-size: 0.72rem;
+}
+
 .home-scrobbles-list .scrobble-item.compact {
   gap: 12px;
   padding: 8px 6px;

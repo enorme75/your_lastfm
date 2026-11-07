@@ -10,11 +10,18 @@ import {
   renderListeningClock
 } from "./charts.js";
 import { loadInsights } from "./insights.js";
-import { formatTimestampDate } from "./dates.js";
-import { t, setLocale, getNextLocale, applyStaticTranslations } from "./i18n.js";
+import {
+  formatTimestampDate,
+  getDayWindow,
+  getWeekWindow,
+  getMonthWindow,
+  getYearWindow,
+  formatDayShort
+} from "./dates.js";
+import { t, getLocale, setLocale, getNextLocale, applyStaticTranslations } from "./i18n.js";
 import { renderTopSongs } from "./topSongs.js";
 import { renderTopArtists } from "./artists.js";
-import { loadScrobbles } from "./scrobbles.js";
+import { loadScrobbles, setScrobblePeriod } from "./scrobbles.js";
 import { loadAccount } from "./account.js";
 import { initSharePage } from "./share.js";
 import { loadFriends } from "./friends.js";
@@ -170,10 +177,6 @@ function initSyncControls() {
     .catch(error => console.error("Could not load sync status:", error));
 }
 
-function setPlaysChartTitle(i18nKey) {
-  setChartTitle("plays-chart-title", i18nKey);
-}
-
 function setChartTitle(elementId, i18nKey) {
   const element = document.getElementById(elementId);
   if (!element) return;
@@ -181,41 +184,108 @@ function setChartTitle(elementId, i18nKey) {
   element.textContent = t(i18nKey);
 }
 
-const SECONDARY_TIMELINES = {
-  month: {
+const TIMELINES = {
+  day: {
+    titleKey: "dashboard.playsPerDay",
+    key: "playsPerDay",
+    render: (data, onPeriod) => renderDailyChart(data, "daily", { onItemPeriod: onPeriod })
+  },
+  week: {
     titleKey: "insights.playsPerWeek",
     key: "playsPerWeek",
-    render: data => renderWeeklyChart(data, "secondary-timeline")
+    render: (data, onPeriod) => renderWeeklyChart(data, "daily", { onItemPeriod: onPeriod })
   },
-  year: {
+  month: {
     titleKey: "dashboard.playsPerMonth",
     key: "playsPerMonth",
-    render: data => renderMonthlyChart(data, "secondary-timeline")
+    render: (data, onPeriod) => renderMonthlyChart(data, "daily", { onItemPeriod: onPeriod })
   },
-  all: {
+  year: {
     titleKey: "dashboard.playsPerYear",
     key: "playsPerYear",
-    render: data => renderYearlyChart(data, "secondary-timeline")
+    render: (data, onPeriod) => renderYearlyChart(data, "daily", { onItemPeriod: onPeriod })
   }
 };
 
-function renderStatsTimelines(data) {
-  const mode = getStatsMode();
-  const secondary = SECONDARY_TIMELINES[mode] || SECONDARY_TIMELINES.all;
+const TIMELINES_BY_MODE = {
+  month: ["day", "week"],
+  year: ["day", "week", "month"],
+  all: ["month", "year"]
+};
 
-  if (mode === "all") {
-    setPlaysChartTitle("dashboard.playsPerMonth");
-    renderMonthlyChart(data.playsPerMonth || []);
-  } else {
-    setPlaysChartTitle("dashboard.playsPerDay");
-    renderDailyChart(data.playsPerDay || []);
+const timelineChoice = { month: "day", year: "day", all: "month" };
+let lastStatsData = null;
+
+function localeTag() {
+  return getLocale() === "en" ? "en-GB" : "fr-FR";
+}
+
+function capitalizeFirst(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function periodWindow(item) {
+  if (item?.day !== undefined) return getDayWindow(item.day);
+  if (item?.week !== undefined) return getWeekWindow(item.week);
+  if (item?.month !== undefined) return getMonthWindow(item.month);
+  if (item?.year !== undefined) return getYearWindow(item.year);
+  return null;
+}
+
+function periodLabel(window) {
+  const from = new Date(window.from);
+
+  if (window.key.length === 4) return window.key;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(window.key)) {
+    return capitalizeFirst(new Intl.DateTimeFormat(localeTag(), {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }).format(from));
+  }
+  if (/^\d{4}-\d{2}$/.test(window.key)) {
+    return capitalizeFirst(new Intl.DateTimeFormat(localeTag(), {
+      month: "long",
+      year: "numeric"
+    }).format(from));
   }
 
-  setChartTitle("secondary-timeline-title", secondary.titleKey);
-  secondary.render(data[secondary.key] || []);
+  const tag = localeTag();
+  return `${formatDayShort(window.from, tag)} – ${formatDayShort(window.to, tag)} ${from.getFullYear()}`;
+}
+
+function onTimelinePeriod(item) {
+  const window = periodWindow(item);
+  if (!window) return;
+
+  setScrobblePeriod({
+    label: periodLabel(window),
+    from: Math.floor(window.from / 1000),
+    to: Math.floor(window.to / 1000)
+  });
+  toggleView("scrobbles");
+}
+
+function renderStatsTimelines(data) {
+  const mode = getStatsMode();
+  const choices = TIMELINES_BY_MODE[mode] || TIMELINES_BY_MODE.all;
+  if (!choices.includes(timelineChoice[mode])) timelineChoice[mode] = choices[0];
+  const granularity = timelineChoice[mode];
+  const timeline = TIMELINES[granularity];
+
+  setChartTitle("plays-chart-title", timeline.titleKey);
+  document.querySelectorAll("[data-timeline-granularity]").forEach(pill => {
+    const pillGranularity = pill.dataset.timelineGranularity;
+    pill.classList.toggle("d-none", !choices.includes(pillGranularity));
+    pill.classList.toggle("active", pillGranularity === granularity);
+  });
+
+  timeline.render(data[timeline.key] || [], onTimelinePeriod);
 }
 
 function renderDashboard(data) {
+  lastStatsData = data;
   renderSummary(data.summary);
   renderAlbums(data.topAlbums);
   renderTopSongs(data.topTracks);
@@ -496,11 +566,25 @@ function initArtistRouting() {
 
 UI.sidebarButtons.forEach(button => {
   if (!button.dataset.view) return;
-  button.addEventListener("click", () => toggleView(button.dataset.view));
+  button.addEventListener("click", () => {
+    if (button.dataset.view === "scrobbles") setScrobblePeriod(null);
+    toggleView(button.dataset.view);
+  });
 });
 
 document.getElementById("home-scrobbles-see-all")?.addEventListener("click", () => {
+  setScrobblePeriod(null);
   toggleView("scrobbles");
+});
+
+document.querySelectorAll("[data-timeline-granularity]").forEach(pill => {
+  pill.addEventListener("click", () => {
+    const mode = getStatsMode();
+    const granularity = pill.dataset.timelineGranularity;
+    if (timelineChoice[mode] === granularity) return;
+    timelineChoice[mode] = granularity;
+    if (lastStatsData) renderStatsTimelines(lastStatsData);
+  });
 });
 
 initStatsFilters(() => {

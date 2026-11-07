@@ -502,10 +502,10 @@ app.get("/api/recent-scrobbles", asyncRoute(async (req, res) => {
   setNoStore(res);
   const parsedPage = Number.parseInt(req.query.page || "1", 10);
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-  const parsedLimit = Number.parseInt(req.query.limit || "20", 10);
+  const parsedLimit = Number.parseInt(req.query.limit || "40", 10);
   const limit = Number.isInteger(parsedLimit) && parsedLimit > 0
     ? Math.min(parsedLimit, 200)
-    : 20;
+    : 40;
 
   const response = await fetchWithRetry(async () => {
     const result = await axios.get("https://ws.audioscrobbler.com/2.0/", {
@@ -548,6 +548,52 @@ app.get("/api/recent-scrobbles", asyncRoute(async (req, res) => {
   res.json({
     tracks: parsed,
     hasMore: page < Number(attr?.totalPages || 1)
+  });
+}));
+
+app.get("/api/scrobbles", asyncRoute(async (req, res) => {
+  setNoStore(res);
+  const from = Number.parseInt(String(req.query.from || ""), 10);
+  const to = Number.parseInt(String(req.query.to || ""), 10);
+  const parsedPage = Number.parseInt(req.query.page || "1", 10);
+  const parsedLimit = Number.parseInt(req.query.limit || "40", 10);
+
+  if (!Number.isInteger(from) || !Number.isInteger(to) || from <= 0 || to <= from) {
+    const error = new Error("Fenêtre de période invalide");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const limit = Number.isInteger(parsedLimit) && parsedLimit > 0
+    ? Math.min(parsedLimit, 200)
+    : 40;
+  const offset = (page - 1) * limit;
+
+  const { total } = db.prepare(`
+    SELECT COUNT(*) AS total
+    FROM scrobbles
+    WHERE played_at >= ? AND played_at <= ?
+  `).get(from, to);
+
+  const rows = db.prepare(`
+    SELECT track, artist, album, album_image, played_at
+    FROM scrobbles
+    WHERE played_at >= ? AND played_at <= ?
+    ORDER BY played_at DESC
+    LIMIT ? OFFSET ?
+  `).all(from, to, limit, offset);
+
+  res.json({
+    total,
+    hasMore: offset + rows.length < total,
+    tracks: rows.map(row => ({
+      track: row.track,
+      artist: row.artist,
+      album: row.album,
+      image: row.album_image || null,
+      date: row.played_at * 1000
+    }))
   });
 }));
 

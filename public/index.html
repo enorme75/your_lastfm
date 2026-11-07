@@ -406,9 +406,15 @@
                         <div class="col-xl-7 col-md-12">
                             <div class="card bg-light shadow-sm h-100">
                                 <div class="card-body text-light">
-                                    <div class="card-header-title mb-3">
+                                    <div class="card-header-title mb-3 timeline-header">
                                         <i class="mdi mdi-chart-line text-green"></i>
                                         <span id="plays-chart-title" data-i18n="dashboard.playsPerDay">Écoutes par jour</span>
+                                        <div class="range-filters timeline-filters">
+                                            <button class="range-pill" data-timeline-granularity="day" data-i18n="dashboard.granDay">Jour</button>
+                                            <button class="range-pill d-none" data-timeline-granularity="week" data-i18n="dashboard.granWeek">Semaine</button>
+                                            <button class="range-pill d-none" data-timeline-granularity="month" data-i18n="dashboard.granMonth">Mois</button>
+                                            <button class="range-pill d-none" data-timeline-granularity="year" data-i18n="dashboard.granYear">Année</button>
+                                        </div>
                                     </div>
                                     <div class="chart-container">
                                         <canvas id="daily"></canvas>
@@ -429,20 +435,6 @@
                                     </div>
                                     <div class="chart-container listening-clock-container">
                                         <canvas id="listening-clock"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <div class="card bg-light shadow-sm">
-                                <div class="card-body text-light">
-                                    <div class="card-header-title mb-3">
-                                        <i class="mdi mdi-chart-bar text-green"></i>
-                                        <span id="secondary-timeline-title" data-i18n="insights.playsPerWeek">Écoutes par semaine</span>
-                                    </div>
-                                    <div class="chart-container">
-                                        <canvas id="secondary-timeline"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -760,6 +752,17 @@
                     <div class="mb-3">
                         <i class="mdi mdi-history me-1 text-green"></i>
                         <span data-i18n="dashboard.recentScrobbles">Scrobbles récents</span>
+                    </div>
+                    <div id="scrobbles-period-banner" class="scrobbles-period-banner d-none mb-3">
+                        <div class="scrobbles-period-copy">
+                            <i class="mdi mdi-calendar-search text-green me-1"></i>
+                            <span id="scrobbles-period-label"></span>
+                            <span id="scrobbles-period-count" class="text-secondary"></span>
+                        </div>
+                        <button id="scrobbles-period-clear" class="btn btn-sm btn-outline-light">
+                            <i class="mdi mdi-close"></i>
+                            <span data-i18n="scrobbles.clearPeriod">Récents</span>
+                        </button>
                     </div>
                     <div id="scrobbles-list" class="scrobbles-list"></div>                    <div class="text-center mt-4">
                         <button

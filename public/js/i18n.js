@@ -89,6 +89,10 @@ const DICTIONARY = {
     openTrackOnLastfm: { fr: "Ouvrir le morceau sur Last.fm", en: "Open track on Last.fm" },
     playsPerMonth: { fr: "Écoutes par mois", en: "Plays per Month" },
     playsPerYear: { fr: "Écoutes par année", en: "Plays per Year" },
+    granDay: { fr: "Jour", en: "Day" },
+    granWeek: { fr: "Semaine", en: "Week" },
+    granMonth: { fr: "Mois", en: "Month" },
+    granYear: { fr: "Année", en: "Year" },
     artistsListened: { fr: "Artistes écoutés", en: "Artists listened" },
     byMonth: { fr: "Par mois", en: "By month" },
     byYear: { fr: "Par année", en: "By year" },
@@ -130,6 +134,16 @@ const DICTIONARY = {
     daysAgo: { fr: "il y a {count} j", en: "{count} days ago" },
     showMore: { fr: "Voir plus", en: "Show more" },
     seeAll: { fr: "Voir tout", en: "See all" },
+    clearPeriod: { fr: "Récents", en: "Recent" },
+    periodCount: { fr: "· {count} écoutes", en: "· {count} plays" },
+    deleteLocalConfirm: {
+      fr: "Supprimer ce scrobble de la base locale (stats your_lastfm) ?",
+      en: "Remove this scrobble from the local database (your_lastfm stats)?"
+    },
+    deleteLocal: {
+      fr: "Supprimer de la base locale",
+      en: "Remove from local database"
+    },
     deleteConfirm: {
       fr: "Supprimer aussi ce scrobble de la base locale (stats your_lastfm) ?",
       en: "Also remove this scrobble from the local database (your_lastfm stats)?"
